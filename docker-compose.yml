@@ -1,3 +1,4 @@
+# Environnement local. En production : base sur Neon, API sur Render
 services:
   db:
     image: postgres:17-alpine
@@ -15,5 +16,35 @@ services:
       timeout: 3s
       retries: 10
 
+  # Tâche unique : applique les migrations Prisma puis s'arrête
+  migrate:
+    build:
+      context: ./backend
+      target: build
+    command: npx prisma migrate deploy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-soutenances}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    build:
+      context: ./backend
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-soutenances}
+      FRONTEND_URL: http://localhost:5173
+      PORT: "3000"
+    ports:
+      - "3000:3000"
+    volumes:
+      - uploads:/app/uploads # mémoires PDF déposés
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
 volumes:
   pgdata:
+  uploads:
