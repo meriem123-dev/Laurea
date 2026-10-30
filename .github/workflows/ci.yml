@@ -88,13 +88,19 @@ jobs:
   audit:
     name: Audit des dépendances
     runs-on: ubuntu-latest
-    continue-on-error: true # informatif : ne bloque pas
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-      - run: npm audit --omit=dev --audit-level=high
+
+      - name: Audit backend
+        run: npm audit --omit=dev --audit-level=high
         working-directory: backend
-      - run: npm audit --omit=dev --audit-level=high
+
+      # zod bloqué en 3.x à cause de @vee-validate/zod
+      # acceptée à revoir quand vee-validate supportera zod 4
+      - name: Audit frontend
+        if: always()
+        run: npx audit-ci@^7 --omit dev --high --allowlist GHSA-mrhx-c7xc-m3w5
         working-directory: frontend
