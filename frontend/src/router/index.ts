@@ -1,7 +1,45 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
+import { createRouter, createWebHistory } from 'vue-router'
+import LoginView from '../views/auth/LoginView.vue'
+import AppLayout from '../layouts/AppLayout.vue'
 
-export const router = createRouter({
+const router = createRouter({
   history: createWebHistory(),
-  routes: [{ path: '/', name: 'home', component: HomeView }],
-});
+  routes: [
+    {
+      path: '/',
+      redirect: '/login',
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: LoginView,
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: () => import('../views/auth/ForgotPasswordView.vue'),
+    },
+    {
+      path: '/admin',
+      component: AppLayout,
+      props: { role: 'admin' },
+      children: [
+        { path: '', redirect: '/admin/dashboard' },
+        {
+          path: 'dashboard',
+          name: 'admin-dashboard',
+          component: () => import('../views/admin/DashboardView.vue'),
+          meta: { title: 'Tableau de bord' },
+        },
+      ],
+    },
+    {
+      // Provisoire : toute route inconnue renvoie au login
+      // (à remplacer par une vraie page 404 dans views/errors/)
+      path: '/:pathMatch(.*)*',
+      redirect: '/login',
+    },
+  ],
+})
+
+export default router

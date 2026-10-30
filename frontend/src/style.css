@@ -1,1 +1,101 @@
 @import "tailwindcss";
+
+@theme {
+  /* Bleu principal (boutons, liens, accents) */
+  --color-primary-50: #edf5ff;   /* EDF5FF, F0F8FF, E9F2FF, EAF4FF, EAF5FF, EDF6FF, E8F4FF… */
+  --color-primary-100: #dbe9f8;  /* DBE9F8, E5F2FD, E7F3FF */
+  --color-primary-200: #c5d9ee;  /* C5D9EE, CBDDEA, A8C1DC, A9C5DF */
+  --color-primary-300: #8bcfff;  /* 8BCFFF, 7EC8FF, 9ED6FF, 65C0FB (accents sur fond sombre) */
+  --color-primary-400: #5aaee8;  /* 5AAEE8, 55B4F1, 46B7FF */
+  --color-primary-500: #3188cf;  /* 3188CF, 2783CA, 327BB9 */
+  --color-primary-600: #1775c5;  /* 1775C5, 1976D2, 2475B8, 2574B5, 2777B7, 2878B9, 397EBC, 3979B3 */
+  --color-primary-700: #176aa1;  /* 176AA1, 256FA8 (bouton « Se connecter ») */
+  --color-primary-800: #145d8e;  /* dérivé (hover du bouton), absent de Figma */
+
+  /* Bleu nuit (panneau hero, fonds sombres) */
+  --color-navy-900: #102d52;     /* 102D52, 142D4A */
+  --color-navy-800: #172f49;     /* 172F49, 18334F */
+  --color-navy-700: #194c79;     /* 194C79, 234767 */
+  --color-navy-600: #315473;     /* 315473, 30445B, 263B52 */
+
+  /* Texte et neutres */
+  --color-ink: #17243a;               /* titres, texte principal */
+  --color-text-body: #53657a;         /* 53657A, 526176, 54708B */
+  --color-text-secondary: #6f7f96;    /* 6F7F96, 708096, 7D8B9C, 7C8B9E, 697A8E, 60748A */
+  --color-text-muted: #8c9aac;        /* 8C9AAC, 8A98AA, 8998AA, 8290A1, 8D99A8, 97A4B5, 9AA6B5… */
+  --color-border-strong: #b8c2ce;     /* B8C2CE, B5C7DA, B1BDCB, A5B2C0 */
+  --color-border: #dce4ee;            /* DCE4EE, DBE3ED, D4E0EC, D7E2EE, E1E8F0 */
+  --color-surface-muted: #edf1f5;     /* EDF1F5, E9EEF4, E5EBF3, E7ECF3, F1F4F8, F1F5F9… */
+  --color-surface: #f5f8fc;           /* F5F8FC, F4F7FA, F7F9FB, F9FBFD, FAFBFD, F9FAFC */
+
+  /* Succès (SOUTENU / NOTÉ / validations) */
+  --color-success: #15966a;           /* 15966A, 2B9C78, 3C8A6C, 44AA7B */
+  --color-success-dark: #12805c;      /* 12805C, 348765, 256B57, 5D8779 */
+  --color-success-soft: #e8f6ef;      /* E8F6EF, EAF8F2, EAF8F3, ECF9F4 */
+  --color-success-border: #d8f0e6;
+
+  /* Avertissement (PLANIFIÉ / en attente) */
+  --color-warning: #dc8334;           /* DC8334, DB822F, DE8737, CC8425 */
+  --color-warning-dark: #95571e;      /* 95571E, B8791F */
+  --color-warning-soft: #fff2e6;      /* FFF1E4, FFF2E6, FFF2E7, FFF4DF, FFF6E8 */
+
+  /* Danger (refus, erreurs) */
+  --color-danger: #e95a5a;            /* E95A5A, EB5757, ED6B6B */
+  --color-danger-dark: #c74a4a;       /* C74A4A, CC5659 */
+  --color-danger-soft: #fcebec;       /* FCEBEC, FFF0F0 */
+
+  /* Violet (statuts alternatifs, ex. CLOS ou jurys) */
+  --color-violet: #7761c2;            /* 7761C2, 7564C2, 8069C9 */
+  --color-violet-dark: #4e438b;
+  --color-violet-soft: #f0edff;       /* F0EDFF, F1EDFF, F0ECFF */
+
+  /* Cyan (infos secondaires) */
+  --color-teal: #2d98ae;              /* 2D98AE, 39A5B9 */
+  --color-teal-soft: #e9f8fb;         /* E9F8FB, E5F7FA */
+--animate-fade-up: fade-up 0.7s ease-out both;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-breathe: breathe 12s ease-in-out infinite;
+  --animate-drift: drift 16s ease-in-out infinite alternate;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(2deg);
+    }
+    50% {
+      transform: translateY(-10px) rotate(0.5deg);
+    }
+  }
+
+  @keyframes breathe {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.04);
+      opacity: 0.6;
+    }
+  }
+
+  @keyframes drift {
+    from {
+      transform: translate(0, 0) scale(1);
+    }
+    to {
+      transform: translate(-24px, -16px) scale(1.06);
+    }
+  }
+}
