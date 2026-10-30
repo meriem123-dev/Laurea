@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { ArrowLeft } from 'lucide-vue-next'
+import { ArrowLeft } from '@lucide/vue'
 import AuthHeader from '../../components/auth/AuthHeader.vue'
 import ForgotPasswordForm from '../../components/auth/ForgotPasswordForm.vue'
 import BaseAlert from '../../components/common/BaseAlert.vue'

@@ -10,7 +10,7 @@ import {
   LayoutGrid,
   Settings,
   Users,
-} from 'lucide-vue-next'
+} from '@lucide/vue'
 import type { UserRole } from '../types/auth'
 import type { NavSection } from '../types/navigation'
 

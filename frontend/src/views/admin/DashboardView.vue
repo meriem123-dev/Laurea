@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
 import { useRouter } from 'vue-router'
-import { BookOpen, CalendarDays, GraduationCap, Plus, Users } from 'lucide-vue-next'
+import { BookOpen, CalendarDays, GraduationCap, Plus, Users } from '@lucide/vue'
 import BaseButton from '../../components/common/BaseButton.vue'
 import StatCard from '../../components/common/StatCard.vue'
 import DefenseProgressCard from '../../components/dashboard/DefenseProgressCard.vue'
