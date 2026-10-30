@@ -22,5 +22,7 @@ model User {
   firstName    String
   lastName     String
   role         Role
+  isActive     Boolean  @default(true)
+  updatedAt    DateTime @updatedAt
   createdAt    DateTime @default(now())
 }
