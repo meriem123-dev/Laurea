@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Award, CalendarDays } from 'lucide-vue-next'
+import { Award, CalendarDays } from '@lucide/vue'
 import AppLogo from '../common/AppLogo.vue'
 
 const features = [

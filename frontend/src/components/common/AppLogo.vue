@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GraduationCap } from 'lucide-vue-next'
+import { GraduationCap } from '@lucide/vue'
 import logo from '../../assets/images/logo.png'
 
 interface Props {

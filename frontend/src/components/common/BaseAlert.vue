@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { AlertCircle, Check } from 'lucide-vue-next'
+import { AlertCircle, Check } from '@lucide/vue'
 
 type Variant = 'info' | 'error'
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { ChevronRight } from 'lucide-vue-next'
+import { ChevronRight } from '@lucide/vue'
 import BaseBadge from '../common/BaseBadge.vue'
 import BaseCard from '../common/BaseCard.vue'
 import { DEFENSE_STATUS_META } from '../../utils/defenseStatus'

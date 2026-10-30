@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
 import { RouterLink } from 'vue-router'
-import { Award, ChevronRight, Clock, Users } from 'lucide-vue-next'
+import { Award, ChevronRight, Clock, Users } from '@lucide/vue'
 import BaseCard from '../common/BaseCard.vue'
 import IconTile from '../common/IconTile.vue'
 import type { TodoAction, TodoActionId } from '../../types/dashboard'

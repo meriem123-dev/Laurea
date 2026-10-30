@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Bell, ChevronRight, Menu } from 'lucide-vue-next'
+import { Bell, ChevronRight, Menu } from '@lucide/vue'
 
 withDefaults(
   defineProps<{
