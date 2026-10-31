@@ -24,7 +24,7 @@ const toneClasses: Record<BadgeTone, string> = {
 
 <template>
   <span
-    class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-semibold"
+    class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[0.6875rem] font-semibold"
     :class="toneClasses[tone]"
   >
     <span v-if="dot" class="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />

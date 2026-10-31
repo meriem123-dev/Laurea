@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import BaseCard from '../common/BaseCard.vue'
-import DonutChart from '../common/DonutChart.vue'
+import SegmentedBar from '../common/SegmentedBar.vue'
 import BaseSelect from '../forms/BaseSelect.vue'
 import { toPercentages } from '../../utils/format'
 import type { BreakdownId, DefenseBreakdownItem } from '../../types/dashboard'
@@ -12,10 +12,10 @@ const props = defineProps<{
 }>()
 
 const COLORS: Record<BreakdownId, string> = {
-  planned: 'text-navy-900',
-  done: 'text-primary-400',
-  toPlan: 'text-primary-200',
-  cancelled: 'text-danger',
+  planned: 'bg-ink',
+  done: 'bg-primary-400',
+  toPlan: 'bg-brass',
+  cancelled: 'bg-danger',
 }
 
 // TODO backend : le filtre de période devra recharger les données
@@ -41,29 +41,33 @@ const segments = computed(() =>
 <template>
   <BaseCard title="Avancement des soutenances" :subtitle="subtitle">
     <template #action>
-      <BaseSelect v-model="period" :options="periodOptions" :ariaLabel="'Période'" />
+       <BaseSelect v-model="period" :options="periodOptions" :ariaLabel="'Période'" />
     </template>
 
-    <div class="flex flex-col items-center justify-center gap-8 sm:flex-row sm:gap-12">
-      <DonutChart :segments="segments" aria-label="Répartition des soutenances par statut">
-        <p class="text-2xl font-semibold leading-none text-ink">{{ total }}</p>
-        <p class="mt-1 text-[11px] text-text-muted">Total</p>
-      </DonutChart>
-
-      <ul class="w-full max-w-56 space-y-4">
-        <li v-for="row in rows" :key="row.id" class="flex items-center gap-3">
-          <span
-            class="h-2 w-2 shrink-0 rounded-full bg-current"
-            :class="row.colorClass"
-            aria-hidden="true"
-          />
-          <div class="flex-1">
-            <p class="text-sm font-semibold leading-none text-ink">{{ row.value }}</p>
-            <p class="mt-1 text-[11px] text-text-muted">{{ row.label }}</p>
-          </div>
-          <span class="text-xs text-text-secondary">{{ row.percent }}%</span>
-        </li>
-      </ul>
+    <div class="flex items-baseline gap-2">
+      <p class="font-display text-5xl leading-none tracking-tight text-ink tabular-nums">
+        {{ total }}
+      </p>
+      <p class="text-xs text-text-muted">au total</p>
     </div>
+
+    <SegmentedBar
+      :segments="segments"
+      aria-label="Répartition des soutenances par statut"
+      class="mt-5"
+    />
+
+    <ul class="mt-4 divide-y divide-border">
+      <li v-for="row in rows" :key="row.id" class="flex items-center gap-3 py-3">
+        <span
+          class="h-2.5 w-2.5 shrink-0 rounded-full"
+          :class="row.colorClass"
+          aria-hidden="true"
+        />
+        <span class="flex-1 text-sm text-text-body">{{ row.label }}</span>
+        <span class="text-sm font-semibold text-ink tabular-nums">{{ row.value }}</span>
+        <span class="w-10 text-right text-xs text-text-muted tabular-nums">{{ row.percent }}%</span>
+      </li>
+    </ul>
   </BaseCard>
 </template>
