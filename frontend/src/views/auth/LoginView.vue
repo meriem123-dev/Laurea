@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthHeader from '../../components/auth/AuthHeader.vue'
 import LoginForm from '../../components/auth/LoginForm.vue'
-import BaseAlert from '../../components/common/BaseAlert.vue'
 import AuthLayout from '../../layouts/AuthLayout.vue'
 import { ROLE_HOME_PATH } from '../../utils/roles'
 import type { LoginPayload } from '../../types/auth'
@@ -35,10 +34,6 @@ async function handleLogin(payload: LoginPayload) {
       <AuthHeader eyebrow="Bienvenue" title="Connectez-vous à votre espace" />
 
       <LoginForm :loading="isLoading" :error-message="errorMessage" @submit="handleLogin" />
-
-      <BaseAlert title="Compte de démonstration">
-        Les identifiants sont préremplis pour ce prototype.
-      </BaseAlert>
     </div>
   </AuthLayout>
 </template>

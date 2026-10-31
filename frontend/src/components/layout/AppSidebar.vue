@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { LogOut } from '@lucide/vue'
 import AppLogo from '../common/AppLogo.vue'
 import type { NavSection } from '../../types/navigation'
 
@@ -11,8 +12,12 @@ withDefaults(
   { open: false },
 )
 
+const emit = defineEmits<{
+  logout: []
+}>()
+
 const baseLink =
-  'group flex items-center gap-3 rounded-lg px-3 py-2.5 text-[0.8125rem] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/30'
+  'group flex items-center gap-3 rounded-lg px-3 py-2 text-[0.8125rem] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/30'
 const activeLink = 'bg-ink text-white'
 const idleLink = 'text-text-body hover:bg-surface-muted hover:text-ink'
 </script>
@@ -26,8 +31,11 @@ const idleLink = 'text-text-body hover:bg-surface-muted hover:text-ink'
       <AppLogo variant="onLight" class="h-12" />
     </div>
 
-    <nav class="flex-1 overflow-y-auto overscroll-contain px-3 pb-4" aria-label="Navigation principale">
-      <div v-for="section in sections" :key="section.label" class="mt-6 first:mt-2">
+    <nav
+      class="flex-1 overflow-y-auto overscroll-contain px-3 pb-4"
+      aria-label="Navigation principale"
+    >
+      <div v-for="section in sections" :key="section.label" class="mt-4 first:mt-1">
         <p class="px-3 pb-2 text-[0.625rem] font-bold uppercase tracking-[0.16em] text-text-muted">
           {{ section.label }}
         </p>
@@ -61,5 +69,20 @@ const idleLink = 'text-text-body hover:bg-surface-muted hover:text-ink'
         </ul>
       </div>
     </nav>
+
+    <div class="shrink-0 border-t border-border p-3">
+      <button
+        type="button"
+        class="group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[0.8125rem] font-medium text-text-body transition-colors hover:bg-danger-soft hover:text-danger-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-danger/40"
+        @click="emit('logout')"
+      >
+        <LogOut
+          class="h-[1.125rem] w-[1.125rem] shrink-0 text-text-secondary group-hover:text-danger-dark"
+          :stroke-width="1.75"
+          aria-hidden="true"
+        />
+        Déconnexion
+      </button>
+    </div>
   </aside>
 </template>

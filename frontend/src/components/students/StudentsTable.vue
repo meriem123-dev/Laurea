@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Ellipsis } from '@lucide/vue'
+import { Eye, Pencil, Trash2 } from '@lucide/vue'
+import ActionMenu, { type ActionMenuItem } from '../common/ActionMenu.vue'
 import BaseBadge from '../common/BaseBadge.vue'
 import BaseCard from '../common/BaseCard.vue'
 import InitialsAvatar from '../common/InitialsAvatar.vue'
@@ -15,7 +16,9 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  'open-actions': [student: Student]
+  view: [student: Student]
+  edit: [student: Student]
+  delete: [student: Student]
 }>()
 
 const columns: TableColumn[] = [
@@ -27,9 +30,21 @@ const columns: TableColumn[] = [
   { key: 'action', label: 'Action', align: 'right' },
 ]
 
+const rowActions: ActionMenuItem[] = [
+  { key: 'view', label: 'Voir le dossier', icon: Eye },
+  { key: 'edit', label: 'Modifier', icon: Pencil },
+  { key: 'delete', label: 'Supprimer', icon: Trash2, danger: true },
+]
+
 const countLabel = computed(() =>
   props.students.length > 1 ? 'étudiants affichés' : 'étudiant affiché',
 )
+
+function onAction(key: string, student: Student) {
+  if (key === 'view') emit('view', student)
+  else if (key === 'edit') emit('edit', student)
+  else if (key === 'delete') emit('delete', student)
+}
 </script>
 
 <template>
@@ -69,7 +84,7 @@ const countLabel = computed(() =>
       <template #cell-specialty="{ row }">{{ row.specialty }}</template>
 
       <template #cell-group="{ row }">
-        <span class="text-xs font-medium tabular-nums text-text-secondary">{{ row.group }}</span>
+        <span class="text-xs font-medium tabular-nums text-text-secondary">{{ row.group || '—' }}</span>
       </template>
 
       <template #cell-status="{ row }">
@@ -79,14 +94,11 @@ const countLabel = computed(() =>
       </template>
 
       <template #cell-action="{ row }">
-        <button
-          type="button"
-          class="inline-flex h-9 w-9 items-center justify-center rounded-full text-text-muted transition hover:bg-surface-muted hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/30"
-          :aria-label="`Actions pour ${fullName(row)}`"
-          @click="emit('open-actions', row)"
-        >
-          <Ellipsis class="h-5 w-5" aria-hidden="true" />
-        </button>
+        <ActionMenu
+          :items="rowActions"
+          :ariaLabel="`Actions pour ${fullName(row)}`"
+          @select="onAction($event, row)"
+        />
       </template>
     </DataTable>
   </BaseCard>

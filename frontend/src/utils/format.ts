@@ -41,3 +41,13 @@ export function toPercentages(values: number[]): number[] {
 
   return floors.map((value, index) => value + (winners.has(index) ? 1 : 0))
 }
+const dayMonthFormatter = new Intl.DateTimeFormat('fr-FR', {
+  day: 'numeric',
+  month: 'long',
+  timeZone: 'UTC',
+})
+
+/** '2025-06-30' -> '30 juin' */
+export function formatDayMonth(iso: string): string {
+  return dayMonthFormatter.format(new Date(iso))
+}

@@ -37,6 +37,12 @@ const router = createRouter({
           component: () => import('../views/admin/StudentsView.vue'),
           meta: { title: 'Étudiants' },
         },
+        {
+          path: 'professors',
+          name: 'admin-professors',
+          component: () => import('../views/admin/ProfessorsView.vue'),
+          meta: { title: 'Professeurs' },
+        },
       ],
     },
     {

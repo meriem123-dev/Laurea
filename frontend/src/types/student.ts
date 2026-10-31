@@ -14,3 +14,14 @@ export interface Student {
   cursus: Cursus
   projectStatus: ProjectStatus
 }
+
+// Données saisies dans le formulaire
+export interface StudentFormData {
+  firstName: string
+  lastName: string
+  email: string
+  matricule: string
+  specialty: string
+  group: string // facultatif : chaîne vide si non renseigné
+  temporaryPassword: string // création seulement ; à envoyer au backend, jamais conservé côté client
+}
