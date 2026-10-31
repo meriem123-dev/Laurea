@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import logo from '../../assets/images/logo.png'
+import { computed } from 'vue'
+
+import logoLight from '../../assets/images/logo_fond_dark.png'
+import logoDark from '../../assets/images/logo_fond_blanc.png'
 
 interface Props {
   variant?: 'onDark' | 'onLight'
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   variant: 'onLight',
 })
+
+const logo = computed(() =>
+  props.variant === 'onDark' ? logoLight : logoDark
+)
 </script>
 
 <template>
@@ -15,6 +22,5 @@ withDefaults(defineProps<Props>(), {
     :src="logo"
     alt="Laurea"
     class="w-auto self-start object-contain"
-    :class="variant === 'onDark' ? 'brightness-0 invert' : ''"
   />
 </template>

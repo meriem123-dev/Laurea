@@ -24,7 +24,7 @@ export class AuthService {
     const payload={sub :user.id,role:user.role};
 
     return{
-        accessToken :this.jwt.signAsync(payload),
+        accessToken :await this.jwt.signAsync(payload),
         user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role },
     }
   }
