@@ -57,4 +57,15 @@ export const students: Student[] = [
     cursus: 'MASTER',
     projectStatus: 'closed',
   },
+    {
+    id: 6,
+    firstName: 'Meriem',
+    lastName: 'Hamouche',
+    email: 'meriem.hamouche@univ.fr',
+    matricule: 'ETU-2025-063',
+    specialty: 'Intelligence artificielle',
+    group: 'M2-IA-01',
+    cursus: 'MASTER',
+    projectStatus: 'validated',
+  },
 ]

@@ -43,6 +43,12 @@ const router = createRouter({
           component: () => import('../views/admin/ProfessorsView.vue'),
           meta: { title: 'Professeurs' },
         },
+        {
+          path: 'projects',
+          name: 'admin-projects',
+          component: () => import('../views/admin/ProjectsView.vue'),
+          meta: { title: 'Projets PFE' },
+        },
       ],
     },
     {

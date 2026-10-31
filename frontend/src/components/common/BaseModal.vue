@@ -9,8 +9,10 @@ const props = withDefaults(
     subtitle?: string
     icon?: Component
     closeLabel?: string
+    
+   size?: 'md' | 'lg'
   }>(),
-  { subtitle: '', closeLabel: 'Fermer' },
+  { subtitle: '', closeLabel: 'Fermer', size: 'md' },
 )
 
 const emit = defineEmits<{
@@ -93,6 +95,7 @@ onBeforeUnmount(() => {
           aria-modal="true"
           :aria-labelledby="titleId"
           tabindex="-1"
+          :class="size === 'lg' ? 'max-w-2xl' : 'max-w-xl'"
           class="relative flex max-h-[92dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-2xl border border-border bg-white shadow-2xl outline-none motion-safe:animate-modal-in sm:rounded-xl"
         >
           <header class="flex shrink-0 items-start gap-4 border-b border-border px-5 py-5 sm:px-6">

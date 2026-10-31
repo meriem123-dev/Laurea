@@ -1,15 +1,8 @@
 import { computed, ref, type Ref } from 'vue'
 import type { Student } from '../types/student'
 import { fullName } from '../utils/student'
+import { normalizeText as normalize } from '../utils/format'
 
-// Minuscules + sans accents : « ines » trouve « Inès »
-function normalize(value: string): string {
-  return value
-    .normalize('NFD')
-    .replace(/\p{M}/gu, '')
-    .toLowerCase()
-    .trim()
-}
 
 export function useStudentFilters(students: Ref<Student[]>) {
   const search = ref('')
