@@ -6,11 +6,15 @@ interface Option {
   label: string
 }
 
-defineProps<{
-  modelValue: string
-  options: Option[]
-  ariaLabel: string
-}>()
+withDefaults(
+  defineProps<{
+    modelValue: string
+    options: Option[]
+    ariaLabel: string
+    size?: 'sm' | 'md'
+  }>(),
+  { size: 'sm' },
+)
 
 const emit = defineEmits<{
   'update:modelValue': [value: string]
@@ -26,7 +30,8 @@ function onChange(event: Event) {
     <select
       :value="modelValue"
       :aria-label="ariaLabel"
-      class="h-8 appearance-none rounded-lg border border-border bg-white pl-3 pr-8 text-xs text-ink outline-none transition focus:border-primary-600 focus:ring-4 focus:ring-primary-600/10"
+      class="w-full appearance-none rounded-lg border border-border-strong bg-white pr-9 text-ink outline-none transition focus:border-ink focus:ring-4 focus:ring-ink/10"
+      :class="size === 'md' ? 'h-10 pl-3.5 text-sm' : 'h-8 pl-3 text-xs'"
       @change="onChange"
     >
       <option v-for="option in options" :key="option.value" :value="option.value">
@@ -34,7 +39,7 @@ function onChange(event: Event) {
       </option>
     </select>
     <ChevronDown
-      class="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-text-secondary"
+      class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary"
       aria-hidden="true"
     />
   </div>

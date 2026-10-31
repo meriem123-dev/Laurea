@@ -31,6 +31,12 @@ const router = createRouter({
           component: () => import('../views/admin/DashboardView.vue'),
           meta: { title: 'Tableau de bord' },
         },
+        {
+          path: 'students',
+          name: 'admin-students',
+          component: () => import('../views/admin/StudentsView.vue'),
+          meta: { title: 'Étudiants' },
+        },
       ],
     },
     {
