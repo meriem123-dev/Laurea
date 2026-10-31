@@ -20,7 +20,7 @@ const steps = ['Déposé', 'Validé', 'Planifié', 'Soutenu', 'Noté', 'Clos']
       class="pointer-events-none absolute -bottom-40 -right-40 size-112 rounded-full bg-brass/20 blur-3xl"
     />
 
-    <AppLogo variant="onDark" class="relative h-14 motion-safe:animate-fade-up" />
+    <AppLogo variant="onDark" class="relative h-14 motion-safe:animate-fade-up"/>
 
     <div class="relative max-w-xl xl:max-w-2xl">
       <p
