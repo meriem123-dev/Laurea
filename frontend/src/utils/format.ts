@@ -51,3 +51,11 @@ const dayMonthFormatter = new Intl.DateTimeFormat('fr-FR', {
 export function formatDayMonth(iso: string): string {
   return dayMonthFormatter.format(new Date(iso))
 }
+/** Minuscules, sans accents : « ines » trouve « Inès » */
+export function normalizeText(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+    .trim()
+}

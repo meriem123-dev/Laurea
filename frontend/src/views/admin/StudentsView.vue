@@ -6,7 +6,7 @@ import ConfirmDialog from '../../components/common/ConfirmDialog.vue'
 import DetailsModal from '../../components/common/DetailsModal.vue'
 import EntityFormModal from '../../components/forms/EntityFormModal.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
-import StudentFilters from '../../components/students/StudentFilters.vue'
+import FilterBar from '../../components/common/FilterBar.vue'
 import StudentsTable from '../../components/students/StudentsTable.vue'
 import { useStudentFilters } from '../../composables/useStudentFilters'
 import { students as studentsMock } from '../../mocks/students'
@@ -22,7 +22,14 @@ const CURSUS_LABELS = { MASTER: 'Master', INGENIEUR: 'Ingénieur' } as const
 // TODO backend : charger la liste via api/ + store (avec états chargement / erreur)
 const students = ref<Student[]>(studentsMock)
 const { search, specialty, specialtyOptions, filtered } = useStudentFilters(students)
-
+const filterSelects = computed(() => [
+  {
+    key: 'specialty',
+    ariaLabel: 'Filtrer par spécialité',
+    options: specialtyOptions.value,
+    modelValue: specialty.value,
+  },
+])
 // Étudiant ciblé par la modification, le détail ou la suppression (null = création)
 const selected = ref<Student | null>(null)
 const isFormOpen = ref(false)
@@ -154,10 +161,12 @@ function deleteStudent() {
       </BaseButton>
     </PageHeader>
 
-    <StudentFilters
+        <FilterBar
       v-model:search="search"
-      v-model:specialty="specialty"
-      :specialtyOptions="specialtyOptions"
+      searchLabel="Rechercher un étudiant"
+      searchPlaceholder="Nom ou matricule…"
+      :selects="filterSelects"
+      @update:select="(_key: string, value: string) => (specialty = value)"
     >
       <template #actions>
         <BaseButton variant="secondary" size="md" class="w-full sm:w-auto">
@@ -165,7 +174,7 @@ function deleteStudent() {
           Importer
         </BaseButton>
       </template>
-    </StudentFilters>
+    </FilterBar>
 
     <StudentsTable
       :students="filtered"
