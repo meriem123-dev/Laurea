@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { RouterView, useRoute } from 'vue-router'
+import { RouterView, useRoute, useRouter } from 'vue-router'
 import AppNavbar from '../components/layout/AppNavbar.vue'
 import AppSidebar from '../components/layout/AppSidebar.vue'
 import { NAV_BY_ROLE } from '../utils/navigation'
@@ -12,12 +12,19 @@ const props = defineProps<{
 }>()
 
 const route = useRoute()
+const router = useRouter()
 const sidebarOpen = ref(false)
 
 const sections = computed(() => NAV_BY_ROLE[props.role])
 // TODO backend : remplacer par l'utilisateur du store auth
 const userLabel = computed(() => ROLE_LABELS[props.role])
 const pageTitle = computed(() => (typeof route.meta.title === 'string' ? route.meta.title : ''))
+
+function logout() {
+  // TODO backend : appeler l'API de déconnexion et vider le store auth / le token.
+  // Pour l'instant : simple redirection, il n'y a pas de vraie session à fermer.
+  void router.push('/login')
+}
 
 // Referme le tiroir mobile après chaque navigation
 watch(
@@ -31,7 +38,7 @@ watch(
 <template>
   <!-- overflow-x-clip (et non hidden) : empêche tout défilement horizontal sans casser le sticky -->
   <div class="flex min-h-screen w-full overflow-x-clip bg-surface">
-    <AppSidebar :sections="sections" :open="sidebarOpen" />
+    <AppSidebar :sections="sections" :open="sidebarOpen" @logout="logout" />
 
     <div
       v-if="sidebarOpen"
@@ -43,9 +50,9 @@ watch(
     <div class="flex min-w-0 flex-1 flex-col">
       <AppNavbar
         :title="pageTitle"
-        :user-label="userLabel"
-        :user-initial="userLabel.charAt(0)"
-        has-unread
+        :userLabel="userLabel"
+        :userInitial="userLabel.charAt(0)"
+        :hasUnread="true"
         @toggle-sidebar="sidebarOpen = !sidebarOpen"
       />
 
