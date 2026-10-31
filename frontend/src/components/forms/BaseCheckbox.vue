@@ -15,12 +15,15 @@ function onChange(event: Event) {
 </script>
 
 <template>
-  <label :for="id" class="inline-flex cursor-pointer items-center gap-2 text-xs text-slate-500">
+  <label
+    :for="id"
+    class="inline-flex cursor-pointer items-center gap-2.5 text-xs text-text-body"
+  >
     <input
       :id="id"
       type="checkbox"
       :checked="modelValue"
-      class="h-4 w-4 cursor-pointer rounded accent-primary-700"
+      class="h-4 w-4 cursor-pointer rounded accent-ink"
       @change="onChange"
     />
     {{ label }}

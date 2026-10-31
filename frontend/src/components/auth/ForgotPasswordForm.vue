@@ -27,7 +27,7 @@ function handleSubmit() {
 
 <template>
   <form class="flex flex-col gap-6" @submit.prevent="handleSubmit">
-    <p class="text-center text-sm leading-relaxed text-slate-500">
+    <p class="text-sm leading-relaxed text-text-secondary">
       Saisissez l’adresse e-mail associée à votre compte. Nous vous enverrons un lien pour
       choisir un nouveau mot de passe.
     </p>

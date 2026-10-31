@@ -29,7 +29,8 @@ watch(
 </script>
 
 <template>
-  <div class="flex min-h-screen bg-surface">
+  <!-- overflow-x-clip (et non hidden) : empêche tout défilement horizontal sans casser le sticky -->
+  <div class="flex min-h-screen w-full overflow-x-clip bg-surface">
     <AppSidebar :sections="sections" :open="sidebarOpen" />
 
     <div
@@ -48,7 +49,7 @@ watch(
         @toggle-sidebar="sidebarOpen = !sidebarOpen"
       />
 
-      <main class="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+      <main class="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
         <RouterView />
       </main>
     </div>

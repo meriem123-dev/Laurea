@@ -47,7 +47,7 @@ async function handleRequest(email: string) {
 
       <RouterLink
         to="/login"
-        class="inline-flex items-center justify-center gap-2 text-xs font-semibold text-primary-600 hover:underline"
+        class="inline-flex items-center gap-2 text-xs font-semibold text-ink hover:underline"
       >
         <ArrowLeft class="h-3.5 w-3.5" aria-hidden="true" />
         Retour à la connexion

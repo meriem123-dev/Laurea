@@ -1,5 +1,11 @@
 const dayFormatter = new Intl.DateTimeFormat('fr-FR', { day: '2-digit', timeZone: 'UTC' })
 const monthFormatter = new Intl.DateTimeFormat('fr-FR', { month: 'short', timeZone: 'UTC' })
+const longDateFormatter = new Intl.DateTimeFormat('fr-FR', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+})
 
 /** '2025-06-18' -> '18' */
 export function formatDay(iso: string): string {
@@ -9,6 +15,11 @@ export function formatDay(iso: string): string {
 /** '2025-06-18' -> 'JUIN' */
 export function formatMonthShort(iso: string): string {
   return monthFormatter.format(new Date(iso)).replace('.', '').toUpperCase()
+}
+
+/** Date du jour -> 'samedi 31 octobre 2026' */
+export function formatLongDate(date: Date): string {
+  return longDateFormatter.format(date)
 }
 
 /** Pourcentages entiers dont la somme fait toujours 100 (méthode du plus fort reste). */

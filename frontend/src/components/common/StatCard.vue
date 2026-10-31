@@ -1,31 +1,34 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
-import type { IconTone } from '../../types/ui'
-import BaseCard from './BaseCard.vue'
-import IconTile from './IconTile.vue'
 
 defineProps<{
   label: string
   value: string | number
   hint?: string
   icon: Component
-  tone: IconTone
 }>()
 </script>
 
 <template>
-  <BaseCard
-    :padded="false"
-    class="p-5 transition duration-300 hover:-translate-y-0.5 hover:shadow-md"
-  >
-    <div class="flex items-center gap-4">
-      <IconTile :icon="icon" :tone="tone" />
-      <div>
-        <p class="text-2xl font-semibold leading-none text-ink">{{ value }}</p>
-        <p class="mt-1.5 text-xs text-text-secondary">{{ label }}</p>
-      </div>
+  <div class="bg-white p-4 sm:p-6">
+    <div class="flex items-center justify-between gap-2">
+      <p class="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-text-secondary">
+        {{ label }}
+      </p>
+      <component
+        :is="icon"
+        class="h-4 w-4 shrink-0 text-text-muted"
+        :stroke-width="1.75"
+        aria-hidden="true"
+      />
     </div>
 
-    <p v-if="hint" class="mt-4 text-[11px] font-medium text-success">{{ hint }}</p>
-  </BaseCard>
+    <p
+      class="mt-4 font-display text-5xl font-normal leading-none tracking-tight text-ink tabular-nums"
+    >
+      {{ value }}
+    </p>
+
+    <p v-if="hint" class="mt-3 text-xs font-medium text-success-dark">{{ hint }}</p>
+  </div>
 </template>

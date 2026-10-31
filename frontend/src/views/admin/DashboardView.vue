@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { BookOpen, CalendarDays, GraduationCap, Plus, Users } from '@lucide/vue'
 import BaseButton from '../../components/common/BaseButton.vue'
 import StatCard from '../../components/common/StatCard.vue'
+import StatStrip from '../../components/common/StatStrip.vue'
 import DefenseProgressCard from '../../components/dashboard/DefenseProgressCard.vue'
 import TodoActionsCard from '../../components/dashboard/TodoActionsCard.vue'
 import UpcomingDefensesCard from '../../components/dashboard/UpcomingDefensesCard.vue'
@@ -14,49 +15,50 @@ import {
   todoActions,
   upcomingDefenses,
 } from '../../mocks/adminDashboard'
+import { formatLongDate } from '../../utils/format'
 import type { StatId } from '../../types/dashboard'
-import type { IconTone } from '../../types/ui'
 
 const router = useRouter()
 
 // TODO backend : nom issu du store auth
 const adminName = 'Admin'
+const today = formatLongDate(new Date())
 
-const statVisuals: Record<StatId, { icon: Component; tone: IconTone }> = {
-  students: { icon: Users, tone: 'teal' },
-  professors: { icon: GraduationCap, tone: 'blue' },
-  projects: { icon: BookOpen, tone: 'violet' },
-  defenses: { icon: CalendarDays, tone: 'orange' },
+const statIcons: Record<StatId, Component> = {
+  students: Users,
+  professors: GraduationCap,
+  projects: BookOpen,
+  defenses: CalendarDays,
 }
 </script>
 
 <template>
-  <div class="mx-auto flex max-w-7xl flex-col gap-6">
+  <div class="mx-auto flex w-full max-w-6xl flex-col gap-8">
     <PageHeader
+      :eyebrow="today"
       :title="`Bonjour ${adminName},`"
       subtitle="Voici un aperçu des soutenances pour cette année universitaire."
     >
-      <BaseButton size="md" @click="router.push('/admin/planning')">
+      <BaseButton size="md" class="w-full sm:w-auto" @click="router.push('/admin/planning')">
         <Plus class="h-4 w-4" aria-hidden="true" />
         Planifier une soutenance
       </BaseButton>
     </PageHeader>
 
-    <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Chiffres clés">
+    <StatStrip aria-label="Chiffres clés" class="motion-safe:animate-fade-up [animation-delay:100ms]">
       <StatCard
-        v-for="(stat, index) in adminStats"
+        v-for="stat in adminStats"
         :key="stat.id"
         :label="stat.label"
         :value="stat.value"
         :hint="stat.hint"
-        :icon="statVisuals[stat.id].icon"
-        :tone="statVisuals[stat.id].tone"
-        class="motion-safe:animate-fade-up"
-        :style="{ animationDelay: `${index * 80}ms` }"
+        :icon="statIcons[stat.id]"
       />
-    </section>
+    </StatStrip>
 
-    <div class="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+    <div
+      class="grid grid-cols-1 gap-6 motion-safe:animate-fade-up [animation-delay:200ms] lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]"
+    >
       <DefenseProgressCard
         :items="defenseBreakdown"
         subtitle="Répartition par statut · Promotion 2025"
@@ -68,6 +70,9 @@ const statVisuals: Record<StatId, { icon: Component; tone: IconTone }> = {
       />
     </div>
 
-    <TodoActionsCard :actions="todoActions" />
+    <TodoActionsCard
+      :actions="todoActions"
+      class="motion-safe:animate-fade-up [animation-delay:300ms]"
+    />
   </div>
 </template>

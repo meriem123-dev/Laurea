@@ -36,11 +36,14 @@ function onInput(event: Event) {
 
 <template>
   <div>
-    <label :for="id" class="mb-2 block text-xs font-semibold text-slate-800">
+    <label
+      :for="id"
+      class="block text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-text-secondary"
+    >
       {{ label }}
     </label>
 
-    <div class="relative">
+    <div class="relative mt-1">
       <input
         :id="id"
         :value="modelValue"
@@ -48,15 +51,20 @@ function onInput(event: Event) {
         :placeholder="placeholder"
         :autocomplete="autocomplete"
         :required="required"
-        class="h-12 w-full rounded-xl border bg-white px-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-primary-700 focus:ring-4 focus:ring-primary-700/10"
-        :class="[error ? 'border-red-400' : 'border-slate-200', isPassword ? 'pr-12' : '']"
+        class="h-11 w-full border-b bg-transparent px-0 text-[0.9375rem] text-ink outline-none transition placeholder:text-text-muted"
+        :class="[
+          error
+            ? 'border-danger'
+            : 'border-border-strong focus:border-ink focus:shadow-[0_1px_0_0_var(--color-ink)]',
+          isPassword ? 'pr-10' : '',
+        ]"
         @input="onInput"
       />
 
       <button
         v-if="isPassword"
         type="button"
-        class="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-slate-400 transition hover:text-slate-600"
+        class="absolute inset-y-0 right-0 flex w-10 items-center justify-end text-text-muted transition hover:text-ink"
         :aria-label="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
         @click="showPassword = !showPassword"
       >
@@ -64,6 +72,6 @@ function onInput(event: Event) {
       </button>
     </div>
 
-    <p v-if="error" class="mt-1.5 text-xs text-red-600">{{ error }}</p>
+    <p v-if="error" class="mt-1.5 text-xs text-danger-dark">{{ error }}</p>
   </div>
 </template>

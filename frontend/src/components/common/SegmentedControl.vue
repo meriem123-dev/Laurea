@@ -16,22 +16,18 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div
-    role="tablist"
-    :aria-label="ariaLabel"
-    class="grid auto-cols-fr grid-flow-col gap-1 rounded-xl bg-surface-muted p-1"
-  >
+  <div role="tablist" :aria-label="ariaLabel" class="flex gap-5 border-b border-border sm:gap-7">
     <button
       v-for="option in options"
       :key="option.value"
       type="button"
       role="tab"
       :aria-selected="option.value === modelValue"
-      class="rounded-lg px-3 py-2.5 text-xs font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-700/40"
+      class="relative -mb-px rounded-sm pb-3 text-[0.8125rem] font-semibold transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:origin-left after:bg-ink after:transition-transform after:duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/30"
       :class="
         option.value === modelValue
-          ? 'bg-white text-primary-700 shadow-sm'
-          : 'text-slate-400 hover:text-slate-600'
+          ? 'text-ink after:scale-x-100'
+          : 'text-text-muted after:scale-x-0 hover:text-ink'
       "
       @click="emit('update:modelValue', option.value)"
     >

@@ -1,21 +1,12 @@
 <script setup lang="ts">
-import type { Component } from 'vue'
 import { RouterLink } from 'vue-router'
-import { Award, ChevronRight, Clock, Users } from '@lucide/vue'
+import { ArrowUpRight } from '@lucide/vue'
 import BaseCard from '../common/BaseCard.vue'
-import IconTile from '../common/IconTile.vue'
-import type { TodoAction, TodoActionId } from '../../types/dashboard'
-import type { IconTone } from '../../types/ui'
+import type { TodoAction } from '../../types/dashboard'
 
 defineProps<{
   actions: TodoAction[]
 }>()
-
-const VISUALS: Record<TodoActionId, { icon: Component; tone: IconTone }> = {
-  pendingProjects: { icon: Clock, tone: 'orange' },
-  incompleteJuries: { icon: Users, tone: 'violet' },
-  resultsToPublish: { icon: Award, tone: 'blue' },
-}
 </script>
 
 <template>
@@ -24,27 +15,31 @@ const VISUALS: Record<TodoActionId, { icon: Component; tone: IconTone }> = {
       Rien à traiter pour le moment.
     </p>
 
-    <div v-else class="grid gap-4 md:grid-cols-3">
-      <RouterLink
-        v-for="action in actions"
-        :key="action.id"
-        :to="action.to"
-        class="group flex items-center gap-3 rounded-xl border border-border bg-white p-3 transition hover:border-primary-200 hover:shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-600/10"
-      >
-        <IconTile :icon="VISUALS[action.id].icon" :tone="VISUALS[action.id].tone" size="sm" />
+    <ul v-else class="-mx-3 grid grid-cols-1 gap-1 border-t border-border pt-3 md:grid-cols-3">
+      <li v-for="action in actions" :key="action.id">
+        <RouterLink
+          :to="action.to"
+          class="group flex items-center gap-4 rounded-lg px-3 py-3 transition hover:bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/30"
+        >
+          <span
+            class="min-w-12 shrink-0 font-display text-5xl leading-none text-brass tabular-nums"
+          >
+            {{ action.count }}
+          </span>
 
-        <div class="min-w-0 flex-1">
-          <p class="truncate text-xs font-semibold text-ink">
-            {{ action.count }} {{ action.label }}
-          </p>
-          <p class="mt-0.5 truncate text-[11px] text-text-muted">{{ action.description }}</p>
-        </div>
+          <span class="min-w-0 flex-1">
+            <span class="block truncate text-sm font-semibold text-ink">{{ action.label }}</span>
+            <span class="mt-0.5 block truncate text-xs text-text-muted">
+              {{ action.description }}
+            </span>
+          </span>
 
-        <ChevronRight
-          class="h-4 w-4 shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5"
-          aria-hidden="true"
-        />
-      </RouterLink>
-    </div>
+          <ArrowUpRight
+            class="h-4 w-4 shrink-0 text-text-muted transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink"
+            aria-hidden="true"
+          />
+        </RouterLink>
+      </li>
+    </ul>
   </BaseCard>
 </template>

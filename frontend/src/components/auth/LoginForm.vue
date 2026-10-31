@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
+import { ArrowRight } from '@lucide/vue'
 import BaseAlert from '../common/BaseAlert.vue'
 import BaseButton from '../common/BaseButton.vue'
 import SegmentedControl from '../common/SegmentedControl.vue'
@@ -45,7 +46,7 @@ function handleSubmit() {
 </script>
 
 <template>
-  <form class="flex flex-col gap-6" @submit.prevent="handleSubmit">
+  <form class="flex flex-col gap-7" @submit.prevent="handleSubmit">
     <SegmentedControl v-model="role" :options="ROLE_OPTIONS" aria-label="Choix de l'espace" />
 
     <BaseInput
@@ -66,11 +67,11 @@ function handleSubmit() {
       required
     />
 
-    <div class="flex items-center justify-between">
+    <div class="flex flex-wrap items-center justify-between gap-3">
       <BaseCheckbox id="remember" v-model="remember" label="Se souvenir de moi" />
       <RouterLink
         to="/forgot-password"
-        class="text-xs font-semibold text-primary-600 hover:underline"
+        class="text-xs font-semibold text-ink underline decoration-border-strong underline-offset-4 transition hover:decoration-ink"
       >
         Mot de passe oublié ?
       </RouterLink>
@@ -80,6 +81,12 @@ function handleSubmit() {
       {{ errorMessage }}
     </BaseAlert>
 
-    <BaseButton type="submit" block :loading="loading">Se connecter</BaseButton>
+    <BaseButton type="submit" block :loading="loading">
+      Se connecter
+      <ArrowRight
+        class="h-4 w-4 transition-transform group-hover:translate-x-1"
+        aria-hidden="true"
+      />
+    </BaseButton>
   </form>
 </template>

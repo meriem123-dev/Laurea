@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { AlertCircle, Check } from '@lucide/vue'
+import { AlertCircle, Info } from '@lucide/vue'
 
 type Variant = 'info' | 'error'
 
@@ -14,31 +14,39 @@ const props = withDefaults(defineProps<Props>(), {
   title: '',
 })
 
-const styles: Record<Variant, { box: string; accent: string }> = {
-  info: { box: 'bg-primary-50', accent: 'text-primary-700' },
-  error: { box: 'bg-red-50', accent: 'text-red-600' },
+const styles: Record<Variant, { box: string; title: string; icon: string }> = {
+  info: {
+    box: 'border border-dashed border-border-strong bg-white/60',
+    title: 'text-ink',
+    icon: 'text-brass',
+  },
+  error: {
+    box: 'border border-danger/30 bg-danger-soft',
+    title: 'text-danger-dark',
+    icon: 'text-danger-dark',
+  },
 }
 
-const icon = computed(() => (props.variant === 'error' ? AlertCircle : Check))
+const icon = computed(() => (props.variant === 'error' ? AlertCircle : Info))
 </script>
 
 <template>
   <div
-    class="flex items-start gap-3 rounded-xl px-4 py-3"
+    class="flex items-start gap-3 rounded-lg px-4 py-3"
     :class="styles[variant].box"
     :role="variant === 'error' ? 'alert' : 'status'"
   >
     <component
       :is="icon"
-      class="mt-0.5 h-3.5 w-3.5 shrink-0"
-      :class="styles[variant].accent"
+      class="mt-0.5 h-4 w-4 shrink-0"
+      :class="styles[variant].icon"
       aria-hidden="true"
     />
     <div>
-      <p v-if="title" class="text-xs font-semibold" :class="styles[variant].accent">
+      <p v-if="title" class="text-xs font-semibold" :class="styles[variant].title">
         {{ title }}
       </p>
-      <p class="mt-0.5 text-[11px] text-slate-500">
+      <p class="text-xs text-text-secondary" :class="title ? 'mt-0.5' : ''">
         <slot />
       </p>
     </div>
