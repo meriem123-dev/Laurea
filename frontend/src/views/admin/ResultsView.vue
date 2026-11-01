@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { Award, CircleCheck, Clock, Download } from '@lucide/vue'
 import BaseAlert from '../../components/common/BaseAlert.vue'
 import BaseButton from '../../components/common/BaseButton.vue'
+import FilterBar from '../../components/common/FilterBar.vue'
 import StatCard from '../../components/common/StatCard.vue'
 import StatStrip from '../../components/common/StatStrip.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
@@ -10,18 +11,48 @@ import ResultDetailsModal from '../../components/results/ResultDetailsModal.vue'
 import ResultsTable from '../../components/results/ResultsTable.vue'
 import { useResultFilters } from '../../composables/useResultFilters'
 import { useResultsData, type ResultView } from '../../composables/useResultsData'
+import type { PublicationState } from '../../types/result'
 import { downloadTextFile, openPrintWindow } from '../../utils/download'
 import { buildReportHtml, resultsToCsv } from '../../utils/resultExport'
 import { fullName } from '../../utils/student'
 
 const { views, publish } = useResultsData()
-const { search, publication, counts, filtered, toggle } = useResultFilters(views)
+const {
+  search,
+  publication,
+  specialty,
+  publicationOptions,
+  specialtyOptions,
+  counts,
+  filtered,
+  toggle,
+} = useResultFilters(views)
 
 const summary = [
   { state: 'published', label: 'Résultats validés', icon: CircleCheck, tone: 'success' },
   { state: 'toValidate', label: 'À valider', icon: Clock, tone: 'warning' },
   { state: 'missing', label: 'Notes manquantes', icon: Award, tone: 'danger' },
 ] as const
+
+const filterSelects = computed(() => [
+  {
+    key: 'publication',
+    ariaLabel: 'Filtrer par statut de publication',
+    options: publicationOptions,
+    modelValue: publication.value,
+  },
+  {
+    key: 'specialty',
+    ariaLabel: 'Filtrer par spécialité',
+    options: specialtyOptions.value,
+    modelValue: specialty.value,
+  },
+])
+
+function setFilter(key: string, value: string) {
+  if (key === 'publication') publication.value = value as PublicationState | ''
+  else if (key === 'specialty') specialty.value = value
+}
 
 // Le résultat ouvert est relu à chaque changement : la fiche se met à jour après publication
 const selectedId = ref<number | null>(null)
@@ -59,7 +90,7 @@ function openPv(view: ResultView) {
 }
 
 function exportResults() {
-  // Exporte les lignes actuellement affichées (filtre et recherche compris)
+  // Exporte les lignes actuellement affichées (filtres et recherche compris)
   downloadTextFile('resultats-soutenances.csv', resultsToCsv(filtered.value))
 }
 </script>
@@ -101,12 +132,15 @@ function exportResults() {
 
     <BaseAlert v-if="pvError" variant="error">{{ pvError }}</BaseAlert>
 
-    <ResultsTable
+    <FilterBar
       v-model:search="search"
-      :views="filtered"
-      @check="openCheck"
-      @pv="openPv"
+      searchLabel="Rechercher un étudiant ou un projet"
+      searchPlaceholder="Étudiant, matricule ou projet…"
+      :selects="filterSelects"
+      @update:select="setFilter"
     />
+
+    <ResultsTable :views="filtered" @check="openCheck" @pv="openPv" />
 
     <ResultDetailsModal
       v-model="isDetailsOpen"

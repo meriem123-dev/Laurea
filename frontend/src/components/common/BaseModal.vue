@@ -87,7 +87,7 @@ onBeforeUnmount(() => {
         class="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-6"
         @keydown="onKeydown"
       >
-        <div class="absolute inset-0 bg-ink/50" aria-hidden="true" @click="close" />
+        <div class="absolute inset-0 bg-scrim/60" aria-hidden="true" @click="close" />
 
         <div
           ref="dialog"

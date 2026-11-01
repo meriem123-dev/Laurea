@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref} from 'vue'
 import { RouterLink } from 'vue-router'
 import { ArrowRight } from '@lucide/vue'
 import BaseAlert from '../common/BaseAlert.vue'
@@ -26,14 +26,11 @@ const emit = defineEmits<{
 }>()
 
 const role = ref<UserRole>('ADMIN_STAFF')
-const email = ref(demoEmails[role.value])
+const email = ref('')               
 const password = ref('')
 const remember = ref(true)
 
-// Prototype : l'email se préremplit selon l'onglet choisi
-watch(role, (newRole) => {
-  email.value = demoEmails[newRole]
-})
+
 
 function handleSubmit() {
   emit('submit', {

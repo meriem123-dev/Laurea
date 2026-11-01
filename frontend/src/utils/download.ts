@@ -24,21 +24,49 @@ export function downloadTextFile(
 }
 
 const PRINT_STYLES = `
-  @page { margin: 18mm; }
-  body { font-family: Georgia, 'Times New Roman', serif; color: #0f1f38; line-height: 1.5; }
-  h1 { font-size: 24px; margin: 0 0 4px; }
-  .muted { color: #667085; font-size: 13px; margin: 0; }
-  dl { display: grid; grid-template-columns: 170px 1fr; gap: 8px 16px; margin: 28px 0; }
-  dt { color: #667085; }
-  dd { margin: 0; font-weight: 600; }
-  h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.08em; margin: 32px 0 0; }
-  table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-  th, td { border-bottom: 1px solid #ccc; padding: 8px 4px; text-align: left; }
-  .num { text-align: right; }
-  .final { margin-top: 20px; font-size: 18px; font-weight: 700; text-align: right; }
-  .signatures { display: flex; justify-content: space-between; gap: 48px; margin-top: 72px; }
-  .signatures div { flex: 1; border-top: 1px solid #0f1f38; padding-top: 6px; font-size: 13px; }
-  .date { margin-top: 40px; font-size: 13px; color: #667085; }
+  @page { size: A4; margin: 16mm; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { margin: 0; font-family: Georgia, 'Times New Roman', serif; color: #0f1f38; line-height: 1.5; font-size: 14px; }
+  .page { max-width: 780px; margin: 0 auto; }
+
+  .brand { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 14px; border-bottom: 3px double #0f1f38; }
+  .brand-name { font-size: 26px; font-weight: 700; letter-spacing: 0.04em; }
+  .brand-sub { font-size: 12px; color: #667085; letter-spacing: 0.12em; text-transform: uppercase; }
+  .ref { text-align: right; font-size: 12px; color: #667085; }
+  .ref strong { display: block; color: #0f1f38; font-size: 13px; }
+
+  .title { text-align: center; margin: 32px 0 6px; font-size: 24px; letter-spacing: 0.12em; text-transform: uppercase; }
+  .subtitle { text-align: center; margin: 0 0 28px; color: #667085; font-size: 13px; }
+
+  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em; color: #8a5a14; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d9d4c7; }
+
+  .info { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: 0; border: 1px solid #d9d4c7; border-radius: 6px; overflow: hidden; }
+  .info div { padding: 10px 14px; border-bottom: 1px solid #ece8dd; }
+  .info div:nth-last-child(-n+1) { border-bottom: 0; }
+  .info .full { grid-column: 1 / -1; }
+  .info dt, .label { margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #667085; }
+  .info dd { margin: 2px 0 0; font-weight: 700; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: #0f1f38; color: #fff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; padding: 9px 12px; text-align: left; }
+  thead th.num { text-align: right; }
+  tbody td { padding: 10px 12px; border-bottom: 1px solid #ece8dd; }
+  tbody tr:nth-child(even) td { background: #f7f6f2; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .result { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-top: 22px; padding: 18px 22px; border: 2px solid #0f1f38; border-radius: 8px; background: #f7f6f2; }
+  .result .grade { font-size: 38px; font-weight: 700; line-height: 1; }
+  .result .grade small { font-size: 16px; font-weight: 400; color: #667085; }
+  .result .verdict { text-align: right; }
+  .badge { display: inline-block; padding: 4px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+  .badge.ok { background: #e8f6ef; color: #12805c; }
+  .badge.ko { background: #fcebec; color: #c74a4a; }
+  .mention { margin-top: 6px; font-style: italic; }
+
+  .signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 56px; page-break-inside: avoid; }
+  .sig { height: 110px; border: 1px solid #d9d4c7; border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .footer { margin-top: 36px; padding-top: 10px; border-top: 1px solid #d9d4c7; display: flex; justify-content: space-between; font-size: 11px; color: #8b909a; }
 `
 
 /** Ouvre un document dans une nouvelle fenêtre et lance l'impression (« Enregistrer en PDF »).

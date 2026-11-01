@@ -40,7 +40,7 @@ const adminNav: NavSection[] = [
     label: 'Notifications et réglages',
     items: [
       // TODO backend : le badge viendra d'un store de notifications
-      { label: 'Notifications', to: '/admin/notifications', icon: Bell, badge: 3 },
+      { label: 'Notifications', to: '/admin/notifications', icon: Bell },
       { label: 'Paramètres', to: '/admin/settings', icon: Settings },
     ],
   },

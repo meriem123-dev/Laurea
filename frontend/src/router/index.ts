@@ -82,6 +82,18 @@ const router = createRouter({
           component: () => import("../views/admin/ResultsView.vue"),
           meta: { title: "Notes et résultats" },
         },
+        {
+        path: "notifications",
+        name: "admin-notifications",
+        component: () => import("../views/admin/NotificationsView.vue"),
+        meta: { title: "Notifications" },
+      },
+      {
+        path: "settings",
+        name: "admin-settings",
+        component: () => import("../views/admin/SettingsView.vue"),
+        meta: { title: "Paramètres" },
+      },
       ],
     },
     {

@@ -134,54 +134,62 @@ html {
 .dark {
   color-scheme: dark; /* champs natifs, listes déroulantes et barres de défilement sombres */
 
-  --color-card: #151b27;
-  --color-surface: #0e131c;
-  --color-surface-muted: #1d2533;
-  --color-border: #262f3f;
-  --color-border-strong: #3a4558;
+  /* Fonds : gris-bleu doux, pas de quasi-noir, étages bien distincts */
+  --color-surface: #141a24;
+  --color-card: #1b2230;
+  --color-surface-muted: #242c3b;
+  --color-border: #2b3445;
+  --color-border-strong: #3d4860;
 
-  --color-ink: #eef1f6;
-  --color-on-ink: #0e131c;
-  --color-text-body: #c1c8d4;
-  --color-text-secondary: #98a2b3;
-  --color-text-muted: #7a8599;
+  /* Texte : blanc cassé adouci, hiérarchie plus douce */
+  --color-ink: #d5dbe6;
+  --color-on-ink: #141a24;
+  --color-text-body: #aab3c2;
+  --color-text-secondary: #8c96a8;
+  --color-text-muted: #7f8aa0;
 
-  /* Bleus : les fonds clairs deviennent des fonds sombres teintés */
-  --color-primary-50: #112a42;
-  --color-primary-100: #17395a;
-  --color-primary-200: #24507a;
-  --color-primary-700: #7cc4f5;
-  --color-primary-800: #9fd3f8;
+  /* Bleus : fonds sombres teintés, textes clairs désaturés */
+  --color-primary-50: #16283d;
+  --color-primary-100: #1c3552;
+  --color-primary-200: #2a4a6e;
+  --color-primary-300: #6aaee0;
+  --color-primary-400: #5a9fd6;
+  --color-primary-500: #5a9fd6;
+  --color-primary-600: #6aaee0;
+  --color-primary-700: #8cc0ea;
+  --color-primary-800: #a8d0f0;
 
-  --color-success: #3bbf8d;
-  --color-success-dark: #5fd0a4;
-  --color-success-soft: #0f2f26;
-  --color-success-border: #1c4a3c;
+  /* Accents désaturés */
+  --color-success: #4cb08a;
+  --color-success-dark: #78c4a4;
+  --color-success-soft: #16302a;
+  --color-success-border: #24493e;
 
-  --color-warning: #e8923f;
-  --color-warning-dark: #f0b668;
-  --color-warning-soft: #36270f;
+  --color-warning: #d99a52;
+  --color-warning-dark: #e3b57e;
+  --color-warning-soft: #33291a;
 
-  --color-danger: #f06a6a;
-  --color-danger-dark: #ff8d8d;
-  --color-danger-soft: #38191c;
+  --color-danger: #e07878;
+  --color-danger-dark: #eb9a9a;
+  --color-danger-soft: #36212a;
+  --color-danger-strong: #b94a4a;
 
-  --color-violet: #9b86e6;
-  --color-violet-dark: #b9a9ff;
-  --color-violet-soft: #241f3f;
+  --color-violet: #9d8bdb;
+  --color-violet-dark: #bcb0ee;
+  --color-violet-soft: #2a2545;
 
-  --color-teal: #4fbfd4;
-  --color-teal-soft: #0f2d33;
+  --color-teal: #55aebf;
+  --color-teal-soft: #15303a;
 
-  --color-brass-dark: #e3b66f;
-  --color-brass-soft: #2e2415;
+  --color-brass-dark: #d9b074;
+  --color-brass-soft: #2f2718;
 }
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 1000px white inset; /* mets la couleur de fond de ton input */
-  -webkit-text-fill-color: #111;                /* couleur du texte */
+  -webkit-box-shadow: 0 0 0 1000px var(--color-card) inset;
+  -webkit-text-fill-color: var(--color-ink);
+  caret-color: var(--color-ink);
   transition: background-color 9999s ease-in-out 0s;
-  caret-color: #111;
 }

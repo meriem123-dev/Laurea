@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { Bell, ChevronRight, Menu } from '@lucide/vue'
+import { ChevronRight, Menu } from '@lucide/vue'
 import ThemeToggle from '../common/ThemeToggle.vue'
+import NotificationBell from './NotificationBell.vue'
 
-withDefaults(
-  defineProps<{
-    title: string
-    userLabel: string
-    userInitial: string
-    hasUnread?: boolean
-  }>(),
-  { hasUnread: false },
-)
+defineProps<{
+  title: string
+  userLabel: string
+  userInitial: string
+  notificationsTo?: string
+}>()
 
 const emit = defineEmits<{
   'toggle-sidebar': []
@@ -41,18 +39,7 @@ const emit = defineEmits<{
     <div class="flex shrink-0 items-center gap-3">
       <ThemeToggle />
 
-      <button
-        type="button"
-        class="relative flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-text-secondary transition hover:text-ink"
-        aria-label="Notifications"
-      >
-        <Bell class="h-4 w-4" :stroke-width="1.75" aria-hidden="true" />
-        <span
-          v-if="hasUnread"
-          class="absolute right-2.5 top-2.5 h-1.5 w-1.5 rounded-full bg-danger"
-          aria-hidden="true"
-        />
-      </button>
+      <NotificationBell :viewAllTo="notificationsTo" />
 
       <div class="flex items-center gap-2.5">
         <span
