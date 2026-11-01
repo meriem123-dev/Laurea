@@ -2,7 +2,6 @@
 import BaseBadge from '../common/BaseBadge.vue'
 import BaseButton from '../common/BaseButton.vue'
 import BaseCard from '../common/BaseCard.vue'
-import SearchInput from '../forms/SearchInput.vue'
 import DataTable, { type TableColumn } from '../tables/DataTable.vue'
 import type { ResultView } from '../../composables/useResultsData'
 import { PUBLICATION_META, formatGrade } from '../../utils/result'
@@ -10,11 +9,9 @@ import { fullName } from '../../utils/student'
 
 defineProps<{
   views: ResultView[]
-  search: string
 }>()
 
 const emit = defineEmits<{
-  'update:search': [value: string]
   check: [view: ResultView]
   pv: [view: ResultView]
 }>()
@@ -31,30 +28,18 @@ const columns: TableColumn[] = [
 
 <template>
   <BaseCard :padded="false">
-    <div
-      class="flex flex-col gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
-    >
-      <div>
-        <h2 class="font-display text-xl text-ink">Résultats des soutenances</h2>
-        <p class="mt-1 text-xs text-text-muted">
-          {{ views.length }} {{ views.length > 1 ? 'étudiants affichés' : 'étudiant affiché' }}
-        </p>
-      </div>
-
-      <SearchInput
-        :modelValue="search"
-        class="sm:w-64"
-        placeholder="Rechercher un étudiant…"
-        ariaLabel="Rechercher un étudiant"
-        @update:modelValue="emit('update:search', $event)"
-      />
+    <div class="border-b border-border px-5 py-4">
+      <h2 class="font-display text-xl text-ink">Résultats des soutenances</h2>
+      <p class="mt-1 text-xs text-text-muted">
+        {{ views.length }} {{ views.length > 1 ? 'étudiants affichés' : 'étudiant affiché' }}
+      </p>
     </div>
 
     <DataTable
       :columns="columns"
       :rows="views"
       :row-key="(view) => view.result.id"
-      empty-text="Aucun résultat ne correspond à votre recherche."
+      empty-text="Aucun résultat ne correspond à vos filtres."
     >
       <template #cell-student="{ row }">
         <p class="text-sm font-semibold text-ink">

@@ -3,10 +3,13 @@ import { computed, ref, watch } from 'vue'
 import { RouterView, useRoute, useRouter } from 'vue-router'
 import AppNavbar from '../components/layout/AppNavbar.vue'
 import AppSidebar from '../components/layout/AppSidebar.vue'
+import { useNotifications } from '../composables/useNotifications'
 import { NAV_BY_ROLE } from '../utils/navigation'
 import { ROLE_LABELS } from '../utils/roles'
 import { useAuthStore } from '../views/auth/store.js'
 import type { UserRole } from '../types/auth'
+
+const NOTIFICATIONS_PATH = '/admin/notifications'
 
 const props = defineProps<{
   role: UserRole
@@ -14,16 +17,38 @@ const props = defineProps<{
 
 const route = useRoute()
 const router = useRouter()
-const auth = useAuthStore() // ← ajouté
+const auth = useAuthStore()
+const { unreadCount } = useNotifications()
 const sidebarOpen = ref(false)
 
-const sections = computed(() => NAV_BY_ROLE[props.role])
+// Le badge « Notifications » de la barre latérale suit le nombre de notifications non lues
+const sections = computed(() =>
+  NAV_BY_ROLE[props.role].map((section) => ({
+    ...section,
+    items: section.items.map((item) =>
+      item.to === NOTIFICATIONS_PATH ? { ...item, badge: unreadCount.value } : item,
+    ),
+  })),
+)
 
-//nom du vrai utilisateur, sinon le libellé du rôle en secours
+// Seul l'espace admin a une page de notifications pour l'instant
+const notificationsTo = computed(() =>
+  props.role === 'ADMIN_STAFF' ? NOTIFICATIONS_PATH : undefined,
+)
+
+// nom du vrai utilisateur, sinon le libellé du rôle en secours
 const userLabel = computed(() =>
   auth.user ? `${auth.user.firstName} ${auth.user.lastName}` : ROLE_LABELS[props.role],
 )
 const pageTitle = computed(() => (typeof route.meta.title === 'string' ? route.meta.title : ''))
+
+// Le menu mobile se referme quand on change de page
+watch(
+  () => route.fullPath,
+  () => {
+    sidebarOpen.value = false
+  },
+)
 
 function logout() {
   auth.logout() // vide token + user
@@ -48,7 +73,7 @@ function logout() {
         :title="pageTitle"
         :userLabel="userLabel"
         :userInitial="userLabel.charAt(0)"
-        :hasUnread="true"
+        :notificationsTo="notificationsTo"
         @toggle-sidebar="sidebarOpen = !sidebarOpen"
       />
 
