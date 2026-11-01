@@ -2,14 +2,18 @@
 import { RouterLink } from 'vue-router'
 import { LogOut } from '@lucide/vue'
 import AppLogo from '../common/AppLogo.vue'
+import InitialsAvatar from '../common/InitialsAvatar.vue'
 import type { NavSection } from '../../types/navigation'
 
 withDefaults(
   defineProps<{
     sections: NavSection[]
     open?: boolean // mobile : tiroir ouvert/fermé
+    userLabel?: string
+    userInitials?: string
+    roleLabel?: string
   }>(),
-  { open: false },
+  { open: false, userLabel: '', userInitials: '', roleLabel: '' },
 )
 
 const emit = defineEmits<{
@@ -70,7 +74,15 @@ const idleLink = 'text-text-body hover:bg-surface-muted hover:text-ink'
       </div>
     </nav>
 
-    <div class="shrink-0 border-t border-border p-3">
+    <div class="shrink-0 space-y-1 border-t border-border p-3">
+      <div v-if="userLabel" class="flex items-center gap-3 rounded-lg px-3 py-2">
+        <InitialsAvatar :initials="userInitials" size="sm" />
+        <div class="min-w-0">
+          <p class="truncate text-xs font-semibold text-ink">{{ userLabel }}</p>
+          <p class="truncate text-[0.6875rem] text-text-muted">{{ roleLabel }}</p>
+        </div>
+      </div>
+
       <button
         type="button"
         class="group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[0.8125rem] font-medium text-text-body transition-colors hover:bg-danger-soft hover:text-danger-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-danger/40"

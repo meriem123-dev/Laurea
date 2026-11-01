@@ -8,6 +8,7 @@ import {
   GraduationCap,
   LayoutGrid,
   Settings,
+  User,
   Users,
 } from '@lucide/vue'
 import type { UserRole } from '../types/auth'
@@ -47,15 +48,28 @@ const adminNav: NavSection[] = [
 
 const professorNav: NavSection[] = [
   {
-    label: 'Espace enseignant',
+    label: 'Mon espace',
+    items: [{ label: 'Tableau de bord', to: '/professor/dashboard', icon: LayoutGrid }],
+  },
+  {
+    label: 'Encadrement',
     items: [
-      { label: 'Tableau de bord', to: '/professor/dashboard', icon: LayoutGrid },
       { label: 'Mes projets', to: '/professor/projects', icon: BookOpen },
       { label: 'Mes soutenances', to: '/professor/defenses', icon: GraduationCap },
       { label: 'Mon planning', to: '/professor/planning', icon: CalendarDays },
+    ],
+  },
+  {
+    label: 'Évaluation',
+    items: [
       { label: 'Évaluations et documents', to: '/professor/evaluations', icon: Award },
+    ],
+  },
+  {
+    label: 'Notifications et compte',
+    items: [
       { label: 'Notifications', to: '/professor/notifications', icon: Bell },
-      { label: 'Mon profil', to: '/professor/profile', icon: Users },
+      { label: 'Mon profil', to: '/professor/profile', icon: User },
     ],
   },
 ]
