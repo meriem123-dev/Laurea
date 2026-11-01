@@ -8,7 +8,7 @@ export interface FormFieldOption {
 export interface FormFieldConfig {
   key: string
   label: string
-  type?: 'text' | 'email' | 'password' | 'select' | 'textarea'
+  type?: 'text' | 'email' | 'password' | 'date' | 'time' | 'select' | 'textarea'
   placeholder?: string
   autocomplete?: string
   required?: boolean

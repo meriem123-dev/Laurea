@@ -16,6 +16,10 @@ export function buildProjectFields(options: ProjectFieldsOptions): FormFieldConf
     type: 'select',
     placeholder: 'Sélectionner un étudiant',
     options: options.studentOptions,
+        hint:
+      options.studentOptions.length === 0
+        ? 'Aucun étudiant disponible : tous ont déjà un projet.'
+        : undefined,
     required: true,
     requiredMessage: `Sélectionnez l’étudiant ${slot}.`,
     half: true,

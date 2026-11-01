@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Bell, ChevronRight, Menu } from '@lucide/vue'
+import ThemeToggle from '../common/ThemeToggle.vue'
 
 withDefaults(
   defineProps<{
@@ -38,9 +39,11 @@ const emit = defineEmits<{
     </div>
 
     <div class="flex shrink-0 items-center gap-3">
+      <ThemeToggle />
+
       <button
         type="button"
-        class="relative flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-text-secondary transition hover:text-ink"
+        class="relative flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-text-secondary transition hover:text-ink"
         aria-label="Notifications"
       >
         <Bell class="h-4 w-4" :stroke-width="1.75" aria-hidden="true" />
@@ -53,7 +56,7 @@ const emit = defineEmits<{
 
       <div class="flex items-center gap-2.5">
         <span
-          class="flex h-10 w-10 items-center justify-center rounded-full bg-ink font-display text-lg text-white"
+          class="flex h-10 w-10 items-center justify-center rounded-full bg-ink font-display text-lg text-on-ink"
           aria-hidden="true"
         >
           {{ userInitial }}

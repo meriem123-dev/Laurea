@@ -203,7 +203,7 @@ function deleteProject() {
 
     <p
       v-if="filtered.length === 0"
-      class="rounded-xl border border-dashed border-border-strong bg-white/60 py-16 text-center text-sm text-text-muted"
+      class="rounded-xl border border-dashed border-border-strong bg-card/60 py-16 text-center text-sm text-text-muted"
     >
       Aucun projet ne correspond à votre recherche.
     </p>

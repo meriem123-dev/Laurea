@@ -18,13 +18,13 @@ const emit = defineEmits<{
 
 const baseLink =
   'group flex items-center gap-3 rounded-lg px-3 py-2 text-[0.8125rem] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/30'
-const activeLink = 'bg-ink text-white'
+const activeLink = 'bg-ink text-on-ink'
 const idleLink = 'text-text-body hover:bg-surface-muted hover:text-ink'
 </script>
 
 <template>
   <aside
-    class="fixed inset-y-0 left-0 z-40 flex w-64 shrink-0 flex-col border-r border-border bg-white transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0"
+    class="fixed inset-y-0 left-0 z-40 flex w-64 shrink-0 flex-col border-r border-border bg-card transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0"
     :class="open ? 'translate-x-0 shadow-2xl' : '-translate-x-full'"
   >
     <div class="shrink-0 px-6 pb-2 pt-5">
@@ -52,7 +52,7 @@ const idleLink = 'text-text-body hover:bg-surface-muted hover:text-ink'
                 <component
                   :is="item.icon"
                   class="h-[1.125rem] w-[1.125rem] shrink-0"
-                  :class="isActive ? 'text-white' : 'text-text-secondary group-hover:text-ink'"
+                  :class="isActive ? 'text-on-ink' : 'text-text-secondary group-hover:text-ink'"
                   :stroke-width="1.75"
                   aria-hidden="true"
                 />

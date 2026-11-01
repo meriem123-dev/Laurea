@@ -42,7 +42,7 @@ watch(
 
     <div
       v-if="sidebarOpen"
-      class="fixed inset-0 z-30 bg-ink/50 lg:hidden"
+      class="fixed inset-0 z-30 bg-scrim/60 lg:hidden"
       aria-hidden="true"
       @click="sidebarOpen = false"
     />

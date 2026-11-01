@@ -49,6 +49,30 @@ const router = createRouter({
           component: () => import('../views/admin/ProjectsView.vue'),
           meta: { title: 'Projets PFE' },
         },
+        {
+          path: 'defenses',
+          name: 'admin-defenses',
+          component: () => import('../views/admin/DefensesView.vue'),
+          meta: { title: 'Soutenances' },
+        },
+        {
+          path: 'juries',
+          name: 'admin-juries',
+          component: () => import('../views/admin/JuriesView.vue'),
+          meta: { title: 'Jurys' },
+        },
+        {
+          path: 'rooms',
+          name: 'admin-rooms',
+          component: () => import('../views/admin/RoomsView.vue'),
+          meta: { title: 'Salles' },
+        },
+        {
+          path: 'results',
+          name: 'admin-results',
+          component: () => import('../views/admin/ResultsView.vue'),
+          meta: { title: 'Notes et résultats' },
+        },
       ],
     },
     {

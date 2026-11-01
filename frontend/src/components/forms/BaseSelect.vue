@@ -73,7 +73,7 @@ function onChange(event: Event) {
         :aria-label="label ? undefined : ariaLabel"
         :aria-invalid="error ? true : undefined"
         :aria-describedby="describedBy"
-        class="w-full appearance-none rounded-lg border bg-white pr-9 outline-none transition focus:ring-4"
+        class="w-full appearance-none rounded-lg border bg-card pr-9 outline-none transition focus:ring-4"
         :class="[
           sizeClasses[size],
           error

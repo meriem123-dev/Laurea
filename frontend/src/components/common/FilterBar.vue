@@ -24,7 +24,7 @@ const emit = defineEmits<{
 
 <template>
   <div
-    class="flex flex-col gap-3 rounded-xl border border-border bg-white p-3 sm:flex-row sm:items-center sm:p-4"
+    class="flex flex-col gap-3 rounded-xl border border-border bg-card p-3 sm:flex-row sm:items-center sm:p-4"
   >
     <SearchInput
       :modelValue="search"

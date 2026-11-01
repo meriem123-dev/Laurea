@@ -37,7 +37,7 @@ function onAction(key: string) {
 
 <template>
   <article
-    class="relative flex h-full flex-col rounded-xl border border-border bg-white p-5 text-center transition duration-300 hover:-translate-y-0.5 hover:border-border-strong"
+    class="relative flex h-full flex-col rounded-xl border border-border bg-card p-5 text-center transition duration-300 hover:-translate-y-0.5 hover:border-border-strong"
   >
     <div class="absolute right-3 top-3">
       <ActionMenu
