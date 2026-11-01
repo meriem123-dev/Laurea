@@ -6,6 +6,7 @@ import AuthHeader from '../../components/auth/AuthHeader.vue'
 import ForgotPasswordForm from '../../components/auth/ForgotPasswordForm.vue'
 import BaseAlert from '../../components/common/BaseAlert.vue'
 import AuthLayout from '../../layouts/AuthLayout.vue'
+import { forgotPassword } from '../auth/api/auth.api'
 
 const isLoading = ref(false)
 const isSent = ref(false)
@@ -16,10 +17,7 @@ async function handleRequest(email: string) {
   errorMessage.value = ''
 
   try {
-    // TODO backend : appeler l'API de réinitialisation (api/ + service auth)
-    // Pour l'instant : simulation, AUCUN e-mail n'est envoyé.
-    console.info('Demande de réinitialisation (simulée) pour :', email)
-    await new Promise((resolve) => setTimeout(resolve, 600))
+    await forgotPassword(email)
     isSent.value = true
   } catch {
     errorMessage.value = 'Envoi impossible. Veuillez réessayer.'

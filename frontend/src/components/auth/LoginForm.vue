@@ -25,7 +25,7 @@ const emit = defineEmits<{
   submit: [payload: LoginPayload]
 }>()
 
-const role = ref<UserRole>('admin')
+const role = ref<UserRole>('ADMIN_STAFF')
 const email = ref(demoEmails[role.value])
 const password = ref('')
 const remember = ref(true)

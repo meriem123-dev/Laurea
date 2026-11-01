@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'professor' | 'student'
+export type UserRole = 'STUDENT' | 'TEACHER' | 'ADMIN_STAFF'
 
 export interface LoginPayload {
   email: string

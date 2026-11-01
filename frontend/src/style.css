@@ -176,3 +176,12 @@ html {
   --color-brass-dark: #e3b66f;
   --color-brass-soft: #2e2415;
 }
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px white inset; /* mets la couleur de fond de ton input */
+  -webkit-text-fill-color: #111;                /* couleur du texte */
+  transition: background-color 9999s ease-in-out 0s;
+  caret-color: #111;
+}

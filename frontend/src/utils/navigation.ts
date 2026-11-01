@@ -79,7 +79,7 @@ const studentNav: NavSection[] = [
 ]
 
 export const NAV_BY_ROLE: Record<UserRole, NavSection[]> = {
-  admin: adminNav,
-  professor: professorNav,
-  student: studentNav,
+  ADMIN_STAFF: adminNav,
+  TEACHER: professorNav,
+  STUDENT: studentNav,
 }
