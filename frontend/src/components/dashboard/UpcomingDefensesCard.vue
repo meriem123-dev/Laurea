@@ -5,23 +5,29 @@ import BaseBadge from '../common/BaseBadge.vue'
 import BaseCard from '../common/BaseCard.vue'
 import { DEFENSE_STATUS_META } from '../../utils/defenseStatus'
 import { formatDay, formatMonthShort } from '../../utils/format'
+import { JURY_ROLE_META } from '../../utils/juryRole'
 import type { UpcomingDefense } from '../../types/dashboard'
 
-defineProps<{
-  defenses: UpcomingDefense[]
-  subtitle: string
-  viewAllTo: string
-}>()
+withDefaults(
+  defineProps<{
+    defenses: UpcomingDefense[]
+    subtitle: string
+    viewAllTo: string
+    title?: string
+    viewAllLabel?: string
+  }>(),
+  { title: 'Prochaines soutenances', viewAllLabel: 'Voir tout' },
+)
 </script>
 
 <template>
-  <BaseCard title="Prochaines soutenances" :subtitle="subtitle">
+  <BaseCard :title="title" :subtitle="subtitle">
     <template #action>
       <RouterLink
         :to="viewAllTo"
         class="inline-flex items-center gap-1 text-xs font-semibold text-ink underline decoration-border-strong underline-offset-4 transition hover:decoration-ink"
       >
-        Voir tout
+        {{ viewAllLabel }}
         <ArrowUpRight class="h-3.5 w-3.5" aria-hidden="true" />
       </RouterLink>
     </template>
@@ -53,7 +59,18 @@ defineProps<{
           <p class="mt-0.5 truncate text-xs text-text-muted">{{ defense.project }}</p>
         </div>
 
-        <BaseBadge :tone="DEFENSE_STATUS_META[defense.status].tone" class="shrink-0">
+        <BaseBadge
+          v-if="defense.role"
+          :tone="JURY_ROLE_META[defense.role].tone"
+          class="shrink-0"
+        >
+          {{ JURY_ROLE_META[defense.role].label }}
+        </BaseBadge>
+        <BaseBadge
+          v-else-if="defense.status"
+          :tone="DEFENSE_STATUS_META[defense.status].tone"
+          class="shrink-0"
+        >
           {{ DEFENSE_STATUS_META[defense.status].label }}
         </BaseBadge>
       </li>

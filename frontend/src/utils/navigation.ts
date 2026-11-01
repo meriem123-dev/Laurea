@@ -4,7 +4,6 @@ import {
   BookOpen,
   Building2,
   CalendarDays,
-  ClipboardCheck,
   FileText,
   GraduationCap,
   LayoutGrid,
@@ -39,32 +38,29 @@ const adminNav: NavSection[] = [
   {
     label: 'Notifications et réglages',
     items: [
-      // TODO backend : le badge viendra d'un store de notifications
+      // Le badge est calculé dans AppLayout à partir des notifications non lues
       { label: 'Notifications', to: '/admin/notifications', icon: Bell },
       { label: 'Paramètres', to: '/admin/settings', icon: Settings },
     ],
   },
 ]
 
-// PROVISOIRE : pas de design pour ces deux menus, libellés et icônes de ma part
 const professorNav: NavSection[] = [
   {
-    label: 'Encadrement',
+    label: 'Espace enseignant',
     items: [
       { label: 'Tableau de bord', to: '/professor/dashboard', icon: LayoutGrid },
-      { label: 'Projets encadrés', to: '/professor/projects', icon: BookOpen },
-      { label: 'Jurys', to: '/professor/juries', icon: Users },
-    ],
-  },
-  {
-    label: 'Soutenances',
-    items: [
-      { label: 'Soutenances', to: '/professor/defenses', icon: CalendarDays },
-      { label: 'Évaluations', to: '/professor/evaluations', icon: ClipboardCheck },
+      { label: 'Mes projets', to: '/professor/projects', icon: BookOpen },
+      { label: 'Mes soutenances', to: '/professor/defenses', icon: GraduationCap },
+      { label: 'Mon planning', to: '/professor/planning', icon: CalendarDays },
+      { label: 'Évaluations et documents', to: '/professor/evaluations', icon: Award },
+      { label: 'Notifications', to: '/professor/notifications', icon: Bell },
+      { label: 'Mon profil', to: '/professor/profile', icon: Users },
     ],
   },
 ]
 
+// PROVISOIRE : pas de design pour ce menu, libellés et icônes de ma part
 const studentNav: NavSection[] = [
   {
     label: 'Mon parcours',
