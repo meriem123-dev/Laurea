@@ -1,5 +1,5 @@
 import type { Project, TeamType } from '../types/project'
-import type { Student } from '../types/student'
+import type { ProjectStatus, Student } from '../types/student'
 
 export const TEAM_TYPES: Record<TeamType, { label: string; size: number }> = {
   solo: { label: 'Monôme', size: 1 },
@@ -33,4 +33,18 @@ export function teamMembers(project: Pick<Project, 'studentIds'>, students: Stud
   return project.studentIds
     .map((id) => students.find((student) => student.id === id))
     .filter((student): student is Student => student !== undefined)
+}
+
+// TODO backend : l'avancement réel viendra de l'API. En attendant, il est déduit du workflow.
+const PROGRESS_BY_STATUS: Record<ProjectStatus, number> = {
+  deposited: 20,
+  validated: 40,
+  planned: 60,
+  defended: 80,
+  graded: 100,
+  closed: 100,
+}
+
+export function projectProgress(status: ProjectStatus): number {
+  return PROGRESS_BY_STATUS[status]
 }

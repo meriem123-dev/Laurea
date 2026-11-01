@@ -4,16 +4,20 @@ import { RouterLink, useRouter } from 'vue-router'
 import { Bell, CheckCheck } from '@lucide/vue'
 import NotificationItem from '../notifications/NotificationItem.vue'
 import { useNotifications } from '../../composables/useNotifications'
+import type { UserRole } from '../../types/auth'
 import type { AppNotification } from '../../types/notification'
 
-defineProps<{
+const props = defineProps<{
+  role: UserRole
   viewAllTo?: string // page « toutes les notifications » (absente = lien masqué)
 }>()
 
 const PREVIEW_COUNT = 5
 
 const router = useRouter()
-const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications()
+const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications(
+  () => props.role,
+)
 
 const isOpen = ref(false)
 const root = ref<HTMLElement | null>(null)

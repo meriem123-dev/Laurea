@@ -2,11 +2,13 @@
 import { ChevronRight, Menu } from '@lucide/vue'
 import ThemeToggle from '../common/ThemeToggle.vue'
 import NotificationBell from './NotificationBell.vue'
+import type { UserRole } from '../../types/auth'
 
 defineProps<{
   title: string
   userLabel: string
   userInitial: string
+  role: UserRole
   notificationsTo?: string
 }>()
 
@@ -39,7 +41,7 @@ const emit = defineEmits<{
     <div class="flex shrink-0 items-center gap-3">
       <ThemeToggle />
 
-      <NotificationBell :viewAllTo="notificationsTo" />
+      <NotificationBell :role="role" :viewAllTo="notificationsTo" />
 
       <div class="flex items-center gap-2.5">
         <span

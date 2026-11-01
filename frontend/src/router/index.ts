@@ -109,6 +109,48 @@ const router = createRouter({
           component: () => import("../views/professor/DashboardView.vue"),
           meta: { title: "Tableau de bord" },
         },
+        {
+          path: "projects",
+          name: "professor-projects",
+          component: () => import("../views/professor/ProjectsView.vue"),
+          meta: { title: "Mes projets" },
+        },
+        {
+          path: "defenses",
+          name: "professor-defenses",
+          component: () => import("../views/professor/DefensesView.vue"),
+          meta: { title: "Mes soutenances" },
+        },
+        {
+          path: "defenses/:id",
+          name: "professor-defense-details",
+          component: () => import("../views/professor/DefenseDetailsView.vue"),
+          meta: { title: "Détails d’une soutenance" },
+        },
+        {
+          path: "planning",
+          name: "professor-planning",
+          component: () => import("../views/professor/PlanningView.vue"),
+          meta: { title: "Mon planning" },
+        },
+        {
+          path: "evaluations",
+          name: "professor-evaluations",
+          component: () => import("../views/professor/EvaluationsView.vue"),
+          meta: { title: "Documents et évaluations" },
+        },
+        {
+          path: "notifications",
+          name: "professor-notifications",
+          component: () => import("../views/professor/NotificationsView.vue"),
+          meta: { title: "Notifications" },
+        },
+        {
+          path: "profile",
+          name: "professor-profile",
+          component: () => import("../views/professor/ProfileView.vue"),
+          meta: { title: "Mon profil" },
+        },
       ],
     },
     {

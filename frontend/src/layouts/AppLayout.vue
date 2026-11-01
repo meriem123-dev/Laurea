@@ -9,7 +9,11 @@ import { ROLE_LABELS } from '../utils/roles'
 import { useAuthStore } from '../views/auth/store.js'
 import type { UserRole } from '../types/auth'
 
-const NOTIFICATIONS_PATH = '/admin/notifications'
+const NOTIFICATIONS_PATH_BY_ROLE: Record<UserRole, string> = {
+  ADMIN_STAFF: '/admin/notifications',
+  TEACHER: '/professor/notifications',
+  STUDENT: '/student/notifications',
+}
 
 const props = defineProps<{
   role: UserRole
@@ -18,7 +22,7 @@ const props = defineProps<{
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
-const { unreadCount } = useNotifications()
+const { unreadCount } = useNotifications(() => props.role)
 const sidebarOpen = ref(false)
 
 // Le badge « Notifications » de la barre latérale suit le nombre de notifications non lues
@@ -26,20 +30,33 @@ const sections = computed(() =>
   NAV_BY_ROLE[props.role].map((section) => ({
     ...section,
     items: section.items.map((item) =>
-      item.to === NOTIFICATIONS_PATH ? { ...item, badge: unreadCount.value } : item,
+      item.to === NOTIFICATIONS_PATH_BY_ROLE[props.role]
+        ? { ...item, badge: unreadCount.value }
+        : item,
     ),
   })),
 )
 
-// Seul l'espace admin a une page de notifications pour l'instant
+// L'espace étudiant n'a pas encore de page de notifications
 const notificationsTo = computed(() =>
-  props.role === 'ADMIN_STAFF' ? NOTIFICATIONS_PATH : undefined,
+  props.role === 'STUDENT' ? undefined : NOTIFICATIONS_PATH_BY_ROLE[props.role],
 )
 
 // nom du vrai utilisateur, sinon le libellé du rôle en secours
 const userLabel = computed(() =>
   auth.user ? `${auth.user.firstName} ${auth.user.lastName}` : ROLE_LABELS[props.role],
 )
+
+const userInitials = computed(() =>
+  userLabel.value
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.charAt(0))
+    .join('')
+    .toUpperCase(),
+)
+
 const pageTitle = computed(() => (typeof route.meta.title === 'string' ? route.meta.title : ''))
 
 // Le menu mobile se referme quand on change de page
@@ -59,7 +76,14 @@ function logout() {
 <template>
   <!-- overflow-x-clip (et non hidden) : empêche tout défilement horizontal sans casser le sticky -->
   <div class="flex min-h-screen w-full overflow-x-clip bg-surface">
-    <AppSidebar :sections="sections" :open="sidebarOpen" @logout="logout" />
+    <AppSidebar
+      :sections="sections"
+      :open="sidebarOpen"
+      :userLabel="userLabel"
+      :userInitials="userInitials"
+      :roleLabel="ROLE_LABELS[role]"
+      @logout="logout"
+    />
 
     <div
       v-if="sidebarOpen"
@@ -73,6 +97,7 @@ function logout() {
         :title="pageTitle"
         :userLabel="userLabel"
         :userInitial="userLabel.charAt(0)"
+        :role="role"
         :notificationsTo="notificationsTo"
         @toggle-sidebar="sidebarOpen = !sidebarOpen"
       />
