@@ -49,7 +49,7 @@ function onInput(event: Event) {
       :required="required"
       :aria-invalid="error ? true : undefined"
       :aria-describedby="describedBy"
-      class="w-full resize-y rounded-lg border bg-white px-3.5 py-3 text-sm leading-relaxed text-ink outline-none transition placeholder:text-text-muted focus:ring-4"
+      class="w-full resize-y rounded-lg border bg-card px-3.5 py-3 text-sm leading-relaxed text-ink outline-none transition placeholder:text-text-muted focus:ring-4"
       :class="
         error
           ? 'border-danger focus:border-danger focus:ring-danger/10'

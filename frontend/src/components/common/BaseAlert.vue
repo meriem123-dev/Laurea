@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { AlertCircle, Info } from '@lucide/vue'
+import { AlertCircle, CircleCheck, Info } from '@lucide/vue'
 
-type Variant = 'info' | 'error'
+type Variant = 'info' | 'success' | 'error'
 
 interface Props {
   variant?: Variant
@@ -16,9 +16,14 @@ const props = withDefaults(defineProps<Props>(), {
 
 const styles: Record<Variant, { box: string; title: string; icon: string }> = {
   info: {
-    box: 'border border-dashed border-border-strong bg-white/60',
+    box: 'border border-dashed border-border-strong bg-card/60',
     title: 'text-ink',
     icon: 'text-brass',
+  },
+  success: {
+    box: 'border border-success/30 bg-success-soft',
+    title: 'text-success-dark',
+    icon: 'text-success-dark',
   },
   error: {
     box: 'border border-danger/30 bg-danger-soft',
@@ -27,7 +32,11 @@ const styles: Record<Variant, { box: string; title: string; icon: string }> = {
   },
 }
 
-const icon = computed(() => (props.variant === 'error' ? AlertCircle : Info))
+const icon = computed(() => {
+  if (props.variant === 'error') return AlertCircle
+  if (props.variant === 'success') return CircleCheck
+  return Info
+})
 </script>
 
 <template>

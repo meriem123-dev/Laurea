@@ -1,6 +1,17 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <script>
+  (function () {
+    try {
+      var stored = localStorage.getItem('laurea-theme')
+      var dark = stored
+        ? stored === 'dark'
+        : window.matchMedia('(prefers-color-scheme: dark)').matches
+      if (dark) document.documentElement.classList.add('dark')
+    } catch (e) {}
+  })()
+</script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Soutenances</title>

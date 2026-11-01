@@ -63,8 +63,13 @@ function reset() {
 }
 watch(() => props.modelValue, reset, { immediate: true })
 
-function inputType(field: FormFieldConfig): 'text' | 'email' | 'password' {
-  return field.type === 'email' || field.type === 'password' ? field.type : 'text'
+function inputType(field: FormFieldConfig): 'text' | 'email' | 'password' | 'date' | 'time' {
+  return field.type === 'email' ||
+    field.type === 'password' ||
+    field.type === 'date' ||
+    field.type === 'time'
+    ? field.type
+    : 'text'
 }
 
 function onInput(key: string, value: string) {

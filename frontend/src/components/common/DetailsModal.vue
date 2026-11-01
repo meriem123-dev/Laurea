@@ -13,11 +13,13 @@ defineProps<{
   fields: { label: string; value: string }[]
   badge?: { label: string; text: string; tone: BadgeTone }
   editable?: boolean // affiche le bouton « Modifier »
+  deletable?: boolean // affiche le bouton « Supprimer »
 }>()
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
   edit: []
+  delete: []
 }>()
 </script>
 
@@ -56,9 +58,19 @@ const emit = defineEmits<{
       >
         Fermer
       </BaseButton>
+      <BaseButton
+        v-if="deletable"
+        variant="danger"
+        size="md"
+        class="w-full sm:w-auto"
+        @click="emit('delete')"
+      >
+        Supprimer
+      </BaseButton>
       <BaseButton v-if="editable" size="md" class="w-full sm:w-auto" @click="emit('edit')">
         Modifier
       </BaseButton>
+      <slot name="actions" />
     </template>
   </BaseModal>
 </template>

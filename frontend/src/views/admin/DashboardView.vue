@@ -39,7 +39,7 @@ const statIcons: Record<StatId, Component> = {
       :title="`Bonjour ${adminName},`"
       subtitle="Voici un aperçu des soutenances pour cette année universitaire."
     >
-      <BaseButton size="md" class="w-full sm:w-auto" @click="router.push('/admin/planning')">
+      <BaseButton size="md" class="w-full sm:w-auto" @click="router.push('/admin/defenses')">
         <Plus class="h-4 w-4" aria-hidden="true" />
         Planifier une soutenance
       </BaseButton>

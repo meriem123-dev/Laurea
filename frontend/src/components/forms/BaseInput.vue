@@ -7,7 +7,7 @@ interface Props {
   id: string
   modelValue: string
   label: string
-  type?: 'text' | 'email' | 'password'
+  type?: 'text' | 'email' | 'password' | 'date' | 'time'
   variant?: 'underline' | 'boxed'
   placeholder?: string
   autocomplete?: string
@@ -45,7 +45,7 @@ const describedBy = computed(() => {
 const inputClasses = computed(() => {
   if (props.variant === 'boxed') {
     return [
-      'h-11 rounded-lg border bg-white px-3.5 text-sm focus:ring-4',
+      'h-11 rounded-lg border bg-card px-3.5 text-sm focus:ring-4',
       props.error
         ? 'border-danger focus:border-danger focus:ring-danger/10'
         : 'border-border-strong focus:border-ink focus:ring-ink/10',

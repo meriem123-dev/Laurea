@@ -119,7 +119,7 @@ onBeforeUnmount(() => close())
       v-if="isOpen"
       ref="menu"
       role="menu"
-      class="fixed z-50 w-52 rounded-xl border border-border bg-white p-1.5 shadow-xl motion-safe:animate-modal-in"
+      class="fixed z-50 w-52 rounded-xl border border-border bg-card p-1.5 shadow-xl motion-safe:animate-modal-in"
       :style="{ top: `${position.top}px`, left: `${position.left}px` }"
       @keydown="onMenuKeydown"
     >

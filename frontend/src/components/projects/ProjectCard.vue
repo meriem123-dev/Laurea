@@ -34,7 +34,7 @@ function onAction(key: string) {
 
 <template>
   <article
-    class="flex h-full flex-col rounded-xl border border-border bg-white p-5 transition duration-300 hover:-translate-y-0.5 hover:border-border-strong"
+    class="flex h-full flex-col rounded-xl border border-border bg-card p-5 transition duration-300 hover:-translate-y-0.5 hover:border-border-strong"
   >
     <div class="flex items-center justify-between gap-3">
       <span
