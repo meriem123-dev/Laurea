@@ -15,6 +15,14 @@ enum Role {
   ADMIN_STAFF
 }
 
+enum Speciality {
+  RESEAUX_SEC
+  DATA_SCIENCE
+  GENIE_LOGICIEL
+  INTELLIGENCE_ARTIFICIELLE
+  SYSTEMES_INFORMATION
+}
+
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
@@ -26,6 +34,7 @@ model User {
   updatedAt    DateTime @updatedAt
   createdAt    DateTime @default(now())
   resetTokens PasswordResetToken[]
+  student Student?
 }
 
 model PasswordResetToken {
@@ -36,4 +45,13 @@ model PasswordResetToken {
   expiresAt DateTime
   usedAt    DateTime?
   createdAt DateTime  @default(now())
+}
+
+model Student {
+  id         String     @id @default(uuid())
+  userId     String     @unique
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  matricule  String     @unique
+  speciality Speciality
+  group      String?
 }

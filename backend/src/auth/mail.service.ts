@@ -16,7 +16,7 @@ export class MailService {
       body: JSON.stringify({
         Messages: [
           {
-            From: { Email: process.env.MAIL_FROM, Name: "Soutenances" },
+            From: { Email: process.env.MAIL_FROM, Name: "Laurea Platform" },
             To: [{ Email: to }],
             Subject: "Réinitialisation de votre mot de passe",
             TextPart: `Bonjour,\n\nPour choisir un nouveau mot de passe (lien valable 30 minutes) :\n${link}\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez ce message.`,

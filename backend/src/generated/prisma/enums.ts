@@ -16,3 +16,14 @@ export const Role = {
 } as const
 
 export type Role = (typeof Role)[keyof typeof Role]
+
+
+export const Speciality = {
+  RESEAUX_SEC: 'RESEAUX_SEC',
+  DATA_SCIENCE: 'DATA_SCIENCE',
+  GENIE_LOGICIEL: 'GENIE_LOGICIEL',
+  INTELLIGENCE_ARTIFICIELLE: 'INTELLIGENCE_ARTIFICIELLE',
+  SYSTEMES_INFORMATION: 'SYSTEMES_INFORMATION'
+} as const
+
+export type Speciality = (typeof Speciality)[keyof typeof Speciality]
