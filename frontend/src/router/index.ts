@@ -83,17 +83,32 @@ const router = createRouter({
           meta: { title: "Notes et résultats" },
         },
         {
-        path: "notifications",
-        name: "admin-notifications",
-        component: () => import("../views/admin/NotificationsView.vue"),
-        meta: { title: "Notifications" },
-      },
-      {
-        path: "settings",
-        name: "admin-settings",
-        component: () => import("../views/admin/SettingsView.vue"),
-        meta: { title: "Paramètres" },
-      },
+          path: "notifications",
+          name: "admin-notifications",
+          component: () => import("../views/admin/NotificationsView.vue"),
+          meta: { title: "Notifications" },
+        },
+        {
+          path: "settings",
+          name: "admin-settings",
+          component: () => import("../views/admin/SettingsView.vue"),
+          meta: { title: "Paramètres" },
+        },
+      ],
+    },
+    {
+      path: "/professor",
+      component: AppLayout,
+      props: { role: "TEACHER" },
+      meta: { requiresAuth: true, roles: ["TEACHER"] },
+      children: [
+        { path: "", redirect: "/professor/dashboard" },
+        {
+          path: "dashboard",
+          name: "professor-dashboard",
+          component: () => import("../views/professor/DashboardView.vue"),
+          meta: { title: "Tableau de bord" },
+        },
       ],
     },
     {
@@ -106,6 +121,11 @@ const router = createRouter({
 });
 
 router.beforeEach((to) => {
+  // DEV UNIQUEMENT (npm run dev) : l'espace enseignant s'ouvre sans compte backend.
+  // En production, import.meta.env.DEV vaut false : cette ligne est inactive.
+  // À supprimer quand les comptes enseignants existeront côté backend.
+  if (import.meta.env.DEV && to.path.startsWith("/professor")) return true;
+
   const auth = useAuthStore();
 
   // page protégée sans être connectée → login
