@@ -184,6 +184,18 @@ const router = createRouter({
           component: () => import("../views/student/ProfileView.vue"),
           meta: { title: "Mon profil" },
         },
+                {
+          path: "defense",
+          name: "student-defense",
+          component: () => import("../views/student/DefenseView.vue"),
+          meta: { title: "Ma soutenance" },
+        },
+        {
+          path: "results",
+          name: "student-results",
+          component: () => import("../views/student/ResultsView.vue"),
+          meta: { title: "Mes résultats" },
+        },
       ],
     },
     {
