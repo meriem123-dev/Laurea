@@ -4,6 +4,16 @@ import type { ProjectDocument } from '../types/document'
 // projectId renvoie à mocks/projects.ts.
 export const documents: ProjectDocument[] = [
   {
+    id: 6,
+    projectId: 1,
+    name: 'Cahier des charges - v2.pdf',
+    submittedOn: '2025-05-28',
+    sizeKb: 1400,
+    grade: 15,
+    comment:
+      'Travail bien structuré. Les objectifs sont clairs ; précisez davantage les contraintes techniques et les critères de validation.',
+  },
+  {
     id: 1,
     projectId: 1,
     name: 'Rapport intermédiaire.pdf',

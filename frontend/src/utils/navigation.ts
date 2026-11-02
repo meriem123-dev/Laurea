@@ -4,7 +4,6 @@ import {
   BookOpen,
   Building2,
   CalendarDays,
-  FileText,
   GraduationCap,
   LayoutGrid,
   Settings,
@@ -74,16 +73,24 @@ const professorNav: NavSection[] = [
   },
 ]
 
-// PROVISOIRE : pas de design pour ce menu, libellés et icônes de ma part
 const studentNav: NavSection[] = [
+  {
+    label: 'Mon espace',
+    items: [{ label: 'Tableau de bord', to: '/student/dashboard', icon: LayoutGrid }],
+  },
   {
     label: 'Mon parcours',
     items: [
-      { label: 'Tableau de bord', to: '/student/dashboard', icon: LayoutGrid },
       { label: 'Mon projet', to: '/student/project', icon: BookOpen },
-      { label: 'Documents', to: '/student/documents', icon: FileText },
       { label: 'Ma soutenance', to: '/student/defense', icon: CalendarDays },
-      { label: 'Résultats', to: '/student/results', icon: Award },
+      { label: 'Mes résultats', to: '/student/results', icon: Award },
+    ],
+  },
+  {
+    label: 'Notifications et compte',
+    items: [
+      { label: 'Notifications', to: '/student/notifications', icon: Bell },
+      { label: 'Mon profil', to: '/student/profile', icon: User },
     ],
   },
 ]
