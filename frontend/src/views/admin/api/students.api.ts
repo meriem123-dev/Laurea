@@ -1,4 +1,4 @@
-import type { Student, StudentFormData,AccountStatus,Speciality } from "../../../types/student";
+import type { Student, StudentFormData,AccountStatus,Speciality, Cursus } from "../../../types/student";
 import { http } from "../../../api/http";
 
 
@@ -7,6 +7,8 @@ export interface StudentDto {
   matricule: string;
   speciality: Speciality;
   group: string | null;
+  cursus: Cursus;
+  accountStatus: AccountStatus;
   userId: string;
   user: {
     id: string;
@@ -14,20 +16,12 @@ export interface StudentDto {
     firstName: string;
     lastName: string;
     isActive: boolean;
-    activatedAt: string | null;
   };
 }
 
 export interface StudentFilters {
   speciality?: Speciality;
   group?: string;
-}
-
-/* ---------- Statut du compte ---------- */
-
-export function accountStatus(user: StudentDto["user"]): AccountStatus {
-  if (!user.isActive) return "DISABLED";
-  return user.activatedAt ? "ACTIVE" : "PENDING";
 }
 
 
@@ -46,9 +40,9 @@ export function toStudent(dto: StudentDto): Student {
     matricule: dto.matricule,
     speciality: dto.speciality,
     group: dto.group ?? "",
-    accountStatus: accountStatus(dto.user),
-    // pas encore fournis par le back
-    cursus: "MASTER",
+    cursus: dto.cursus,
+    accountStatus: dto.accountStatus,
+    // pas encore fourni par le back
     projectStatus: "deposited",
   };
 }

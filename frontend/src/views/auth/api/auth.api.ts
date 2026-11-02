@@ -27,5 +27,9 @@ export async function forgotPassword(email: string) {
 }
 
 export async function resetPassword(token: string, password: string) {
-  await http.post('api/auth/reset-password', { token, password })
+  const { data } = await http.post<{ accessToken: string; user: AuthUser }>(
+    'api/auth/reset-password',
+    { token, password },
+  )
+  return data
 }

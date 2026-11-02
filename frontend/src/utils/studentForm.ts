@@ -38,14 +38,15 @@ export function buildStudentFields(
       requiredMessage: "Le nom est obligatoire.",
       half: true,
     },
-    emailField("prenom.nom@univ.fr", options.existingEmails),
+    emailField("prenom.nom@univ.dz", options.existingEmails),
     {
       key: "matricule",
       label: "Matricule",
-      placeholder: "Ex. : ETU-2025-059",
+      placeholder: "Ex. : 202233004511",
       required: true,
       requiredMessage: "Le matricule est obligatoire.",
       hint: "Le matricule doit être unique pour chaque étudiant.",
+      half:true,
       normalize: (value) => value.trim().toUpperCase(),
       // Vérification locale seulement : le backend doit aussi garantir l'unicité
       validate: (value) =>
@@ -77,7 +78,7 @@ export function buildStudentFields(
     {
       key: "group",
       label: "Groupe",
-      placeholder: "IA",
+      placeholder: "G02",
       optional: true,
       half: true,
     },
