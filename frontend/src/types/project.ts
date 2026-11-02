@@ -1,30 +1,29 @@
-import type { ProjectStatus } from './student'
+import type { ProjectStatus } from "./student";
 
-export type TeamType = 'solo' | 'pair' | 'trio'
+export type TeamType = "solo" | "pair" | "trio";
 
 export interface Project {
-  id: number
-  title: string
-  domain: string
-  company: string // entreprise éventuelle : chaîne vide si aucune
-  academicYear: string
-  teamType: TeamType
-  studentIds: number[]
-  supervisorId: number
-  coSupervisorId: number | null
-  notes: string
-  status: ProjectStatus
+  id: number;
+  title: string;
+  domain: string;
+  company: string;
+  academicYear: string;
+  teamType: TeamType;
+  studentIds: string[];
+  supervisorId: number;
+  coSupervisorId: number | null;
+  notes: string;
+  status: ProjectStatus;
 }
 
-// Données saisies dans le formulaire
 export interface ProjectFormData {
-  title: string
-  academicYear: string
-  domain: string
-  company: string
-  teamType: TeamType
-  studentIds: number[]
-  supervisorId: number
-  coSupervisorId: number | null
-  notes: string
+  title: string;
+  academicYear: string;
+  domain: string;
+  company: string;
+  teamType: TeamType;
+  studentIds: string[];
+  supervisorId: number;
+  coSupervisorId: number | null;
+  notes: string;
 }

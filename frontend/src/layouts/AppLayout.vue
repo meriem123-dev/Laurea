@@ -38,9 +38,7 @@ const sections = computed(() =>
 )
 
 // L'espace étudiant n'a pas encore de page de notifications
-const notificationsTo = computed(() =>
-  props.role === 'STUDENT' ? undefined : NOTIFICATIONS_PATH_BY_ROLE[props.role],
-)
+const notificationsTo = computed(() => NOTIFICATIONS_PATH_BY_ROLE[props.role])
 
 // nom du vrai utilisateur, sinon le libellé du rôle en secours
 const userLabel = computed(() =>

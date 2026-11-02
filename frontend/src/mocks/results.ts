@@ -5,7 +5,7 @@ import type { DefenseResult } from '../types/result'
 export const results: DefenseResult[] = [
   {
     id: 1,
-    studentId: 1,
+    studentId: "1",
     expectedGrades: 3,
     grades: [
       { professorId: 5, value: 16.5 },
@@ -16,7 +16,7 @@ export const results: DefenseResult[] = [
   },
   {
     id: 2,
-    studentId: 2,
+    studentId: "2",
     expectedGrades: 3,
     grades: [
       { professorId: 1, value: 15 },
@@ -27,7 +27,7 @@ export const results: DefenseResult[] = [
   },
   {
     id: 3,
-    studentId: 3,
+    studentId: "3",
     expectedGrades: 3,
     grades: [
       { professorId: 5, value: 15 },
@@ -37,7 +37,7 @@ export const results: DefenseResult[] = [
   },
   {
     id: 4,
-    studentId: 4,
+    studentId: "4",
     expectedGrades: 3,
     grades: [
       { professorId: 2, value: 13 },

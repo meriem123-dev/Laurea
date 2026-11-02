@@ -20,9 +20,9 @@ const { views, publish } = useResultsData()
 const {
   search,
   publication,
-  specialty,
+  speciality,
   publicationOptions,
-  specialtyOptions,
+  specialityOptions,
   counts,
   filtered,
   toggle,
@@ -42,16 +42,16 @@ const filterSelects = computed(() => [
     modelValue: publication.value,
   },
   {
-    key: 'specialty',
+    key: 'speciality',
     ariaLabel: 'Filtrer par spécialité',
-    options: specialtyOptions.value,
-    modelValue: specialty.value,
+    options: specialityOptions.value,
+    modelValue: speciality.value,
   },
 ])
 
 function setFilter(key: string, value: string) {
   if (key === 'publication') publication.value = value as PublicationState | ''
-  else if (key === 'specialty') specialty.value = value
+  else if (key === 'speciality') speciality.value = value
 }
 
 // Le résultat ouvert est relu à chaque changement : la fiche se met à jour après publication

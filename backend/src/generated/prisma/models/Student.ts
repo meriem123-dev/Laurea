@@ -30,6 +30,8 @@ export type StudentMinAggregateOutputType = {
   matricule: string | null
   speciality: $Enums.Speciality | null
   group: string | null
+  cursus: $Enums.Cursus | null
+  accountStatus: $Enums.AccountStatus | null
 }
 
 export type StudentMaxAggregateOutputType = {
@@ -38,6 +40,8 @@ export type StudentMaxAggregateOutputType = {
   matricule: string | null
   speciality: $Enums.Speciality | null
   group: string | null
+  cursus: $Enums.Cursus | null
+  accountStatus: $Enums.AccountStatus | null
 }
 
 export type StudentCountAggregateOutputType = {
@@ -46,6 +50,8 @@ export type StudentCountAggregateOutputType = {
   matricule: number
   speciality: number
   group: number
+  cursus: number
+  accountStatus: number
   _all: number
 }
 
@@ -56,6 +62,8 @@ export type StudentMinAggregateInputType = {
   matricule?: true
   speciality?: true
   group?: true
+  cursus?: true
+  accountStatus?: true
 }
 
 export type StudentMaxAggregateInputType = {
@@ -64,6 +72,8 @@ export type StudentMaxAggregateInputType = {
   matricule?: true
   speciality?: true
   group?: true
+  cursus?: true
+  accountStatus?: true
 }
 
 export type StudentCountAggregateInputType = {
@@ -72,6 +82,8 @@ export type StudentCountAggregateInputType = {
   matricule?: true
   speciality?: true
   group?: true
+  cursus?: true
+  accountStatus?: true
   _all?: true
 }
 
@@ -153,6 +165,8 @@ export type StudentGroupByOutputType = {
   matricule: string
   speciality: $Enums.Speciality
   group: string | null
+  cursus: $Enums.Cursus
+  accountStatus: $Enums.AccountStatus
   _count: StudentCountAggregateOutputType | null
   _min: StudentMinAggregateOutputType | null
   _max: StudentMaxAggregateOutputType | null
@@ -182,6 +196,8 @@ export type StudentWhereInput = {
   matricule?: Prisma.StringFilter<"Student"> | string
   speciality?: Prisma.EnumSpecialityFilter<"Student"> | $Enums.Speciality
   group?: Prisma.StringNullableFilter<"Student"> | string | null
+  cursus?: Prisma.EnumCursusFilter<"Student"> | $Enums.Cursus
+  accountStatus?: Prisma.EnumAccountStatusFilter<"Student"> | $Enums.AccountStatus
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
@@ -191,6 +207,8 @@ export type StudentOrderByWithRelationInput = {
   matricule?: Prisma.SortOrder
   speciality?: Prisma.SortOrder
   group?: Prisma.SortOrderInput | Prisma.SortOrder
+  cursus?: Prisma.SortOrder
+  accountStatus?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -203,6 +221,8 @@ export type StudentWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.StudentWhereInput | Prisma.StudentWhereInput[]
   speciality?: Prisma.EnumSpecialityFilter<"Student"> | $Enums.Speciality
   group?: Prisma.StringNullableFilter<"Student"> | string | null
+  cursus?: Prisma.EnumCursusFilter<"Student"> | $Enums.Cursus
+  accountStatus?: Prisma.EnumAccountStatusFilter<"Student"> | $Enums.AccountStatus
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id" | "userId" | "matricule">
 
@@ -212,6 +232,8 @@ export type StudentOrderByWithAggregationInput = {
   matricule?: Prisma.SortOrder
   speciality?: Prisma.SortOrder
   group?: Prisma.SortOrderInput | Prisma.SortOrder
+  cursus?: Prisma.SortOrder
+  accountStatus?: Prisma.SortOrder
   _count?: Prisma.StudentCountOrderByAggregateInput
   _max?: Prisma.StudentMaxOrderByAggregateInput
   _min?: Prisma.StudentMinOrderByAggregateInput
@@ -226,6 +248,8 @@ export type StudentScalarWhereWithAggregatesInput = {
   matricule?: Prisma.StringWithAggregatesFilter<"Student"> | string
   speciality?: Prisma.EnumSpecialityWithAggregatesFilter<"Student"> | $Enums.Speciality
   group?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
+  cursus?: Prisma.EnumCursusWithAggregatesFilter<"Student"> | $Enums.Cursus
+  accountStatus?: Prisma.EnumAccountStatusWithAggregatesFilter<"Student"> | $Enums.AccountStatus
 }
 
 export type StudentCreateInput = {
@@ -233,6 +257,8 @@ export type StudentCreateInput = {
   matricule: string
   speciality: $Enums.Speciality
   group?: string | null
+  cursus: $Enums.Cursus
+  accountStatus?: $Enums.AccountStatus
   user: Prisma.UserCreateNestedOneWithoutStudentInput
 }
 
@@ -242,6 +268,8 @@ export type StudentUncheckedCreateInput = {
   matricule: string
   speciality: $Enums.Speciality
   group?: string | null
+  cursus: $Enums.Cursus
+  accountStatus?: $Enums.AccountStatus
 }
 
 export type StudentUpdateInput = {
@@ -249,6 +277,8 @@ export type StudentUpdateInput = {
   matricule?: Prisma.StringFieldUpdateOperationsInput | string
   speciality?: Prisma.EnumSpecialityFieldUpdateOperationsInput | $Enums.Speciality
   group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
+  accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
 }
 
@@ -258,6 +288,8 @@ export type StudentUncheckedUpdateInput = {
   matricule?: Prisma.StringFieldUpdateOperationsInput | string
   speciality?: Prisma.EnumSpecialityFieldUpdateOperationsInput | $Enums.Speciality
   group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
+  accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
 }
 
 export type StudentCreateManyInput = {
@@ -266,6 +298,8 @@ export type StudentCreateManyInput = {
   matricule: string
   speciality: $Enums.Speciality
   group?: string | null
+  cursus: $Enums.Cursus
+  accountStatus?: $Enums.AccountStatus
 }
 
 export type StudentUpdateManyMutationInput = {
@@ -273,6 +307,8 @@ export type StudentUpdateManyMutationInput = {
   matricule?: Prisma.StringFieldUpdateOperationsInput | string
   speciality?: Prisma.EnumSpecialityFieldUpdateOperationsInput | $Enums.Speciality
   group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
+  accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
 }
 
 export type StudentUncheckedUpdateManyInput = {
@@ -281,6 +317,8 @@ export type StudentUncheckedUpdateManyInput = {
   matricule?: Prisma.StringFieldUpdateOperationsInput | string
   speciality?: Prisma.EnumSpecialityFieldUpdateOperationsInput | $Enums.Speciality
   group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
+  accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
 }
 
 export type StudentNullableScalarRelationFilter = {
@@ -294,6 +332,8 @@ export type StudentCountOrderByAggregateInput = {
   matricule?: Prisma.SortOrder
   speciality?: Prisma.SortOrder
   group?: Prisma.SortOrder
+  cursus?: Prisma.SortOrder
+  accountStatus?: Prisma.SortOrder
 }
 
 export type StudentMaxOrderByAggregateInput = {
@@ -302,6 +342,8 @@ export type StudentMaxOrderByAggregateInput = {
   matricule?: Prisma.SortOrder
   speciality?: Prisma.SortOrder
   group?: Prisma.SortOrder
+  cursus?: Prisma.SortOrder
+  accountStatus?: Prisma.SortOrder
 }
 
 export type StudentMinOrderByAggregateInput = {
@@ -310,6 +352,8 @@ export type StudentMinOrderByAggregateInput = {
   matricule?: Prisma.SortOrder
   speciality?: Prisma.SortOrder
   group?: Prisma.SortOrder
+  cursus?: Prisma.SortOrder
+  accountStatus?: Prisma.SortOrder
 }
 
 export type StudentCreateNestedOneWithoutUserInput = {
@@ -352,11 +396,21 @@ export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
 }
 
+export type EnumCursusFieldUpdateOperationsInput = {
+  set?: $Enums.Cursus
+}
+
+export type EnumAccountStatusFieldUpdateOperationsInput = {
+  set?: $Enums.AccountStatus
+}
+
 export type StudentCreateWithoutUserInput = {
   id?: string
   matricule: string
   speciality: $Enums.Speciality
   group?: string | null
+  cursus: $Enums.Cursus
+  accountStatus?: $Enums.AccountStatus
 }
 
 export type StudentUncheckedCreateWithoutUserInput = {
@@ -364,6 +418,8 @@ export type StudentUncheckedCreateWithoutUserInput = {
   matricule: string
   speciality: $Enums.Speciality
   group?: string | null
+  cursus: $Enums.Cursus
+  accountStatus?: $Enums.AccountStatus
 }
 
 export type StudentCreateOrConnectWithoutUserInput = {
@@ -387,6 +443,8 @@ export type StudentUpdateWithoutUserInput = {
   matricule?: Prisma.StringFieldUpdateOperationsInput | string
   speciality?: Prisma.EnumSpecialityFieldUpdateOperationsInput | $Enums.Speciality
   group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
+  accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
 }
 
 export type StudentUncheckedUpdateWithoutUserInput = {
@@ -394,6 +452,8 @@ export type StudentUncheckedUpdateWithoutUserInput = {
   matricule?: Prisma.StringFieldUpdateOperationsInput | string
   speciality?: Prisma.EnumSpecialityFieldUpdateOperationsInput | $Enums.Speciality
   group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
+  accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
 }
 
 
@@ -404,6 +464,8 @@ export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   matricule?: boolean
   speciality?: boolean
   group?: boolean
+  cursus?: boolean
+  accountStatus?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["student"]>
 
@@ -413,6 +475,8 @@ export type StudentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   matricule?: boolean
   speciality?: boolean
   group?: boolean
+  cursus?: boolean
+  accountStatus?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["student"]>
 
@@ -422,6 +486,8 @@ export type StudentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   matricule?: boolean
   speciality?: boolean
   group?: boolean
+  cursus?: boolean
+  accountStatus?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["student"]>
 
@@ -431,9 +497,11 @@ export type StudentSelectScalar = {
   matricule?: boolean
   speciality?: boolean
   group?: boolean
+  cursus?: boolean
+  accountStatus?: boolean
 }
 
-export type StudentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "matricule" | "speciality" | "group", ExtArgs["result"]["student"]>
+export type StudentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "matricule" | "speciality" | "group" | "cursus" | "accountStatus", ExtArgs["result"]["student"]>
 export type StudentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -455,6 +523,8 @@ export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     matricule: string
     speciality: $Enums.Speciality
     group: string | null
+    cursus: $Enums.Cursus
+    accountStatus: $Enums.AccountStatus
   }, ExtArgs["result"]["student"]>
   composites: {}
 }
@@ -884,6 +954,8 @@ export interface StudentFieldRefs {
   readonly matricule: Prisma.FieldRef<"Student", 'String'>
   readonly speciality: Prisma.FieldRef<"Student", 'Speciality'>
   readonly group: Prisma.FieldRef<"Student", 'String'>
+  readonly cursus: Prisma.FieldRef<"Student", 'Cursus'>
+  readonly accountStatus: Prisma.FieldRef<"Student", 'AccountStatus'>
 }
     
 

@@ -1,13 +1,15 @@
-import { IsEmail, IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
-import { Speciality } from '../../generated/prisma/client';
+import {
+  IsEmail,
+  IsEnum,
+  IsOptional,
+  IsString,
+  MinLength,
+} from "class-validator";
+import { Speciality,Cursus } from "../../generated/prisma/client";
 
 export class CreateStudentDto {
   @IsEmail()
   email: string;
-
-  @IsString()
-  @MinLength(8)
-  password: string;
 
   @IsString()
   firstName: string;
@@ -18,10 +20,13 @@ export class CreateStudentDto {
   @IsString()
   matricule: string;
 
+  @IsEnum(Cursus)
+  cursus: Cursus;
+
   @IsEnum(Speciality)
   speciality: Speciality;
 
   @IsOptional()
   @IsString()
-  group?: string;
+  group?: string | null;
 }

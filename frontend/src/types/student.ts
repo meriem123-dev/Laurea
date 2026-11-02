@@ -1,27 +1,28 @@
 export type Cursus = 'MASTER' | 'INGENIEUR'
-
-// États du workflow : DÉPOSÉ → VALIDÉ → PLANIFIÉ → SOUTENU → NOTÉ → CLOS
 export type ProjectStatus = 'deposited' | 'validated' | 'planned' | 'defended' | 'graded' | 'closed'
+export type AccountStatus = 'PENDING' | 'ACTIVE' | 'DISABLED'
+export type Speciality =
+  | "RESEAUX_SEC"
+  | "DATA_SCIENCE"
+  | "GENIE_LOGICIEL"
+  | "INTELLIGENCE_ARTIFICIELLE"
+  | "SYSTEMES_INFORMATION";
 
 export interface Student {
-  id: number
+  id: string
   firstName: string
   lastName: string
   email: string
   matricule: string
-  specialty: string
-  group: string
-  cursus: Cursus
+  cursus: Cursus;
+  speciality: Speciality
+  group: string | null
   projectStatus: ProjectStatus
+  accountStatus: AccountStatus
 }
 
 // Données saisies dans le formulaire
-export interface StudentFormData {
-  firstName: string
-  lastName: string
-  email: string
-  matricule: string
-  specialty: string
-  group: string // facultatif : chaîne vide si non renseigné
-  temporaryPassword: string // création seulement ; à envoyer au backend, jamais conservé côté client
-}
+export type StudentFormData = Pick<
+  Student,
+  'firstName' | 'lastName' | 'email' | 'matricule' | 'cursus'| 'speciality' | 'group'
+>

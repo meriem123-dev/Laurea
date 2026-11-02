@@ -154,6 +154,39 @@ const router = createRouter({
       ],
     },
     {
+      path: "/student",
+      component: AppLayout,
+      props: { role: "STUDENT" },
+      meta: { requiresAuth: true, roles: ["STUDENT"] },
+      children: [
+        { path: "", redirect: "/student/dashboard" },
+        {
+          path: "dashboard",
+          name: "student-dashboard",
+          component: () => import("../views/student/DashboardView.vue"),
+          meta: { title: "Tableau de bord" },
+        },
+        {
+          path: "project",
+          name: "student-project",
+          component: () => import("../views/student/ProjectView.vue"),
+          meta: { title: "Mon projet PFE" },
+        },
+        {
+          path: "notifications",
+          name: "student-notifications",
+          component: () => import("../views/student/NotificationsView.vue"),
+          meta: { title: "Notifications" },
+        },
+        {
+          path: "profile",
+          name: "student-profile",
+          component: () => import("../views/student/ProfileView.vue"),
+          meta: { title: "Mon profil" },
+        },
+      ],
+    },
+    {
       // Provisoire : toute route inconnue renvoie au login
       // (à remplacer par une vraie page 404 dans views/errors/)
       path: "/:pathMatch(.*)*",
@@ -163,10 +196,15 @@ const router = createRouter({
 });
 
 router.beforeEach((to) => {
-  // DEV UNIQUEMENT (npm run dev) : l'espace enseignant s'ouvre sans compte backend.
+  // DEV UNIQUEMENT (npm run dev) : les espaces enseignant et étudiant s'ouvrent sans compte backend.
   // En production, import.meta.env.DEV vaut false : cette ligne est inactive.
-  // À supprimer quand les comptes enseignants existeront côté backend.
-  if (import.meta.env.DEV && to.path.startsWith("/professor")) return true;
+  // À supprimer quand les comptes enseignants et étudiants existeront côté backend.
+  if (
+    import.meta.env.DEV &&
+    (to.path.startsWith("/professor") || to.path.startsWith("/student"))
+  ) {
+    return true;
+  }
 
   const auth = useAuthStore();
 

@@ -1,6 +1,6 @@
 import type { UserRole } from '../types/auth'
 import type { AppNotification } from '../types/notification'
-
+import { studentNotifications } from './studentNotifications'
 // Données fictives : à remplacer par les appels API (api/ + store).
 // Les dates sont calculées par rapport à maintenant pour que « il y a 2 h » reste cohérent.
 const ago = (minutes: number) => new Date(Date.now() - minutes * 60_000).toISOString()
@@ -134,5 +134,5 @@ const professorNotifications: AppNotification[] = [
 export const notificationsByRole: Record<UserRole, AppNotification[]> = {
   ADMIN_STAFF: adminNotifications,
   TEACHER: professorNotifications,
-  STUDENT: [], // TODO : espace étudiant pas encore conçu
+    STUDENT: studentNotifications, // TODO : espace étudiant pas encore conçu
 }

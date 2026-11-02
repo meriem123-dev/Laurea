@@ -32,4 +32,6 @@ export class AuthController {
     await this.auth.resetPassword(dto.token, dto.password);
     return { message: "Mot de passe modifié." };
   }
+
+  
 }
