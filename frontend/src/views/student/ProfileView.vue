@@ -78,7 +78,7 @@ const labelClass = 'text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-
           </div>
           <div class="min-w-0">
             <dt :class="labelClass">Spécialité</dt>
-            <dd class="mt-1 text-sm text-ink">{{ student.specialty }}</dd>
+            <dd class="mt-1 text-sm text-ink">{{student.speciality }}</dd>
           </div>
           <div class="min-w-0">
             <dt :class="labelClass">Groupe</dt>

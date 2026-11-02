@@ -8,12 +8,12 @@ import { useDefensesData } from './useDefensesData'
 
 // Description modifiable par l'étudiant. État partagé au niveau du module.
 // TODO backend : PATCH /projects/:id/description
-const descriptions = ref<Record<number, string>>(
+const descriptions = ref<Record<string, string>>(
   Object.fromEntries(Object.entries(projectMeta).map(([id, meta]) => [id, meta.description])),
 )
 
 // TODO backend : remplacer par GET /students/me/project
-export function useStudentSpace(studentId: number) {
+export function useStudentSpace(studentId: string) {
   const { views } = useDefensesData()
 
   const student = computed(() => students.find((item) => item.id === studentId))

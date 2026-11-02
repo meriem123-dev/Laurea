@@ -7,8 +7,8 @@ export interface Grade {
 
 export interface DefenseResult {
   id: number
-  studentId: number
-  expectedGrades: number // nombre de notes attendues du jury
-  grades: Grade[] // notes déjà reçues
+  studentId: string
+  expectedGrades: number
+  grades: Grade[]
   published: boolean
 }

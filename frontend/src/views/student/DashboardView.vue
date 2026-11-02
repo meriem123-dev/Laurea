@@ -140,7 +140,7 @@ function openNotification(item: AppNotification) {
                 Encadré par <span class="font-semibold text-ink">{{ displayName(supervisor) }}</span>
               </template>
               <template v-if="student">
-                · {{ CURSUS_LABELS[student.cursus] }} {{ student.specialty }}
+                · {{ CURSUS_LABELS[student.cursus] }} {{ student.speciality }}
               </template>
             </p>
 

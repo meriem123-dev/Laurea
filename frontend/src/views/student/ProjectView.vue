@@ -127,7 +127,7 @@ const labelClass = 'text-[0.625rem] font-bold uppercase tracking-[0.14em] text-t
             <p class="mt-1 text-xs text-text-muted">
               Projet PFE
               <template v-if="student">
-                · {{ CURSUS_LABELS[student.cursus] }} {{ student.specialty }}
+                · {{ CURSUS_LABELS[student.cursus] }} {{ student.speciality }}
               </template>
               · {{ project.academicYear }}
             </p>
