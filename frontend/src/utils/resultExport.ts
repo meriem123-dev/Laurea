@@ -5,8 +5,7 @@ import { PUBLICATION_META, formatGrade } from './result'
 import { fullName } from './student'
 
 const CSV_SEPARATOR = ';' // séparateur attendu par Excel en français
-const PASS_MARK = 10 // note minimale d'admission
-
+export const PASS_MARK = 10
 function csvCell(value: string): string {
   // Neutralise les formules (=, +, -, @) qu'Excel exécuterait à l'ouverture
   const safe = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value
@@ -37,8 +36,8 @@ export function resultsToCsv(views: ResultView[]): string {
   return '\uFEFF' + [header, ...lines].map((row) => row.map(csvCell).join(CSV_SEPARATOR)).join('\r\n')
 }
 
-function mentionOf(grade: number): string {
-  if (grade >= 16) return 'Très bien'
+export function mentionOf(grade: number): string {
+    if (grade >= 16) return 'Très bien'
   if (grade >= 14) return 'Bien'
   if (grade >= 12) return 'Assez bien'
   if (grade >= PASS_MARK) return 'Passable'
