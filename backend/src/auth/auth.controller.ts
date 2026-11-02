@@ -26,12 +26,8 @@ export class AuthController {
     // même réponse que l'email existe ou non
     return { message: "Si ce compte existe, un email a été envoyé." };
   }
-
   @Post("reset-password")
-  async resetPassword(@Body() dto: ResetPasswordDto) {
-    await this.auth.resetPassword(dto.token, dto.password);
-    return { message: "Mot de passe modifié." };
+  resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.auth.resetPassword(dto.token, dto.password);
   }
-
-  
 }

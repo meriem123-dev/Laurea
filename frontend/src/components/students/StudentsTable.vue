@@ -10,6 +10,7 @@ import { PROJECT_STATUS_META } from "../../utils/projectStatus";
 import { fullName, initials } from "../../utils/student";
 import type { Student } from "../../types/student";
 import { SPECIALITY_LABELS } from "../../utils/speciality";
+import { ACCOUNT_STATUS_META } from "../../utils/accountStatus.js";
 
 const props = defineProps<{
   students: Student[];
@@ -28,6 +29,7 @@ const columns: TableColumn[] = [
   { key: "cursus", label: "Cursus" },
   { key: "speciality", label: "Spécialité" },
   { key: "group", label: "Groupe" },
+  { key: "account", label: "Compte" },
   { key: "status", label: "Statut PFE" },
   { key: "action", label: "Action", align: "right" },
 ];
@@ -101,6 +103,10 @@ function onAction(key: string, student: Student) {
         <span class="text-xs font-medium tabular-nums text-text-secondary">{{
           row.group || "—"
         }}</span>
+      </template>
+
+      <template #cell-account="{ row }">
+        {{ ACCOUNT_STATUS_META[row.accountStatus].label }}
       </template>
 
       <template #cell-status="{ row }">

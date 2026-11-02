@@ -10,6 +10,7 @@ import { UsersService } from "../users/users.service";
 import { Role } from "../generated/prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { MailService } from "./mail.service";
+import { AccountStatus } from "../generated/prisma/client";
 
 const sha256 = (s: string) => createHash("sha256").update(s).digest("hex");
 
@@ -71,42 +72,69 @@ export class AuthService {
   }
 
   //logique réinitailisation mdp
+
   async resetPassword(token: string, newPassword: string) {
     const record = await this.prisma.passwordResetToken.findUnique({
       where: { tokenHash: sha256(token) },
+      include: { user: { include: { student: true } } },
     });
 
     if (!record || record.usedAt || record.expiresAt < new Date()) {
       throw new BadRequestException("Lien invalide ou expiré");
     }
 
+    const { user } = record;
+    const isActivation = user.student?.accountStatus === AccountStatus.PENDING;
+
     await this.prisma.$transaction([
       this.prisma.user.update({
-        where: { id: record.userId },
-        data: { passwordHash: await argon2.hash(newPassword) },
+        where: { id: user.id },
+        data: {
+          passwordHash: await argon2.hash(newPassword),
+          ...(isActivation && {
+            student: { update: { accountStatus: AccountStatus.ACTIVE } },
+          }),
+        },
       }),
       this.prisma.passwordResetToken.update({
         where: { id: record.id },
         data: { usedAt: new Date() },
       }),
     ]);
+
+    // même format de retour que login
+    const payload = { sub: user.id, role: user.role };
+    return {
+      accessToken: await this.jwt.signAsync(payload),
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+      },
+    };
   }
 
-  //activation compte étudiant 
-  async sendActivationLink(user: { id: string; email: string; firstName: string }) {
-  const token = randomBytes(32).toString('base64url');
-  const tokenHash = createHash('sha256').update(token).digest('hex');
+  //activation compte étudiant
+  async sendActivationLink(user: {
+    id: string;
+    email: string;
+    firstName: string;
+  }) {
+    const token = randomBytes(32).toString("base64url");
+    const tokenHash = createHash("sha256").update(token).digest("hex");
 
-  // une expiration de 48h
-  await this.prisma.passwordResetToken.create({
-    data: {
-      userId: user.id,
-      tokenHash,
-      expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000),
-    },
-  });
+    // une expiration de 48h
+    await this.prisma.passwordResetToken.create({
+      data: {
+        userId: user.id,
+        tokenHash,
+        expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000),
+      },
+    });
 
-  const link = `${process.env.FRONT_URL}/reset-password?token=${token}`;
-  return this.mail.sendActivationLink(user.email, link, user.firstName);
-}
+    const link = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    return this.mail.sendActivationLink(user.email, link, user.firstName);
+  }
 }
