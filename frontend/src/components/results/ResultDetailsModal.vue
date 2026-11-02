@@ -29,7 +29,7 @@ const fields = computed(() => {
       label: 'Étudiant',
       value: current.student ? `${fullName(current.student)} (${current.student.matricule})` : '',
     },
-    { label: 'Spécialité', value: current.student?.specialty ?? '' },
+    { label: 'Spécialité', value: current.student?.speciality ?? '' },
     {
       label: 'Notes reçues',
       value: `${current.result.grades.length} sur ${current.result.expectedGrades}`,

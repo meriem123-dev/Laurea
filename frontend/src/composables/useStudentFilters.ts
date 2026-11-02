@@ -6,10 +6,10 @@ import { normalizeText as normalize } from '../utils/format'
 
 export function useStudentFilters(students: Ref<Student[]>) {
   const search = ref('')
-  const specialty = ref('') // '' = toutes
+  const speciality = ref('') // '' = toutes
 
-  const specialtyOptions = computed(() => {
-    const unique = [...new Set(students.value.map((student) => student.specialty))].sort((a, b) =>
+  const specialityOptions = computed(() => {
+    const unique = [...new Set(students.value.map((student) => student.speciality))].sort((a, b) =>
       a.localeCompare(b, 'fr'),
     )
     return [
@@ -22,14 +22,14 @@ export function useStudentFilters(students: Ref<Student[]>) {
     const query = normalize(search.value)
 
     return students.value.filter((student) => {
-      const matchesSpecialty = !specialty.value || student.specialty === specialty.value
+      const matchesSpeciality = !speciality.value || student.speciality === speciality.value
       const matchesSearch =
         !query ||
         normalize(fullName(student)).includes(query) ||
         normalize(student.matricule).includes(query)
-      return matchesSpecialty && matchesSearch
+      return matchesSpeciality && matchesSearch
     })
   })
 
-  return { search, specialty, specialtyOptions, filtered }
+  return { search, speciality, specialityOptions, filtered }
 }

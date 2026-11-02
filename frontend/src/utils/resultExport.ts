@@ -92,7 +92,7 @@ export function buildReportHtml(view: ResultView, generatedOn: string): string {
       <dl class="info">
         <div><dt>Étudiant</dt><dd>${escapeHtml(student ? fullName(student) : '')}</dd></div>
         <div><dt>Matricule</dt><dd>${escapeHtml(student?.matricule ?? '')}</dd></div>
-        <div><dt>Spécialité</dt><dd>${escapeHtml(student?.specialty ?? '')}</dd></div>
+        <div><dt>Spécialité</dt><dd>${escapeHtml(student?.speciality ?? '')}</dd></div>
         <div><dt>Domaine</dt><dd>${escapeHtml(view.project?.domain ?? '')}</dd></div>
         <div class="full"><dt>Intitulé du projet</dt><dd>${escapeHtml(view.project?.title ?? '')}</dd></div>
       </dl>

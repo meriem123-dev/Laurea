@@ -22,6 +22,7 @@ export class AuthService {
     private mail: MailService,
   ) {}
 
+  //logique login
   async login(email: string, password: string, role?: Role) {
     const user = await this.users.findByEmail(email);
 
@@ -48,6 +49,7 @@ export class AuthService {
     };
   }
 
+  //logique forgot password
   async forgotPassword(email: string) {
     const user = await this.users.findByEmail(email);
     if (!user || !user.isActive) return; // même réponse dans tous les cas
@@ -68,6 +70,7 @@ export class AuthService {
     );
   }
 
+  //logique réinitailisation mdp
   async resetPassword(token: string, newPassword: string) {
     const record = await this.prisma.passwordResetToken.findUnique({
       where: { tokenHash: sha256(token) },
@@ -88,4 +91,22 @@ export class AuthService {
       }),
     ]);
   }
+
+  //activation compte étudiant 
+  async sendActivationLink(user: { id: string; email: string; firstName: string }) {
+  const token = randomBytes(32).toString('base64url');
+  const tokenHash = createHash('sha256').update(token).digest('hex');
+
+  // une expiration de 48h
+  await this.prisma.passwordResetToken.create({
+    data: {
+      userId: user.id,
+      tokenHash,
+      expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000),
+    },
+  });
+
+  const link = `${process.env.FRONT_URL}/reset-password?token=${token}`;
+  return this.mail.sendActivationLink(user.email, link, user.firstName);
+}
 }

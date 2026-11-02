@@ -712,7 +712,9 @@ export const StudentScalarFieldEnum = {
   userId: 'userId',
   matricule: 'matricule',
   speciality: 'speciality',
-  group: 'group'
+  group: 'group',
+  cursus: 'cursus',
+  accountStatus: 'accountStatus'
 } as const
 
 export type StudentScalarFieldEnum = (typeof StudentScalarFieldEnum)[keyof typeof StudentScalarFieldEnum]
@@ -808,6 +810,34 @@ export type EnumSpecialityFieldRefInput<$PrismaModel> = FieldRefInputType<$Prism
  * Reference to a field of type 'Speciality[]'
  */
 export type ListEnumSpecialityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Speciality[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Cursus'
+ */
+export type EnumCursusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Cursus'>
+    
+
+
+/**
+ * Reference to a field of type 'Cursus[]'
+ */
+export type ListEnumCursusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Cursus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'AccountStatus'
+ */
+export type EnumAccountStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccountStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'AccountStatus[]'
+ */
+export type ListEnumAccountStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccountStatus[]'>
     
 
 

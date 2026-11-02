@@ -27,3 +27,20 @@ export const Speciality = {
 } as const
 
 export type Speciality = (typeof Speciality)[keyof typeof Speciality]
+
+
+export const Cursus = {
+  MASTER: 'MASTER',
+  INGENIEUR: 'INGENIEUR'
+} as const
+
+export type Cursus = (typeof Cursus)[keyof typeof Cursus]
+
+
+export const AccountStatus = {
+  PENDING: 'PENDING',
+  ACTIVE: 'ACTIVE',
+  DISABLED: 'DISABLED'
+} as const
+
+export type AccountStatus = (typeof AccountStatus)[keyof typeof AccountStatus]

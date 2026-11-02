@@ -23,6 +23,17 @@ enum Speciality {
   SYSTEMES_INFORMATION
 }
 
+enum Cursus {
+  MASTER
+  INGENIEUR
+}
+
+enum AccountStatus {
+  PENDING
+  ACTIVE
+  DISABLED
+}
+
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
@@ -54,4 +65,6 @@ model Student {
   matricule  String     @unique
   speciality Speciality
   group      String?
+  cursus        Cursus
+  accountStatus AccountStatus @default(PENDING)
 }

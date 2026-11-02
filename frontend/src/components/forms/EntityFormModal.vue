@@ -1,133 +1,142 @@
 <script setup lang="ts">
-import { computed, reactive, useId, watch, type Component } from 'vue'
-import BaseAlert from '../common/BaseAlert.vue'
-import BaseButton from '../common/BaseButton.vue'
-import BaseModal from '../common/BaseModal.vue'
-import BaseInput from './BaseInput.vue'
-import BaseSelect from './BaseSelect.vue'
-import BaseTextarea from './BaseTextarea.vue'
-import type { FormFieldConfig, FormValues } from '../../types/form'
+import { computed, reactive, useId, watch, type Component } from "vue";
+import BaseAlert from "../common/BaseAlert.vue";
+import BaseButton from "../common/BaseButton.vue";
+import BaseModal from "../common/BaseModal.vue";
+import BaseInput from "./BaseInput.vue";
+import BaseSelect from "./BaseSelect.vue";
+import BaseTextarea from "./BaseTextarea.vue";
+import type { FormFieldConfig, FormValues } from "../../types/form";
 
 const props = withDefaults(
   defineProps<{
-    modelValue: boolean
-    title: string
-    subtitle?: string
-    icon?: Component
-    fields: FormFieldConfig[]
-    initialValues?: FormValues // valeurs de départ (modification, ou valeurs par défaut)
-    submitLabel?: string
-    notice?: string // encadré d'information en bas du formulaire
-    footerNote?: string // phrase à gauche des boutons
-    size?: 'md' | 'lg'
-    loading?: boolean
+    modelValue: boolean;
+    title: string;
+    subtitle?: string;
+    icon?: Component;
+    fields: FormFieldConfig[];
+    initialValues?: FormValues; // valeurs de départ (modification, ou valeurs par défaut)
+    submitLabel?: string;
+    notice?: string; // encadré d'information en bas du formulaire
+    footerNote?: string; // phrase à gauche des boutons
+    size?: "md" | "lg";
+    loading?: boolean;
+    error?: string | null;
   }>(),
-  { submitLabel: 'Enregistrer', size: 'md', loading: false },
-)
+  { submitLabel: "Enregistrer", size: "md", loading: false },
+);
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-  submit: [values: FormValues]
-}>()
+  "update:modelValue": [value: boolean];
+  submit: [values: FormValues];
+}>();
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const formId = useId()
-const values = reactive<FormValues>({})
-const errors = reactive<FormValues>({})
+const formId = useId();
+const values = reactive<FormValues>({});
+const errors = reactive<FormValues>({});
 
-const hasRequired = computed(() => props.fields.some((field) => field.required))
+const hasRequired = computed(() =>
+  props.fields.some((field) => field.required),
+);
 
 // Champs affichés (les champs conditionnels dépendent des valeurs saisies)
 const visibleFields = computed(() =>
-  props.fields.filter((field) => !field.visibleWhen || field.visibleWhen(values)),
-)
+  props.fields.filter(
+    (field) => !field.visibleWhen || field.visibleWhen(values),
+  ),
+);
 
 // Chaque champ, avec le titre de section à afficher avant lui (s'il ouvre une nouvelle section)
 const rows = computed(() =>
   visibleFields.value.map((field, index) => {
-    const previous = visibleFields.value[index - 1]
-    const heading = field.section && field.section !== previous?.section ? field.section : ''
-    return { field, heading }
+    const previous = visibleFields.value[index - 1];
+    const heading =
+      field.section && field.section !== previous?.section ? field.section : "";
+    return { field, heading };
   }),
-)
+);
 
 // Formulaire réinitialisé à l'ouverture ET à la fermeture (un mot de passe ne reste pas en mémoire)
 function reset() {
-  for (const key of Object.keys(values)) delete values[key]
-  for (const key of Object.keys(errors)) delete errors[key]
+  for (const key of Object.keys(values)) delete values[key];
+  for (const key of Object.keys(errors)) delete errors[key];
   for (const field of props.fields) {
-    values[field.key] = props.initialValues?.[field.key] ?? ''
-    errors[field.key] = ''
+    values[field.key] = props.initialValues?.[field.key] ?? "";
+    errors[field.key] = "";
   }
 }
-watch(() => props.modelValue, reset, { immediate: true })
+watch(() => props.modelValue, reset, { immediate: true });
 
-function inputType(field: FormFieldConfig): 'text' | 'email' | 'password' | 'date' | 'time' {
-  return field.type === 'email' ||
-    field.type === 'password' ||
-    field.type === 'date' ||
-    field.type === 'time'
+function inputType(
+  field: FormFieldConfig,
+): "text" | "email" | "password" | "date" | "time" {
+  return field.type === "email" ||
+    field.type === "password" ||
+    field.type === "date" ||
+    field.type === "time"
     ? field.type
-    : 'text'
+    : "text";
 }
 
 function onInput(key: string, value: string) {
-  values[key] = value
-  errors[key] = '' // l'erreur disparaît dès qu'on modifie le champ
+  values[key] = value;
+  errors[key] = ""; // l'erreur disparaît dès qu'on modifie le champ
 }
 
 function normalized(field: FormFieldConfig, raw: string): string {
-  if (field.normalize) return field.normalize(raw)
-  if (field.type === 'password') return raw
-  if (field.type === 'email') return raw.trim().toLowerCase()
-  return raw.trim()
+  if (field.normalize) return field.normalize(raw);
+  if (field.type === "password") return raw;
+  if (field.type === "email") return raw.trim().toLowerCase();
+  return raw.trim();
 }
 
 function validate(): FormValues | null {
-  const result: FormValues = {}
-  let firstInvalid: string | null = null
+  const result: FormValues = {};
+  let firstInvalid: string | null = null;
 
   for (const field of props.fields) {
     // Champ masqué : ignoré à la validation et envoyé vide
     if (field.visibleWhen && !field.visibleWhen(values)) {
-      result[field.key] = ''
-      errors[field.key] = ''
-      continue
+      result[field.key] = "";
+      errors[field.key] = "";
+      continue;
     }
 
-    const value = normalized(field, values[field.key] ?? '')
-    result[field.key] = value
+    const value = normalized(field, values[field.key] ?? "");
+    result[field.key] = value;
 
-    let message = ''
+    let message = "";
     if (!value) {
-      if (field.required) message = field.requiredMessage ?? 'Ce champ est obligatoire.'
-    } else if (field.type === 'email' && !EMAIL_PATTERN.test(value)) {
-      message = 'Saisissez une adresse e-mail valide.'
+      if (field.required)
+        message = field.requiredMessage ?? "Ce champ est obligatoire.";
+    } else if (field.type === "email" && !EMAIL_PATTERN.test(value)) {
+      message = "Saisissez une adresse e-mail valide.";
     } else if (field.minLength && value.length < field.minLength) {
-      message = `Au moins ${field.minLength} caractères.`
+      message = `Au moins ${field.minLength} caractères.`;
     } else if (field.validate) {
-      message = field.validate(value, values)
+      message = field.validate(value, values);
     }
 
-    errors[field.key] = message
-    if (message && firstInvalid === null) firstInvalid = field.key
+    errors[field.key] = message;
+    if (message && firstInvalid === null) firstInvalid = field.key;
   }
 
   if (firstInvalid !== null) {
-    document.getElementById(`${formId}-${firstInvalid}`)?.focus()
-    return null
+    document.getElementById(`${formId}-${firstInvalid}`)?.focus();
+    return null;
   }
-  return result
+  return result;
 }
 
 function handleSubmit() {
-  const result = validate()
-  if (result) emit('submit', result)
+  const result = validate();
+  if (result) emit("submit", result);
 }
 
 function close() {
-  emit('update:modelValue', false)
+  emit("update:modelValue", false);
 }
 </script>
 
@@ -147,9 +156,17 @@ function close() {
       @submit.prevent="handleSubmit"
     >
       <p v-if="hasRequired" class="text-xs text-text-secondary sm:col-span-2">
-        <span class="text-danger-dark" aria-hidden="true">*</span> Champs obligatoires
+        <span class="text-danger-dark" aria-hidden="true">*</span> Champs
+        obligatoires
       </p>
 
+      <p
+        v-if="error"
+        role="alert"
+        class="rounded-lg border border-danger-dark/30 bg-danger-dark/5 px-4 py-3 text-sm text-danger-dark sm:col-span-2"
+      >
+        {{ error }}
+      </p>
       <template v-for="row in rows" :key="row.field.key">
         <p
           v-if="row.heading"
@@ -214,7 +231,13 @@ function close() {
       >
         {{ footerNote }}
       </p>
-      <BaseButton variant="secondary" size="md" class="w-full sm:w-auto" @click="close">
+      <BaseButton
+        variant="secondary"
+        size="md"
+        class="w-full sm:w-auto"
+        :disabled="loading"
+        @click="close"
+      >
         Annuler
       </BaseButton>
       <BaseButton

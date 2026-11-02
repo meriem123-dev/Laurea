@@ -174,7 +174,7 @@ function onLock() {
                 Cursus
               </dt>
               <dd class="mt-0.5 text-sm font-semibold text-ink">
-                {{ student ? `${CURSUS_LABELS[student.cursus]} · ${student.specialty}` : '—' }}
+                {{ student ? `${CURSUS_LABELS[student.cursus]} · ${student.speciality}` : '—' }}
               </dd>
             </div>
           </div>

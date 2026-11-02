@@ -1,150 +1,186 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { FileUp, Pencil, Plus, User, UserPlus } from '@lucide/vue'
-import BaseButton from '../../components/common/BaseButton.vue'
-import ConfirmDialog from '../../components/common/ConfirmDialog.vue'
-import DetailsModal from '../../components/common/DetailsModal.vue'
-import EntityFormModal from '../../components/forms/EntityFormModal.vue'
-import PageHeader from '../../components/layout/PageHeader.vue'
-import FilterBar from '../../components/common/FilterBar.vue'
-import StudentsTable from '../../components/students/StudentsTable.vue'
-import { useStudentFilters } from '../../composables/useStudentFilters'
-import { students as studentsMock } from '../../mocks/students'
-import { invitationNotice } from '../../utils/accountFields'
-import { PROJECT_STATUS_META } from '../../utils/projectStatus'
-import { fullName } from '../../utils/student'
-import { buildStudentFields, studentToFormValues, toStudentData } from '../../utils/studentForm'
-import type { FormValues } from '../../types/form'
-import type { Student } from '../../types/student'
+import { computed, onMounted, ref } from "vue";
+import { storeToRefs } from "pinia";
+import { FileUp, Pencil, Plus, User, UserPlus } from "@lucide/vue";
+import BaseButton from "../../components/common/BaseButton.vue";
+import ConfirmDialog from "../../components/common/ConfirmDialog.vue";
+import DetailsModal from "../../components/common/DetailsModal.vue";
+import EntityFormModal from "../../components/forms/EntityFormModal.vue";
+import PageHeader from "../../components/layout/PageHeader.vue";
+import FilterBar from "../../components/common/FilterBar.vue";
+import StudentsTable from "../../components/students/StudentsTable.vue";
+import { useStudentFilters } from "../../composables/useStudentFilters";
+import { useStudentsStore } from "./stores/students";
+import { ACCOUNT_STATUS_META } from "../../utils/accountStatus";
+import { invitationNotice } from "../../utils/accountFields";
+import { getErrorMessage } from "../../utils/apiError";
+import { PROJECT_STATUS_META } from "../../utils/projectStatus";
+import { fullName } from "../../utils/student";
+import {
+  buildStudentFields,
+  studentToFormValues,
+  toStudentData,
+} from "../../utils/studentForm";
+import type { FormValues } from "../../types/form";
+import type { Student } from "../../types/student";
+import { SPECIALITY_LABELS } from "../../utils/speciality";
 
-const CURSUS_LABELS = { MASTER: 'Master', INGENIEUR: 'Ingénieur' } as const
+const CURSUS_LABELS = { MASTER: "Master", INGENIEUR: "Ingénieur" } as const;
 
-// TODO backend : charger la liste via api/ + store (avec états chargement / erreur)
-const students = ref<Student[]>(studentsMock)
-const { search, specialty, specialtyOptions, filtered } = useStudentFilters(students)
+const store = useStudentsStore();
+const { items: students, loading, error } = storeToRefs(store);
+onMounted(() => store.fetchAll());
+
+const { search, speciality, specialityOptions, filtered } =
+  useStudentFilters(students);
 const filterSelects = computed(() => [
   {
-    key: 'specialty',
-    ariaLabel: 'Filtrer par spécialité',
-    options: specialtyOptions.value,
-    modelValue: specialty.value,
+    key: "speciality",
+    ariaLabel: "Filtrer par spécialité",
+    options: specialityOptions.value,
+    modelValue: speciality.value,
   },
-])
-// Étudiant ciblé par la modification, le détail ou la suppression (null = création)
-const selected = ref<Student | null>(null)
-const isFormOpen = ref(false)
-const isDetailsOpen = ref(false)
-const isDeleteOpen = ref(false)
+]);
 
-const isEdit = computed(() => selected.value !== null)
+// Étudiant ciblé par la modification, le détail ou la suppression (null = création)
+const selected = ref<Student | null>(null);
+const isFormOpen = ref(false);
+const isDetailsOpen = ref(false);
+const isDeleteOpen = ref(false);
+
+// Retours à l'utilisateur
+const isSaving = ref(false);
+const formError = ref<string | null>(null);
+const feedback = ref<{
+  tone: "success" | "warning" | "error";
+  text: string;
+} | null>(null);
+const FEEDBACK_CLASSES = {
+  success: "border-green-200 bg-green-50 text-green-800",
+  warning: "border-amber-200 bg-amber-50 text-amber-800",
+  error: "border-red-200 bg-red-50 text-red-800",
+} as const;
+
+const isEdit = computed(() => selected.value !== null);
 
 // En modification, l'étudiant ne doit pas entrer en conflit avec ses propres valeurs
-const others = computed(() => students.value.filter((student) => student.id !== selected.value?.id))
+const others = computed(() =>
+  students.value.filter((student) => student.id !== selected.value?.id),
+);
 
 const formFields = computed(() =>
   buildStudentFields({
-    specialtyOptions: specialtyOptions.value.filter((option) => option.value !== ''),
+    specialityOptions: Object.entries(SPECIALITY_LABELS).map(
+      ([value, label]) => ({
+        value,
+        label,
+      }),
+    ),
     existingMatricules: others.value.map((student) => student.matricule),
     existingEmails: others.value.map((student) => student.email),
-    includePassword: !isEdit.value,
   }),
-)
+);
 
 const initialValues = computed(() =>
   selected.value ? studentToFormValues(selected.value) : undefined,
-)
+);
 
 const detailsFields = computed(() => {
-  const student = selected.value
-  if (!student) return []
+  const student = selected.value;
+  if (!student) return [];
   return [
-    { label: 'Adresse e-mail', value: student.email },
-    { label: 'Matricule', value: student.matricule },
-    { label: 'Spécialité', value: student.specialty },
-    { label: 'Groupe', value: student.group },
-    { label: 'Cursus', value: CURSUS_LABELS[student.cursus] },
-  ]
-})
+    { label: "Adresse e-mail", value: student.email },
+    { label: "Matricule", value: student.matricule },
+    { label: "Spécialité", value: student.speciality },
+    { label: "Groupe", value: student.group ?? "Non renseigné" },
+    { label: "Cursus", value: CURSUS_LABELS[student.cursus] },
+    {
+      label: "Compte",
+      value: ACCOUNT_STATUS_META[student.accountStatus].label,
+    },
+  ];
+});
 
 const detailsBadge = computed(() => {
-  const student = selected.value
-  if (!student) return undefined
-  const meta = PROJECT_STATUS_META[student.projectStatus]
-  return { label: 'Statut PFE', text: meta.label, tone: meta.tone }
-})
+  const student = selected.value;
+  if (!student) return undefined;
+  const meta = PROJECT_STATUS_META[student.projectStatus];
+  return { label: "Statut PFE", text: meta.label, tone: meta.tone };
+});
 
 function openCreate() {
-  selected.value = null
-  isFormOpen.value = true
+  selected.value = null;
+  formError.value = null;
+  isFormOpen.value = true;
 }
 
 function openDetails(student: Student) {
-  selected.value = student
-  isDetailsOpen.value = true
+  selected.value = student;
+  isDetailsOpen.value = true;
 }
 
 function openEdit(student: Student) {
-  selected.value = student
-  isFormOpen.value = true
+  selected.value = student;
+  formError.value = null;
+  isFormOpen.value = true;
 }
 
 function editFromDetails() {
-  isDetailsOpen.value = false
-  isFormOpen.value = true
+  isDetailsOpen.value = false;
+  formError.value = null;
+  isFormOpen.value = true;
 }
 
 function openDelete(student: Student) {
-  selected.value = student
-  isDeleteOpen.value = true
+  selected.value = student;
+  isDeleteOpen.value = true;
 }
 
-function saveStudent(values: FormValues) {
-  // TODO backend : POST /students (avec le mot de passe temporaire et l'e-mail d'invitation)
-  // ou PUT /students/:id. Ici : modification locale, non enregistrée. Le mot de passe n'est
-  // volontairement pas conservé.
-  const data = toStudentData(values)
-  const current = selected.value
-
-  if (current) {
-    students.value = students.value.map((student) =>
-      student.id === current.id
+async function saveStudent(values: FormValues) {
+  const data = toStudentData(values);
+  const current = selected.value;
+  formError.value = null;
+  feedback.value = null;
+  isSaving.value = true;
+  try {
+    if (current) {
+      await store.update(current.id, data);
+      feedback.value = { tone: "success", text: "Étudiant mis à jour." };
+    } else {
+      const emailSent = await store.create(data);
+      feedback.value = emailSent
         ? {
-            ...student,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            email: data.email,
-            matricule: data.matricule,
-            specialty: data.specialty,
-            group: data.group,
+            tone: "success",
+            text: `Compte créé : une invitation a été envoyée à ${data.email}.`,
           }
-        : student,
-    )
-  } else {
-    const nextId = Math.max(0, ...students.value.map((student) => student.id)) + 1
-    students.value = [
-      {
-        id: nextId,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        matricule: data.matricule,
-        specialty: data.specialty,
-        group: data.group,
-        cursus: 'MASTER', // valeur par défaut : le design ne contient pas de champ cursus
-        projectStatus: 'deposited',
-      },
-      ...students.value,
-    ]
+        : {
+            tone: "warning",
+            text: "Compte créé, mais l’e-mail d’invitation n’a pas pu être envoyé. Renvoyez l’invitation.",
+          };
+    }
+    isFormOpen.value = false; // on ne ferme que si tout s'est bien passé
+  } catch (e) {
+    formError.value = getErrorMessage(e, "Enregistrement impossible.");
+  } finally {
+    isSaving.value = false;
   }
-  isFormOpen.value = false
 }
 
-function deleteStudent() {
-  // TODO backend : DELETE /students/:id. Ici : suppression locale, non enregistrée.
-  const current = selected.value
-  if (!current) return
-  students.value = students.value.filter((student) => student.id !== current.id)
-  isDeleteOpen.value = false
+async function deleteStudent() {
+  const current = selected.value;
+  if (!current) return;
+  feedback.value = null;
+  try {
+    await store.remove(current.id);
+    feedback.value = { tone: "success", text: "Étudiant supprimé." };
+  } catch (e) {
+    feedback.value = {
+      tone: "error",
+      text: getErrorMessage(e, "Suppression impossible."),
+    };
+  } finally {
+    isDeleteOpen.value = false;
+  }
 }
 </script>
 
@@ -161,12 +197,12 @@ function deleteStudent() {
       </BaseButton>
     </PageHeader>
 
-        <FilterBar
+    <FilterBar
       v-model:search="search"
       searchLabel="Rechercher un étudiant"
       searchPlaceholder="Nom ou matricule…"
       :selects="filterSelects"
-      @update:select="(_key: string, value: string) => (specialty = value)"
+      @update:select="(_key: string, value: string) => (speciality = value)"
     >
       <template #actions>
         <BaseButton variant="secondary" size="md" class="w-full sm:w-auto">
@@ -176,7 +212,34 @@ function deleteStudent() {
       </template>
     </FilterBar>
 
+    <!-- affichage table ou error -->
+    <p
+      v-if="feedback"
+      role="status"
+      :class="[
+        'rounded-lg border p-4 text-sm',
+        FEEDBACK_CLASSES[feedback.tone],
+      ]"
+    >
+      {{ feedback.text }}
+    </p>
+
+    <p v-if="loading" class="text-sm text-slate-500">
+      Chargement des étudiants…
+    </p>
+    <div
+      v-else-if="error"
+      role="alert"
+      class="flex items-center justify-between gap-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800"
+    >
+      <span>{{ error }}</span>
+      <BaseButton variant="secondary" size="md" @click="store.fetchAll()"
+        >Réessayer</BaseButton
+      >
+    </div>
+
     <StudentsTable
+      v-else
       :students="filtered"
       promotion="2024–2025"
       @view="openDetails"
@@ -197,6 +260,8 @@ function deleteStudent() {
       :initialValues="initialValues"
       :submitLabel="isEdit ? 'Enregistrer' : 'Créer l’étudiant'"
       :notice="isEdit ? undefined : invitationNotice('L’étudiant')"
+      :error="formError"
+      :loading="isSaving"
       @submit="saveStudent"
     />
 
