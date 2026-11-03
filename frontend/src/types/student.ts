@@ -26,3 +26,14 @@ export type StudentFormData = Pick<
   Student,
   'firstName' | 'lastName' | 'email' | 'matricule' | 'cursus'| 'speciality' | 'group'
 >
+
+export interface ImportError {
+  line: number;
+  message: string;
+}
+export interface ImportResult {
+  total: number;
+  created: number;
+  emailsFailed: number;
+  errors: ImportError[];
+}

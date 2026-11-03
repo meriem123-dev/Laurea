@@ -24,9 +24,15 @@ import {
 import type { FormValues } from "../../types/form";
 import type { Student } from "../../types/student";
 import { SPECIALITY_LABELS } from "../../utils/speciality";
+import type { ImportError } from "../../types/student.js";
+
+const fileInput = ref<HTMLInputElement | null>(null);
+const isImporting = ref(false);
+const importErrors = ref<ImportError[]>([]);
 
 const CURSUS_LABELS = { MASTER: "Master", INGENIEUR: "Ingénieur" } as const;
 
+//chargements etudiants
 const store = useStudentsStore();
 const { items: students, loading, error } = storeToRefs(store);
 onMounted(() => store.fetchAll());
@@ -55,6 +61,7 @@ const feedback = ref<{
   tone: "success" | "warning" | "error";
   text: string;
 } | null>(null);
+
 const FEEDBACK_CLASSES = {
   success: "border-green-200 bg-green-50 text-green-800",
   warning: "border-amber-200 bg-amber-50 text-amber-800",
@@ -85,6 +92,7 @@ const initialValues = computed(() =>
   selected.value ? studentToFormValues(selected.value) : undefined,
 );
 
+//détails de l'étudiant
 const detailsFields = computed(() => {
   const student = selected.value;
   if (!student) return [];
@@ -108,6 +116,7 @@ const detailsBadge = computed(() => {
   return { label: "Statut PFE", text: meta.label, tone: meta.tone };
 });
 
+//ouverture modales
 function openCreate() {
   selected.value = null;
   formError.value = null;
@@ -136,6 +145,7 @@ function openDelete(student: Student) {
   isDeleteOpen.value = true;
 }
 
+//créer ou modif
 async function saveStudent(values: FormValues) {
   const data = toStudentData(values);
   const current = selected.value;
@@ -166,6 +176,7 @@ async function saveStudent(values: FormValues) {
   }
 }
 
+//suppression
 async function deleteStudent() {
   const current = selected.value;
   if (!current) return;
@@ -180,6 +191,56 @@ async function deleteStudent() {
     };
   } finally {
     isDeleteOpen.value = false;
+  }
+}
+
+//importer fichier
+async function onFileChosen(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
+
+  feedback.value = null;
+  importErrors.value = [];
+  isImporting.value = true;
+  try {
+    const result = await store.importFile(file);
+    importErrors.value = result.errors;
+
+    const failedMails = result.emailsFailed
+      ? ` ${result.emailsFailed} invitation(s) non envoyée(s) : renvoie-les depuis la liste.`
+      : "";
+
+    feedback.value = {
+      tone: result.errors.length || result.emailsFailed ? "warning" : "success",
+      text: `${result.created} étudiant(s) importé(s) sur ${result.total}, ${result.errors.length} ligne(s) rejetée(s).${failedMails}`,
+    };
+  } catch (e) {
+    feedback.value = {
+      tone: "error",
+      text: getErrorMessage(e, "Import impossible."),
+    };
+  } finally {
+    isImporting.value = false;
+    input.value = ""; // permet de re-sélectionner le même fichier
+  }
+}
+
+//telecrger fichier
+async function downloadTemplate() {
+  try {
+    const blob = await store.downloadTemplate();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "modele-etudiants.xlsx";
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    feedback.value = {
+      tone: "error",
+      text: getErrorMessage(e, "Téléchargement impossible."),
+    };
   }
 }
 </script>
@@ -205,9 +266,30 @@ async function deleteStudent() {
       @update:select="(_key: string, value: string) => (speciality = value)"
     >
       <template #actions>
-        <BaseButton variant="secondary" size="md" class="w-full sm:w-auto">
+        <input
+          ref="fileInput"
+          type="file"
+          accept=".xlsx,.csv"
+          class="hidden"
+          @change="onFileChosen"
+        />
+        <BaseButton
+          variant="secondary"
+          size="md"
+          class="w-full sm:w-auto"
+          @click="downloadTemplate"
+        >
+          Télécharger le modèle
+        </BaseButton>
+        <BaseButton
+          variant="secondary"
+          size="md"
+          class="w-full sm:w-auto"
+          :disabled="isImporting"
+          @click="fileInput?.click()"
+        >
           <FileUp class="h-4 w-4" aria-hidden="true" />
-          Importer
+          {{ isImporting ? "Import en cours…" : "Importer" }}
         </BaseButton>
       </template>
     </FilterBar>
@@ -223,6 +305,15 @@ async function deleteStudent() {
     >
       {{ feedback.text }}
     </p>
+
+    <ul
+      v-if="importErrors.length"
+      class="max-h-60 overflow-y-auto rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800"
+    >
+      <li v-for="err in importErrors" :key="err.line">
+        <strong>Ligne {{ err.line }}</strong> : {{ err.message }}
+      </li>
+    </ul>
 
     <p v-if="loading" class="text-sm text-slate-500">
       Chargement des étudiants…

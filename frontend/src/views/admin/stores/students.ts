@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import * as studentsApi from '../api/students.api'
 import { getErrorMessage } from '../../../utils/apiError'
-import type { Student, StudentFormData } from '../../../types/student'
+import type { Student, StudentFormData, ImportResult } from '../../../types/student'
 
 export const useStudentsStore = defineStore('students', () => {
   const items = ref<Student[]>([])
@@ -42,5 +42,20 @@ export const useStudentsStore = defineStore('students', () => {
     return (await studentsApi.resendInvitation(id)).emailSent
   }
 
-  return { items, loading, error, fetchAll, create, update, remove, resendInvitation }
+  async function importFile(file: File): Promise<ImportResult> {
+    const result = await studentsApi.importStudents(file)
+    // on recharge la liste même si certaines lignes ont été rejetées
+    await fetchAll()
+    return result
+  }
+
+  function downloadTemplate(): Promise<Blob> {
+    return studentsApi.downloadStudentsTemplate()
+  }
+
+  return {
+    items, loading, error,
+    fetchAll, create, update, remove, resendInvitation,
+    importFile, downloadTemplate,
+  }
 })
