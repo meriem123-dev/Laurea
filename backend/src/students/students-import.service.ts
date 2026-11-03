@@ -234,10 +234,10 @@ export class StudentsImportService {
     ];
     ws.getRow(1).font = { bold: true };
     ws.addRow({
-      nom: "Benali",
-      prenom: "Sara",
-      email: "sara.benali@exemple.dz",
-      matricule: "202400123",
+      nom: "HM",
+      prenom: "Meriem",
+      email: "meriem.hm@univ-bejaia.dz",
+      matricule: "33001234",
       specialite: "Génie logiciel",
       groupe: "G1",
       cursus: "Ingénieur",
