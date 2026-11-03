@@ -1,6 +1,13 @@
-import type { Student, StudentFormData,AccountStatus,Speciality, Cursus } from "../../../types/student";
+import type {
+  Student,
+  StudentFormData,
+  AccountStatus,
+  Speciality,
+  Cursus,
+  ImportError,
+  ImportResult,
+} from "../../../types/student";
 import { http } from "../../../api/http";
-
 
 export interface StudentDto {
   id: string;
@@ -24,11 +31,10 @@ export interface StudentFilters {
   group?: string;
 }
 
-
 /* ---------- Mapping ---------- */
 
 function toPayload(data: StudentFormData) {
-  return { ...data, group: data.group || null }
+  return { ...data, group: data.group || null };
 }
 
 export function toStudent(dto: StudentDto): Student {
@@ -99,5 +105,20 @@ export async function resendInvitation(
   const { data } = await http.post<{ emailSent: boolean }>(
     `api/students/${id}/resend-invitation`,
   );
+  return data;
+}
+
+// importation
+export async function importStudents(file: File): Promise<ImportResult> {
+  const form = new FormData();
+  form.append("file", file);
+  const { data } = await http.post<ImportResult>("api/students/import", form);
+  return data;
+}
+
+export async function downloadStudentsTemplate(): Promise<Blob> {
+  const { data } = await http.get<Blob>("api/students/import/template", {
+    responseType: "blob",
+  });
   return data;
 }

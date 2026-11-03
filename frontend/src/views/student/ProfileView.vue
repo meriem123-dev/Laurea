@@ -1,43 +1,46 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import BaseCard from '../../components/common/BaseCard.vue'
-import InitialsAvatar from '../../components/common/InitialsAvatar.vue'
-import PageHeader from '../../components/layout/PageHeader.vue'
-import AppearanceCard from '../../components/settings/AppearanceCard.vue'
-import NotificationPreferencesCard from '../../components/settings/NotificationPreferencesCard.vue'
-import SecurityCard from '../../components/settings/SecurityCard.vue'
-import { CURRENT_STUDENT_ID } from '../../mocks/currentStudent'
-import { students } from '../../mocks/students'
-import { ROLE_LABELS } from '../../utils/roles'
-import { fullName, initials } from '../../utils/student'
-import { useAuthStore } from '../auth/store.js'
+import { computed, onMounted } from "vue";
+import { storeToRefs } from "pinia";
+import BaseCard from "../../components/common/BaseCard.vue";
+import InitialsAvatar from "../../components/common/InitialsAvatar.vue";
+import PageHeader from "../../components/layout/PageHeader.vue";
+import AppearanceCard from "../../components/settings/AppearanceCard.vue";
+import NotificationPreferencesCard from "../../components/settings/NotificationPreferencesCard.vue";
+import SecurityCard from "../../components/settings/SecurityCard.vue";
+import { ROLE_LABELS } from "../../utils/roles";
+import { SPECIALITY_LABELS } from "../../utils/speciality";
+import { fullName, initials } from "../../utils/student";
+import { useAuthStore } from "../auth/store.js";
+import { useMyStudentStore } from "./stores/student";
 
-const CURSUS_LABELS = { MASTER: 'Master', INGENIEUR: 'Ingénieur' } as const
+const CURSUS_LABELS = { MASTER: "Master", INGENIEUR: "Ingénieur" } as const;
 
-const auth = useAuthStore()
+const auth = useAuthStore();
+const myStudent = useMyStudentStore();
+const { student, error } = storeToRefs(myStudent);
 
-// TODO backend : GET /students/me (matricule, spécialité, groupe). Ici : données fictives.
-const student = students.find((item) => item.id === CURRENT_STUDENT_ID)
+onMounted(() => myStudent.fetchMe());
 
-// Le compte connecté prime ; sans compte (mode dev), on retombe sur la fiche fictive
+// Le compte connecté (auth) donne le nom et l'email, la fiche étudiant donne le reste
 const name = computed(() => {
-  if (auth.user) return fullName(auth.user)
-  return student ? fullName(student) : ''
-})
+  if (auth.user) return fullName(auth.user);
+  return student.value ? fullName(student.value) : "";
+});
 const avatar = computed(() => {
-  if (auth.user) return initials(auth.user)
-  return student ? initials(student) : ''
-})
-const email = computed(() => auth.user?.email ?? student?.email ?? '')
+  if (auth.user) return initials(auth.user);
+  return student.value ? initials(student.value) : "";
+});
+const email = computed(() => auth.user?.email ?? student.value?.email ?? "");
 
 const notifyDescriptions = {
-  defense: 'Planification et modification de votre soutenance.',
-  project: 'Validation de votre sujet et retours de votre encadrant.',
-  jury: 'Composition de votre jury.',
-  result: 'Évaluations reçues et publication de vos résultats.',
-}
+  defense: "Planification et modification de votre soutenance.",
+  project: "Validation de votre sujet et retours de votre encadrant.",
+  jury: "Composition de votre jury.",
+  result: "Évaluations reçues et publication de vos résultats.",
+};
 
-const labelClass = 'text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-text-secondary'
+const labelClass =
+  "text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-text-secondary";
 </script>
 
 <template>
@@ -48,7 +51,11 @@ const labelClass = 'text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-
       subtitle="Gérez votre compte, l’apparence et vos notifications."
     />
 
-    <BaseCard v-if="name" title="Profil" subtitle="Informations de votre compte">
+    <BaseCard
+      v-if="name"
+      title="Profil"
+      subtitle="Informations de votre compte"
+    >
       <div class="flex items-center gap-4">
         <InitialsAvatar :initials="avatar" size="lg" />
         <div class="min-w-0">
@@ -57,7 +64,9 @@ const labelClass = 'text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-
         </div>
       </div>
 
-      <dl class="mt-5 grid grid-cols-1 gap-5 border-t border-border pt-5 sm:grid-cols-2">
+      <dl
+        class="mt-5 grid grid-cols-1 gap-5 border-t border-border pt-5 sm:grid-cols-2"
+      >
         <div class="min-w-0">
           <dt :class="labelClass">Rôle</dt>
           <dd class="mt-1 text-sm text-ink">{{ ROLE_LABELS.STUDENT }}</dd>
@@ -70,23 +79,35 @@ const labelClass = 'text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-
         <template v-if="student">
           <div class="min-w-0">
             <dt :class="labelClass">Matricule</dt>
-            <dd class="mt-1 text-sm tabular-nums text-ink">{{ student.matricule }}</dd>
+            <dd class="mt-1 text-sm tabular-nums text-ink">
+              {{ student.matricule }}
+            </dd>
           </div>
           <div class="min-w-0">
             <dt :class="labelClass">Cursus</dt>
-            <dd class="mt-1 text-sm text-ink">{{ CURSUS_LABELS[student.cursus] }}</dd>
+            <dd class="mt-1 text-sm text-ink">
+              {{ CURSUS_LABELS[student.cursus] }}
+            </dd>
           </div>
           <div class="min-w-0">
             <dt :class="labelClass">Spécialité</dt>
-            <dd class="mt-1 text-sm text-ink">{{student.speciality }}</dd>
+            <dd class="mt-1 text-sm text-ink">{{ student.speciality }}</dd>
           </div>
           <div class="min-w-0">
             <dt :class="labelClass">Groupe</dt>
-            <dd class="mt-1 text-sm text-ink">{{ student.group || '—' }}</dd>
+            <dd class="mt-1 text-sm text-ink">{{ student.group || "—" }}</dd>
           </div>
         </template>
       </dl>
     </BaseCard>
+
+    <p
+      v-if="error"
+      role="alert"
+      class="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800"
+    >
+      {{ error }}
+    </p>
 
     <AppearanceCard />
     <NotificationPreferencesCard :descriptions="notifyDescriptions" />

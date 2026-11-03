@@ -1,32 +1,37 @@
 import {
   IsEmail,
   IsEnum,
+  IsNotEmpty,
   IsOptional,
   IsString,
-  MinLength,
+  Matches,
+  MaxLength,
 } from "class-validator";
-import { Speciality,Cursus } from "../../generated/prisma/client";
+import { Speciality, Cursus } from "../../generated/prisma/client";
 
 export class CreateStudentDto {
-  @IsEmail()
-  email: string;
+  @IsString()
+  @IsNotEmpty({ message: "Le prénom est obligatoire" })
+  firstName!: string;
 
   @IsString()
-  firstName: string;
+  @IsNotEmpty({ message: "Le nom est obligatoire" })
+  lastName!: string;
 
-  @IsString()
-  lastName: string;
+  @IsEmail({}, { message: "Adresse e-mail invalide" })
+  email!: string;
 
-  @IsString()
-  matricule: string;
+  @Matches(/^\d{8}$/, { message: "Le matricule doit contenir 8 chiffres" })
+  matricule!: string;
 
-  @IsEnum(Cursus)
-  cursus: Cursus;
+  @IsEnum(Speciality, { message: "Spécialité invalide" })
+  speciality!: Speciality;
 
-  @IsEnum(Speciality)
-  speciality: Speciality;
+  @IsEnum(Cursus, { message: "Cursus invalide" })
+  cursus!: Cursus;
 
   @IsOptional()
   @IsString()
-  group?: string | null;
+  @MaxLength(10, { message: "Groupe trop long" })
+  group?: string;
 }

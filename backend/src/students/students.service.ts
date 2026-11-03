@@ -102,6 +102,16 @@ export class StudentsService {
     return { deleted: true };
   }
 
+  // profil de l'étudiant connecté
+  async findByUserId(userId: string) {
+    const student = await this.prisma.student.findUnique({
+      where: { userId },
+      include,
+    });
+    if (!student) throw new NotFoundException("Profil étudiant introuvable");
+    return student;
+  }
+
   private handleUniqueError(e: unknown) {
     if (
       e instanceof Prisma.PrismaClientKnownRequestError &&
