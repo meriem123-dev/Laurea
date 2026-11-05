@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import * as authApi from "./api/auth.api";
 import type { AuthUser } from "./api/auth.api";
 import type { UserRole } from "../../types/auth";
@@ -13,9 +13,32 @@ function loadUser(): AuthUser | null {
   }
 }
 
+//verifie si token expiré
+function isTokenExpired(token: string | null): boolean {
+  if (!token) return true;
+  try {
+    const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    const { exp } = JSON.parse(atob(base64));
+    return exp * 1000 < Date.now();
+  } catch {
+    return true;
+  }
+}
+
+//auth état global
 export const useAuthStore = defineStore("auth", () => {
+  // nettoie au démarrage si le token est mort
+  if (isTokenExpired(localStorage.getItem("token"))) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  }
+
   const token = ref<string | null>(localStorage.getItem("token"));
   const user = ref<AuthUser | null>(loadUser());
+
+  function isSessionValid(): boolean {
+    return !!token.value && !isTokenExpired(token.value);
+  }
 
   function setSession(accessToken: string, authUser: AuthUser) {
     token.value = accessToken;
@@ -43,5 +66,13 @@ export const useAuthStore = defineStore("auth", () => {
     localStorage.removeItem("user");
   }
 
-  return { token, user, login, resetPassword, setSession, logout };
+  return {
+    token,
+    user,
+    login,
+    resetPassword,
+    setSession,
+    logout,
+    isSessionValid,
+  };
 });

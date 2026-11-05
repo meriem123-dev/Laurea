@@ -184,7 +184,7 @@ const router = createRouter({
           component: () => import("../views/student/ProfileView.vue"),
           meta: { title: "Mon profil" },
         },
-                {
+        {
           path: "defense",
           name: "student-defense",
           component: () => import("../views/student/DefenseView.vue"),
@@ -207,9 +207,9 @@ const router = createRouter({
   ],
 });
 
+//nav guard pour vérifier la validité du token et son role
 router.beforeEach((to) => {
   // DEV UNIQUEMENT (npm run dev) : les espaces enseignant et étudiant s'ouvrent sans compte backend.
-  // En production, import.meta.env.DEV vaut false : cette ligne est inactive.
   // À supprimer quand les comptes enseignants et étudiants existeront côté backend.
   if (
     import.meta.env.DEV &&
@@ -220,15 +220,19 @@ router.beforeEach((to) => {
 
   const auth = useAuthStore();
 
-  // page protégée sans être connectée → login
-  if (to.meta.requiresAuth && !auth.token) return "/login";
+  // page protégée sans session valide - login (avec message si le token existait)
+  if (to.meta.requiresAuth && !auth.isSessionValid()) {
+    const expired = !!auth.token;
+    auth.logout();
+    return { path: "/login", query: expired ? { expired: "1" } : {} };
+  }
 
-  // déjà connectée → pas besoin de revoir le login
-  if (to.path === "/login" && auth.token && auth.user) {
+  // déjà connectée so pas besoin de revoir le login
+  if (to.path === "/login" && auth.isSessionValid() && auth.user) {
     return ROLE_HOME_PATH[auth.user.role];
   }
 
-  // mauvais espace pour ce rôle → renvoie vers le sien
+  // mauvais espace pour ce rôle donc renvoie vers le sien
   const roles = to.meta.roles as UserRole[] | undefined;
   if (roles && auth.user && !roles.includes(auth.user.role)) {
     return ROLE_HOME_PATH[auth.user.role];
