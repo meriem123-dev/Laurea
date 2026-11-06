@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class MailService {
-
   //logique du mot de passe oublié
   sendResetLink(to: string, link: string) {
     return this.send({
@@ -46,20 +45,24 @@ export class MailService {
     ).toString("base64");
 
     //mail via mailjet
-    const res = await fetch("https://api.mailjet.com/v3.1/send", {
-      method: "POST",
-      headers: {
-        Authorization: `Basic ${auth}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        Messages: [
-          {
-            From: { Email: process.env.MAIL_FROM, Name: "Laurea Platform" },
-            To: [{ Email: p.to }],
-            Subject: p.subject,
-            TextPart: `${p.intro}\n\n${p.button} :\n${p.link}\n\n${p.footer}`,
-            HTMLPart: `
+    // erreur réseau (Mailjet injoignable…) : on renvoie false au lieu de faire échouer la requête,
+    // sinon le compte est créé mais l'API répond 500
+    let res: Response;
+    try {
+      res = await fetch("https://api.mailjet.com/v3.1/send", {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${auth}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Messages: [
+            {
+              From: { Email: process.env.MAIL_FROM, Name: "Laurea Platform" },
+              To: [{ Email: p.to }],
+              Subject: p.subject,
+              TextPart: `${p.intro}\n\n${p.button} :\n${p.link}\n\n${p.footer}`,
+              HTMLPart: `
   <div style="font-family:Arial,sans-serif;max-width:480px;margin:auto;color:#111">
     <h2>${p.title}</h2>
     <p>${p.intro}</p>
@@ -69,10 +72,14 @@ export class MailService {
     <p style="font-size:12px;color:#666">Si le bouton ne fonctionne pas, copiez ce lien :<br>${p.link}</p>
     <p style="font-size:12px;color:#666">${p.footer}</p>
   </div>`,
-          },
-        ],
-      }),
-    });
+            },
+          ],
+        }),
+      });
+    } catch (e) {
+      console.error("Mailjet injoignable", e);
+      return false;
+    }
     if (!res.ok) console.error("Mailjet error", await res.text());
     return res.ok; // permet à l'appelant de savoir si ça a marché
   }

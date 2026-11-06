@@ -73,10 +73,11 @@ export class AuthService {
 
   //logique réinitailisation mdp
 
+  //logique réinitailisation mdp
   async resetPassword(token: string, newPassword: string) {
     const record = await this.prisma.passwordResetToken.findUnique({
       where: { tokenHash: sha256(token) },
-      include: { user: { include: { student: true } } },
+      include: { user: { include: { student: true, teacher: true } } },
     });
 
     if (!record || record.usedAt || record.expiresAt < new Date()) {
@@ -84,15 +85,22 @@ export class AuthService {
     }
 
     const { user } = record;
-    const isActivation = user.student?.accountStatus === AccountStatus.PENDING;
+    // premier mot de passe défini = activation du compte (étudiant ou enseignant)
+    const activateStudent =
+      user.student?.accountStatus === AccountStatus.PENDING;
+    const activateTeacher =
+      user.teacher?.accountStatus === AccountStatus.PENDING;
 
     await this.prisma.$transaction([
       this.prisma.user.update({
         where: { id: user.id },
         data: {
           passwordHash: await argon2.hash(newPassword),
-          ...(isActivation && {
+          ...(activateStudent && {
             student: { update: { accountStatus: AccountStatus.ACTIVE } },
+          }),
+          ...(activateTeacher && {
+            teacher: { update: { accountStatus: AccountStatus.ACTIVE } },
           }),
         },
       }),
