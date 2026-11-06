@@ -77,3 +77,13 @@ model Teacher {
   specialty     String // texte libre, comme dans le front
   accountStatus AccountStatus @default(PENDING)
 }
+
+model Room {
+  id        String @id @default(uuid())
+  name      String @unique
+  block     String @default("")
+  pole      String @default("")
+  equipment String @default("")
+  capacity  Int
+  tone      String @default("blue")
+}

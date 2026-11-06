@@ -37,3 +37,8 @@ export type Student = Prisma.StudentModel
  * 
  */
 export type Teacher = Prisma.TeacherModel
+/**
+ * Model Room
+ * 
+ */
+export type Room = Prisma.RoomModel
