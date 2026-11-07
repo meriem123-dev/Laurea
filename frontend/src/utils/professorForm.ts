@@ -1,47 +1,76 @@
-import type { FormFieldConfig, FormValues } from '../types/form'
-import type { Professor, ProfessorFormData } from '../types/professor'
-import { emailField, temporaryPasswordField } from './accountFields'
+import type { FormFieldConfig, FormValues } from "../types/form";
+import type { ProfessorTitle } from "../types/professor";
+import type {
+  ApiProfessor,
+  ProfessorPayload,
+} from "../views/admin/api/professors.api";
+import { emailField } from "./accountFields";
 
+// Plus de mot de passe temporaire : le back envoie un lien d'activation (comme pour les étudiants)
 export function buildProfessorFields(
   existingEmails: string[],
-  includePassword: boolean, // création : oui (invitation) / modification : non
 ): FormFieldConfig[] {
-  const fields: FormFieldConfig[] = [
+  return [
     {
-      key: 'name',
-      label: 'Nom complet',
-      placeholder: 'Ex. : Karim Mansouri',
+      key: "firstName",
+      label: "Prénom",
+      placeholder: "Ex. : Karim",
+      autocomplete: "given-name",
       required: true,
-      requiredMessage: 'Le nom complet est obligatoire.',
+      requiredMessage: "Le prénom est obligatoire.",
+      half: true,
     },
-    emailField('Ex. : karim.mansouri@univ.fr', existingEmails),
     {
-      key: 'specialty',
-      label: 'Spécialité',
-      placeholder: 'Ex. : Intelligence artificielle',
+      key: "lastName",
+      label: "Nom",
+      placeholder: "Ex. : Mansouri",
+      autocomplete: "family-name",
       required: true,
-      requiredMessage: 'La spécialité est obligatoire.',
+      requiredMessage: "Le nom est obligatoire.",
+      half: true,
     },
-  ]
-
-  if (includePassword) fields.push(temporaryPasswordField())
-  return fields
+    emailField("Ex. : karim.mansouri@univ.dz", existingEmails),
+    {
+      key: "title",
+      label: "Titre",
+      type: "select",
+      optional: true,
+      options: [
+        { value: "", label: "Aucun titre" },
+        { value: "Pr.", label: "Pr." },
+        { value: "Dr.", label: "Dr." },
+      ],
+      half: true,
+    },
+    {
+      key: "specialty",
+      label: "Spécialité",
+      placeholder: "Ex. : Intelligence artificielle",
+      required: true,
+      requiredMessage: "La spécialité est obligatoire.",
+      half: true,
+    },
+  ];
 }
 
-export function professorToFormValues(professor: Professor): FormValues {
+export function professorToFormValues(professor: ApiProfessor): FormValues {
   return {
-    name: professor.name,
+    firstName: professor.firstName,
+    lastName: professor.lastName,
     email: professor.email,
+    title: professor.title ?? "",
     specialty: professor.specialty,
-  }
+  };
 }
 
-export function toProfessorData(values: FormValues): ProfessorFormData {
-  const get = (key: string) => values[key] ?? ''
+export function toProfessorData(values: FormValues): ProfessorPayload {
+  const get = (key: string) => (values[key] ?? "").trim();
+  const title = get("title");
   return {
-    name: get('name'),
-    email: get('email'),
-    specialty: get('specialty'),
-    temporaryPassword: get('temporaryPassword'),
-  }
+    firstName: get("firstName"),
+    lastName: get("lastName"),
+    email: get("email").toLowerCase(),
+    title: title ? (title as ProfessorTitle) : null,
+    specialty: get("specialty"),
+  };
 }
