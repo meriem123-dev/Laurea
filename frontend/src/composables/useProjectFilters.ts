@@ -18,7 +18,7 @@ export function useProjectFilters(projects: Ref<Project[]>, students: Ref<Studen
 
   const domainOptions = [
     { value: '', label: 'Tous les domaines' },
-    ...PROJECT_DOMAIN_OPTIONS.map((value) => ({ value, label: value })),
+    ...PROJECT_DOMAIN_OPTIONS,
   ]
 
   const filtered = computed(() => {

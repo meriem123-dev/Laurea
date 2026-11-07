@@ -110,9 +110,13 @@ function onAction(key: string, student: Student) {
       </template>
 
       <template #cell-status="{ row }">
-        <BaseBadge :tone="PROJECT_STATUS_META[row.projectStatus].tone">
+        <BaseBadge
+          v-if="row.projectStatus"
+          :tone="PROJECT_STATUS_META[row.projectStatus].tone"
+        >
           {{ PROJECT_STATUS_META[row.projectStatus].label }}
         </BaseBadge>
+        <BaseBadge v-else class="text-xs text-text-muted">Sans projet</BaseBadge>
       </template>
 
       <template #cell-action="{ row }">
