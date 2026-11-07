@@ -55,7 +55,8 @@ export const ModelName = {
   PasswordResetToken: 'PasswordResetToken',
   Student: 'Student',
   Teacher: 'Teacher',
-  Room: 'Room'
+  Room: 'Room',
+  Project: 'Project'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -108,7 +109,8 @@ export const StudentScalarFieldEnum = {
   speciality: 'speciality',
   group: 'group',
   cursus: 'cursus',
-  accountStatus: 'accountStatus'
+  accountStatus: 'accountStatus',
+  projectId: 'projectId'
 } as const
 
 export type StudentScalarFieldEnum = (typeof StudentScalarFieldEnum)[keyof typeof StudentScalarFieldEnum]
@@ -136,6 +138,24 @@ export const RoomScalarFieldEnum = {
 } as const
 
 export type RoomScalarFieldEnum = (typeof RoomScalarFieldEnum)[keyof typeof RoomScalarFieldEnum]
+
+
+export const ProjectScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  domain: 'domain',
+  company: 'company',
+  academicYear: 'academicYear',
+  teamType: 'teamType',
+  supervisorId: 'supervisorId',
+  coSupervisorId: 'coSupervisorId',
+  notes: 'notes',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -2,7 +2,7 @@ import { computed, ref, type Ref } from 'vue'
 import type { Project } from '../types/project'
 import type { Student } from '../types/student'
 import { normalizeText } from '../utils/format'
-import { PROJECT_DOMAINS, teamMembers } from '../utils/project'
+import { PROJECT_DOMAIN_OPTIONS, teamMembers } from '../utils/project'
 import { PROJECT_STATUS_META } from '../utils/projectStatus'
 import { fullName } from '../utils/student'
 
@@ -18,7 +18,7 @@ export function useProjectFilters(projects: Ref<Project[]>, students: Ref<Studen
 
   const domainOptions = [
     { value: '', label: 'Tous les domaines' },
-    ...PROJECT_DOMAINS.map((value) => ({ value, label: value })),
+    ...PROJECT_DOMAIN_OPTIONS,
   ]
 
   const filtered = computed(() => {

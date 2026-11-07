@@ -32,6 +32,7 @@ export type StudentMinAggregateOutputType = {
   group: string | null
   cursus: $Enums.Cursus | null
   accountStatus: $Enums.AccountStatus | null
+  projectId: string | null
 }
 
 export type StudentMaxAggregateOutputType = {
@@ -42,6 +43,7 @@ export type StudentMaxAggregateOutputType = {
   group: string | null
   cursus: $Enums.Cursus | null
   accountStatus: $Enums.AccountStatus | null
+  projectId: string | null
 }
 
 export type StudentCountAggregateOutputType = {
@@ -52,6 +54,7 @@ export type StudentCountAggregateOutputType = {
   group: number
   cursus: number
   accountStatus: number
+  projectId: number
   _all: number
 }
 
@@ -64,6 +67,7 @@ export type StudentMinAggregateInputType = {
   group?: true
   cursus?: true
   accountStatus?: true
+  projectId?: true
 }
 
 export type StudentMaxAggregateInputType = {
@@ -74,6 +78,7 @@ export type StudentMaxAggregateInputType = {
   group?: true
   cursus?: true
   accountStatus?: true
+  projectId?: true
 }
 
 export type StudentCountAggregateInputType = {
@@ -84,6 +89,7 @@ export type StudentCountAggregateInputType = {
   group?: true
   cursus?: true
   accountStatus?: true
+  projectId?: true
   _all?: true
 }
 
@@ -167,6 +173,7 @@ export type StudentGroupByOutputType = {
   group: string | null
   cursus: $Enums.Cursus
   accountStatus: $Enums.AccountStatus
+  projectId: string | null
   _count: StudentCountAggregateOutputType | null
   _min: StudentMinAggregateOutputType | null
   _max: StudentMaxAggregateOutputType | null
@@ -198,7 +205,9 @@ export type StudentWhereInput = {
   group?: Prisma.StringNullableFilter<"Student"> | string | null
   cursus?: Prisma.EnumCursusFilter<"Student"> | $Enums.Cursus
   accountStatus?: Prisma.EnumAccountStatusFilter<"Student"> | $Enums.AccountStatus
+  projectId?: Prisma.StringNullableFilter<"Student"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
 }
 
 export type StudentOrderByWithRelationInput = {
@@ -209,7 +218,9 @@ export type StudentOrderByWithRelationInput = {
   group?: Prisma.SortOrderInput | Prisma.SortOrder
   cursus?: Prisma.SortOrder
   accountStatus?: Prisma.SortOrder
+  projectId?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  project?: Prisma.ProjectOrderByWithRelationInput
 }
 
 export type StudentWhereUniqueInput = Prisma.AtLeast<{
@@ -223,7 +234,9 @@ export type StudentWhereUniqueInput = Prisma.AtLeast<{
   group?: Prisma.StringNullableFilter<"Student"> | string | null
   cursus?: Prisma.EnumCursusFilter<"Student"> | $Enums.Cursus
   accountStatus?: Prisma.EnumAccountStatusFilter<"Student"> | $Enums.AccountStatus
+  projectId?: Prisma.StringNullableFilter<"Student"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
 }, "id" | "userId" | "matricule">
 
 export type StudentOrderByWithAggregationInput = {
@@ -234,6 +247,7 @@ export type StudentOrderByWithAggregationInput = {
   group?: Prisma.SortOrderInput | Prisma.SortOrder
   cursus?: Prisma.SortOrder
   accountStatus?: Prisma.SortOrder
+  projectId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.StudentCountOrderByAggregateInput
   _max?: Prisma.StudentMaxOrderByAggregateInput
   _min?: Prisma.StudentMinOrderByAggregateInput
@@ -250,6 +264,7 @@ export type StudentScalarWhereWithAggregatesInput = {
   group?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
   cursus?: Prisma.EnumCursusWithAggregatesFilter<"Student"> | $Enums.Cursus
   accountStatus?: Prisma.EnumAccountStatusWithAggregatesFilter<"Student"> | $Enums.AccountStatus
+  projectId?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
 }
 
 export type StudentCreateInput = {
@@ -260,6 +275,7 @@ export type StudentCreateInput = {
   cursus: $Enums.Cursus
   accountStatus?: $Enums.AccountStatus
   user: Prisma.UserCreateNestedOneWithoutStudentInput
+  project?: Prisma.ProjectCreateNestedOneWithoutStudentsInput
 }
 
 export type StudentUncheckedCreateInput = {
@@ -270,6 +286,7 @@ export type StudentUncheckedCreateInput = {
   group?: string | null
   cursus: $Enums.Cursus
   accountStatus?: $Enums.AccountStatus
+  projectId?: string | null
 }
 
 export type StudentUpdateInput = {
@@ -280,6 +297,7 @@ export type StudentUpdateInput = {
   cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
   accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutStudentsNestedInput
 }
 
 export type StudentUncheckedUpdateInput = {
@@ -290,6 +308,7 @@ export type StudentUncheckedUpdateInput = {
   group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
   accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type StudentCreateManyInput = {
@@ -300,6 +319,7 @@ export type StudentCreateManyInput = {
   group?: string | null
   cursus: $Enums.Cursus
   accountStatus?: $Enums.AccountStatus
+  projectId?: string | null
 }
 
 export type StudentUpdateManyMutationInput = {
@@ -319,6 +339,7 @@ export type StudentUncheckedUpdateManyInput = {
   group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
   accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type StudentNullableScalarRelationFilter = {
@@ -334,6 +355,7 @@ export type StudentCountOrderByAggregateInput = {
   group?: Prisma.SortOrder
   cursus?: Prisma.SortOrder
   accountStatus?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
 }
 
 export type StudentMaxOrderByAggregateInput = {
@@ -344,6 +366,7 @@ export type StudentMaxOrderByAggregateInput = {
   group?: Prisma.SortOrder
   cursus?: Prisma.SortOrder
   accountStatus?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
 }
 
 export type StudentMinOrderByAggregateInput = {
@@ -354,6 +377,17 @@ export type StudentMinOrderByAggregateInput = {
   group?: Prisma.SortOrder
   cursus?: Prisma.SortOrder
   accountStatus?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
+}
+
+export type StudentListRelationFilter = {
+  every?: Prisma.StudentWhereInput
+  some?: Prisma.StudentWhereInput
+  none?: Prisma.StudentWhereInput
+}
+
+export type StudentOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type StudentCreateNestedOneWithoutUserInput = {
@@ -404,6 +438,48 @@ export type EnumAccountStatusFieldUpdateOperationsInput = {
   set?: $Enums.AccountStatus
 }
 
+export type StudentCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutProjectInput, Prisma.StudentUncheckedCreateWithoutProjectInput> | Prisma.StudentCreateWithoutProjectInput[] | Prisma.StudentUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutProjectInput | Prisma.StudentCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.StudentCreateManyProjectInputEnvelope
+  connect?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+}
+
+export type StudentUncheckedCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutProjectInput, Prisma.StudentUncheckedCreateWithoutProjectInput> | Prisma.StudentCreateWithoutProjectInput[] | Prisma.StudentUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutProjectInput | Prisma.StudentCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.StudentCreateManyProjectInputEnvelope
+  connect?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+}
+
+export type StudentUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutProjectInput, Prisma.StudentUncheckedCreateWithoutProjectInput> | Prisma.StudentCreateWithoutProjectInput[] | Prisma.StudentUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutProjectInput | Prisma.StudentCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.StudentUpsertWithWhereUniqueWithoutProjectInput | Prisma.StudentUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.StudentCreateManyProjectInputEnvelope
+  set?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+  disconnect?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+  delete?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+  connect?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+  update?: Prisma.StudentUpdateWithWhereUniqueWithoutProjectInput | Prisma.StudentUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.StudentUpdateManyWithWhereWithoutProjectInput | Prisma.StudentUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.StudentScalarWhereInput | Prisma.StudentScalarWhereInput[]
+}
+
+export type StudentUncheckedUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutProjectInput, Prisma.StudentUncheckedCreateWithoutProjectInput> | Prisma.StudentCreateWithoutProjectInput[] | Prisma.StudentUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutProjectInput | Prisma.StudentCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.StudentUpsertWithWhereUniqueWithoutProjectInput | Prisma.StudentUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.StudentCreateManyProjectInputEnvelope
+  set?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+  disconnect?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+  delete?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+  connect?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+  update?: Prisma.StudentUpdateWithWhereUniqueWithoutProjectInput | Prisma.StudentUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.StudentUpdateManyWithWhereWithoutProjectInput | Prisma.StudentUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.StudentScalarWhereInput | Prisma.StudentScalarWhereInput[]
+}
+
 export type StudentCreateWithoutUserInput = {
   id?: string
   matricule: string
@@ -411,6 +487,7 @@ export type StudentCreateWithoutUserInput = {
   group?: string | null
   cursus: $Enums.Cursus
   accountStatus?: $Enums.AccountStatus
+  project?: Prisma.ProjectCreateNestedOneWithoutStudentsInput
 }
 
 export type StudentUncheckedCreateWithoutUserInput = {
@@ -420,6 +497,7 @@ export type StudentUncheckedCreateWithoutUserInput = {
   group?: string | null
   cursus: $Enums.Cursus
   accountStatus?: $Enums.AccountStatus
+  projectId?: string | null
 }
 
 export type StudentCreateOrConnectWithoutUserInput = {
@@ -445,10 +523,112 @@ export type StudentUpdateWithoutUserInput = {
   group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
   accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  project?: Prisma.ProjectUpdateOneWithoutStudentsNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  matricule?: Prisma.StringFieldUpdateOperationsInput | string
+  speciality?: Prisma.EnumSpecialityFieldUpdateOperationsInput | $Enums.Speciality
+  group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
+  accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type StudentCreateWithoutProjectInput = {
+  id?: string
+  matricule: string
+  speciality: $Enums.Speciality
+  group?: string | null
+  cursus: $Enums.Cursus
+  accountStatus?: $Enums.AccountStatus
+  user: Prisma.UserCreateNestedOneWithoutStudentInput
+}
+
+export type StudentUncheckedCreateWithoutProjectInput = {
+  id?: string
+  userId: string
+  matricule: string
+  speciality: $Enums.Speciality
+  group?: string | null
+  cursus: $Enums.Cursus
+  accountStatus?: $Enums.AccountStatus
+}
+
+export type StudentCreateOrConnectWithoutProjectInput = {
+  where: Prisma.StudentWhereUniqueInput
+  create: Prisma.XOR<Prisma.StudentCreateWithoutProjectInput, Prisma.StudentUncheckedCreateWithoutProjectInput>
+}
+
+export type StudentCreateManyProjectInputEnvelope = {
+  data: Prisma.StudentCreateManyProjectInput | Prisma.StudentCreateManyProjectInput[]
+  skipDuplicates?: boolean
+}
+
+export type StudentUpsertWithWhereUniqueWithoutProjectInput = {
+  where: Prisma.StudentWhereUniqueInput
+  update: Prisma.XOR<Prisma.StudentUpdateWithoutProjectInput, Prisma.StudentUncheckedUpdateWithoutProjectInput>
+  create: Prisma.XOR<Prisma.StudentCreateWithoutProjectInput, Prisma.StudentUncheckedCreateWithoutProjectInput>
+}
+
+export type StudentUpdateWithWhereUniqueWithoutProjectInput = {
+  where: Prisma.StudentWhereUniqueInput
+  data: Prisma.XOR<Prisma.StudentUpdateWithoutProjectInput, Prisma.StudentUncheckedUpdateWithoutProjectInput>
+}
+
+export type StudentUpdateManyWithWhereWithoutProjectInput = {
+  where: Prisma.StudentScalarWhereInput
+  data: Prisma.XOR<Prisma.StudentUpdateManyMutationInput, Prisma.StudentUncheckedUpdateManyWithoutProjectInput>
+}
+
+export type StudentScalarWhereInput = {
+  AND?: Prisma.StudentScalarWhereInput | Prisma.StudentScalarWhereInput[]
+  OR?: Prisma.StudentScalarWhereInput[]
+  NOT?: Prisma.StudentScalarWhereInput | Prisma.StudentScalarWhereInput[]
+  id?: Prisma.StringFilter<"Student"> | string
+  userId?: Prisma.StringFilter<"Student"> | string
+  matricule?: Prisma.StringFilter<"Student"> | string
+  speciality?: Prisma.EnumSpecialityFilter<"Student"> | $Enums.Speciality
+  group?: Prisma.StringNullableFilter<"Student"> | string | null
+  cursus?: Prisma.EnumCursusFilter<"Student"> | $Enums.Cursus
+  accountStatus?: Prisma.EnumAccountStatusFilter<"Student"> | $Enums.AccountStatus
+  projectId?: Prisma.StringNullableFilter<"Student"> | string | null
+}
+
+export type StudentCreateManyProjectInput = {
+  id?: string
+  userId: string
+  matricule: string
+  speciality: $Enums.Speciality
+  group?: string | null
+  cursus: $Enums.Cursus
+  accountStatus?: $Enums.AccountStatus
+}
+
+export type StudentUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  matricule?: Prisma.StringFieldUpdateOperationsInput | string
+  speciality?: Prisma.EnumSpecialityFieldUpdateOperationsInput | $Enums.Speciality
+  group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
+  accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
+}
+
+export type StudentUncheckedUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  matricule?: Prisma.StringFieldUpdateOperationsInput | string
+  speciality?: Prisma.EnumSpecialityFieldUpdateOperationsInput | $Enums.Speciality
+  group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
+  accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+}
+
+export type StudentUncheckedUpdateManyWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   matricule?: Prisma.StringFieldUpdateOperationsInput | string
   speciality?: Prisma.EnumSpecialityFieldUpdateOperationsInput | $Enums.Speciality
   group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -466,7 +646,9 @@ export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   group?: boolean
   cursus?: boolean
   accountStatus?: boolean
+  projectId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.Student$projectArgs<ExtArgs>
 }, ExtArgs["result"]["student"]>
 
 export type StudentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -477,7 +659,9 @@ export type StudentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   group?: boolean
   cursus?: boolean
   accountStatus?: boolean
+  projectId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.Student$projectArgs<ExtArgs>
 }, ExtArgs["result"]["student"]>
 
 export type StudentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -488,7 +672,9 @@ export type StudentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   group?: boolean
   cursus?: boolean
   accountStatus?: boolean
+  projectId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.Student$projectArgs<ExtArgs>
 }, ExtArgs["result"]["student"]>
 
 export type StudentSelectScalar = {
@@ -499,23 +685,28 @@ export type StudentSelectScalar = {
   group?: boolean
   cursus?: boolean
   accountStatus?: boolean
+  projectId?: boolean
 }
 
-export type StudentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "matricule" | "speciality" | "group" | "cursus" | "accountStatus", ExtArgs["result"]["student"]>
+export type StudentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "matricule" | "speciality" | "group" | "cursus" | "accountStatus" | "projectId", ExtArgs["result"]["student"]>
 export type StudentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.Student$projectArgs<ExtArgs>
 }
 export type StudentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.Student$projectArgs<ExtArgs>
 }
 export type StudentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.Student$projectArgs<ExtArgs>
 }
 
 export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Student"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    project: Prisma.$ProjectPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -525,6 +716,7 @@ export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     group: string | null
     cursus: $Enums.Cursus
     accountStatus: $Enums.AccountStatus
+    projectId: string | null
   }, ExtArgs["result"]["student"]>
   composites: {}
 }
@@ -920,6 +1112,7 @@ readonly fields: StudentFieldRefs;
 export interface Prisma__StudentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  project<T extends Prisma.Student$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -956,6 +1149,7 @@ export interface StudentFieldRefs {
   readonly group: Prisma.FieldRef<"Student", 'String'>
   readonly cursus: Prisma.FieldRef<"Student", 'Cursus'>
   readonly accountStatus: Prisma.FieldRef<"Student", 'AccountStatus'>
+  readonly projectId: Prisma.FieldRef<"Student", 'String'>
 }
     
 
@@ -1354,6 +1548,25 @@ export type StudentDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Students to delete.
    */
   limit?: number
+}
+
+/**
+ * Student.project
+ */
+export type Student$projectArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Project
+   */
+  select?: Prisma.ProjectSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Project
+   */
+  omit?: Prisma.ProjectOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProjectInclude<ExtArgs> | null
+  where?: Prisma.ProjectWhereInput
 }
 
 /**

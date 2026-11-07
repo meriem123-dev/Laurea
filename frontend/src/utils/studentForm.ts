@@ -32,7 +32,7 @@ export function buildStudentFields(
     {
       key: "lastName",
       label: "Nom",
-      placeholder: "Ex. : Bensaïd",
+      placeholder: "Ex. : Abdelli",
       autocomplete: "family-name",
       required: true,
       requiredMessage: "Le nom est obligatoire.",
@@ -42,7 +42,7 @@ export function buildStudentFields(
     {
       key: "matricule",
       label: "Matricule",
-      placeholder: "Ex. : 202233004511",
+      placeholder: "Ex. : 33004511",
       required: true,
       requiredMessage: "Le matricule est obligatoire.",
       hint: "Le matricule doit être unique pour chaque étudiant.",

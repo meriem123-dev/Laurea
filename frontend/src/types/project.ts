@@ -1,6 +1,6 @@
 import type { ProjectStatus } from "./student";
 
-export type TeamType = "solo" | "pair" | "trio";
+export type TeamType = "solo" | "pair" | "trio" |"quad";
 
 export interface Project {
   id: number;

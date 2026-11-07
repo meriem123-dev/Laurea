@@ -6,7 +6,7 @@ import type {
 import type { Project, ProjectFormData, TeamType } from "../types/project";
 import {
   ACADEMIC_YEARS,
-  PROJECT_DOMAINS,
+  PROJECT_DOMAIN_OPTIONS,
   TEAM_TYPE_OPTIONS,
   teamSize,
 } from "./project";
@@ -69,10 +69,7 @@ export function buildProjectFields(
       label: "Domaine",
       type: "select",
       placeholder: "Sélectionner un domaine",
-      options: PROJECT_DOMAINS.map((domain) => ({
-        value: domain,
-        label: domain,
-      })),
+      options: PROJECT_DOMAIN_OPTIONS,
       required: true,
       requiredMessage: "Sélectionnez un domaine.",
       half: true,

@@ -44,3 +44,25 @@ export const AccountStatus = {
 } as const
 
 export type AccountStatus = (typeof AccountStatus)[keyof typeof AccountStatus]
+
+
+export const TeamType = {
+  solo: 'solo',
+  pair: 'pair',
+  trio: 'trio',
+  quad: 'quad'
+} as const
+
+export type TeamType = (typeof TeamType)[keyof typeof TeamType]
+
+
+export const ProjectStatus = {
+  deposited: 'deposited',
+  validated: 'validated',
+  planned: 'planned',
+  defended: 'defended',
+  graded: 'graded',
+  closed: 'closed'
+} as const
+
+export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus]

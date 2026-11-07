@@ -109,9 +109,13 @@ const detailsFields = computed(() => {
   ];
 });
 
+
 const detailsBadge = computed(() => {
   const student = selected.value;
   if (!student) return undefined;
+  if (!student.projectStatus) {
+    return { label: "Statut PFE", text: "Sans projet", tone: "neutral" as const };
+  }
   const meta = PROJECT_STATUS_META[student.projectStatus];
   return { label: "Statut PFE", text: meta.label, tone: meta.tone };
 });
