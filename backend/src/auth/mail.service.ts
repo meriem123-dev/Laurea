@@ -80,7 +80,11 @@ export class MailService {
       console.error("Mailjet injoignable", e);
       return false;
     }
-    if (!res.ok) console.error("Mailjet error", await res.text());
-    return res.ok; // permet à l'appelant de savoir si ça a marché
+    const responseBody = await res.text();
+
+    console.log("Mailjet status:", res.status);
+    console.log("Mailjet response:", responseBody);
+
+    return res.ok;
   }
 }

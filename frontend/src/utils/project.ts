@@ -1,10 +1,12 @@
 import type { Project, TeamType } from '../types/project'
-import type { ProjectStatus, Student } from '../types/student'
+import type { ProjectStatus, Student,Speciality } from '../types/student'
+import { SPECIALITY_LABELS } from './speciality'
 
 export const TEAM_TYPES: Record<TeamType, { label: string; size: number }> = {
   solo: { label: 'Monôme', size: 1 },
   pair: { label: 'Binôme', size: 2 },
   trio: { label: 'Trinôme', size: 3 },
+  quad :{label : 'Quadrinôme' ,size: 4}
 }
 
 export const TEAM_TYPE_OPTIONS = (Object.keys(TEAM_TYPES) as TeamType[]).map((value) => ({
@@ -12,18 +14,23 @@ export const TEAM_TYPE_OPTIONS = (Object.keys(TEAM_TYPES) as TeamType[]).map((va
   label: TEAM_TYPES[value].label,
 }))
 
-// TODO backend : ces listes de référence viendront d'une API
-export const ACADEMIC_YEARS = ['2025-2026', '2024-2025']
+// année universitaire courante : commence en septembre
+function currentAcademicStart(date = new Date()): number {
+  return date.getMonth() >= 8 ? date.getFullYear() : date.getFullYear() - 1
+}
 
-export const PROJECT_DOMAINS = [
-  'Intelligence artificielle',
-  'Systèmes d’information',
-  'Cybersécurité',
-  'Data Science',
-  'Génie logiciel',
-  'Réseaux et télécoms',
-  'Bases de données',
-]
+export function academicYearLabel(start: number): string {
+  return `${start}-${start + 1}`
+}
+
+// courante + 2 précédentes
+export const ACADEMIC_YEARS = [0, 1, 2].map((i) =>
+  academicYearLabel(currentAcademicStart() - i),
+)
+
+export const PROJECT_DOMAIN_OPTIONS = (Object.keys(SPECIALITY_LABELS) as Speciality[]).map(
+  (value) => ({ value, label: SPECIALITY_LABELS[value] }),
+)
 
 export function teamSize(teamType: string): number {
   return TEAM_TYPES[teamType as TeamType]?.size ?? 0

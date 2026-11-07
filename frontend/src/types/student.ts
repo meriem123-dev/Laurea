@@ -17,7 +17,7 @@ export interface Student {
   cursus: Cursus;
   speciality: Speciality
   group: string | null
-  projectStatus: ProjectStatus
+  projectStatus: ProjectStatus | null
   accountStatus: AccountStatus
 }
 

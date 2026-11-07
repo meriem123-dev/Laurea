@@ -64,3 +64,8 @@ export type Teacher = Prisma.TeacherModel
  * 
  */
 export type Room = Prisma.RoomModel
+/**
+ * Model Project
+ * 
+ */
+export type Project = Prisma.ProjectModel
