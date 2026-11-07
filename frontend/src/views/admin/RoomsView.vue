@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { isAxiosError } from 'axios'
+
+
 import { DoorOpen, Pencil, Plus } from '@lucide/vue'
 import BaseAlert from '../../components/common/BaseAlert.vue'
 import BaseButton from '../../components/common/BaseButton.vue'
@@ -19,7 +22,19 @@ import { buildRoomFields, roomToFormValues, toRoomData } from '../../utils/roomF
 import type { FormValues } from '../../types/form'
 import type { Room } from '../../types/room'
 
-const { rooms, addRoom, updateRoom, removeRoom } = useRoomsData()
+const { rooms, error, loadRooms, addRoom, updateRoom, removeRoom } = useRoomsData()
+
+onMounted(loadRooms)
+
+function apiMessage(e: unknown): string {
+  if (isAxiosError(e)) {
+    if (e.response?.status === 409) return 'Une salle porte déjà ce nom.'
+    const msg = e.response?.data?.message
+    if (msg) return Array.isArray(msg) ? msg.join(', ') : String(msg)
+  }
+  return 'Une erreur est survenue. Réessayez.'
+}
+
 const { defenses } = useDefensesData()
 
 // Jour pour lequel on calcule la disponibilité (par défaut : aujourd'hui)
@@ -104,21 +119,26 @@ function openDelete(room: Room) {
   selected.value = room
   isDeleteOpen.value = true
 }
-
-function saveRoom(values: FormValues) {
-  // TODO backend : POST /rooms ou PUT /rooms/:id. Ici : enregistrement local en mémoire,
-  // perdu au rechargement.
+async function saveRoom(values: FormValues) {
   const data = toRoomData(values)
-  if (selected.value) updateRoom(selected.value.id, data)
-  else addRoom(data)
+  try {
+    if (selected.value) await updateRoom(selected.value.id, data)
+    else await addRoom(data)
+    blockedMessage.value = ''
+  } catch (e) {
+    blockedMessage.value = apiMessage(e)
+  }
   isFormOpen.value = false
 }
 
-function deleteRoom() {
-  // TODO backend : DELETE /rooms/:id. Ici : suppression locale, non enregistrée.
+async function deleteRoom() {
   const current = selected.value
   if (!current) return
-  removeRoom(current.id)
+  try {
+    await removeRoom(current.id)
+  } catch (e) {
+    blockedMessage.value = apiMessage(e)
+  }
   isDeleteOpen.value = false
 }
 </script>
@@ -148,7 +168,10 @@ function deleteRoom() {
     </div>
 
     <BaseAlert v-if="blockedMessage" variant="error">{{ blockedMessage }}</BaseAlert>
+     
+     <BaseAlert v-if="error" variant="error">{{ error }}</BaseAlert>
 
+     
     <EmptyState v-if="rooms.length === 0" message="Aucune salle pour le moment." />
 
     <ul v-else class="grid grid-cols-1 gap-4 md:grid-cols-2">

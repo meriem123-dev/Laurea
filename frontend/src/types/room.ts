@@ -1,7 +1,7 @@
 export type RoomTone = 'blue' | 'violet' | 'orange' | 'green'
 
 export interface Room {
-  id: number
+  id: string
   name: string
   block: string // bloc ou bâtiment (chaîne vide si non renseigné)
   pole: string // pôle (chaîne vide si non renseigné)

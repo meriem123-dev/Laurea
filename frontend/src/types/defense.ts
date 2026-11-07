@@ -4,7 +4,7 @@ export interface Defense {
   date: string // ISO : 2025-06-18
   time: string // HH:MM
   duration: number // minutes
-  roomId: number
+  roomId: string
   presidentId: number
   memberIds: number[]
 }
