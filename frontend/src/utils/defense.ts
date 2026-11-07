@@ -63,7 +63,7 @@ export const ROOM_TONES: Record<RoomTone, { box: string; text: string; dot: stri
 export interface Conflict {
   kind: 'room' | 'professor'
   ids: [number, number] // les deux soutenances concernées
-  subjectId: number // identifiant de la salle ou du professeur
+  subjectId: number | string  // identifiant de la salle ou du professeur
 }
 
 export function findConflicts(defenses: Defense[]): Conflict[] {

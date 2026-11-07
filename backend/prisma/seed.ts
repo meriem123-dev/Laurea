@@ -29,6 +29,21 @@ async function main() {
     },
   });
 
+  const roomsSeed = [
+  { name: 'Salle A12', block: 'Bâtiment Sciences', pole: '', equipment: 'Vidéoprojecteur, tableau', capacity: 24, tone: 'blue' },
+  { name: 'Amphi B', block: 'Bâtiment Central', pole: '', equipment: 'Vidéoconférence, sonorisation, micro', capacity: 120, tone: 'violet' },
+  { name: 'Salle C04', block: '', pole: 'Pôle Numérique', equipment: 'Vidéoprojecteur, visioconférence', capacity: 32, tone: 'green' },
+  { name: 'Salle A08', block: 'Bâtiment Sciences', pole: '', equipment: 'Tableau', capacity: 20, tone: 'orange' },
+];
+
+for (const room of roomsSeed) {
+  await prisma.room.upsert({
+    where: { name: room.name },
+    update: {},
+    create: room,
+  });
+}
+
   console.log(`Admin prêt : ${email}`);
 }
 

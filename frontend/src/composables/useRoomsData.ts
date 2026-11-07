@@ -1,33 +1,53 @@
-import { reactive } from 'vue'
-import { rooms as roomsMock } from '../mocks/rooms'
+import { reactive, ref } from 'vue'
+import {
+  createRoom,
+  deleteRoom,
+  fetchRooms,
+  updateRoom as apiUpdateRoom,
+} from '../views/admin/api/rooms.api'
 import type { Room, RoomFormData, RoomTone } from '../types/room'
 
-// Tableau réactif partagé au niveau du module : toutes les pages voient les mêmes salles.
-// On le modifie « sur place » (push, splice) pour que les anciens lecteurs restent à jour.
-// TODO backend : remplacer par un store Pinia branché sur l'API.
-export const rooms = reactive<Room[]>(roomsMock.map((room) => ({ ...room })))
+// Tableau réactif partagé (utilisé aussi par useDefensesData), modifié « sur place »
+export const rooms = reactive<Room[]>([])
+
+const loading = ref(false)
+const error = ref('')
 
 const TONE_CYCLE: RoomTone[] = ['blue', 'violet', 'green', 'orange']
 
 export function useRoomsData() {
-  function addRoom(data: RoomFormData): Room {
-    const id = Math.max(0, ...rooms.map((room) => room.id)) + 1
-    // Couleur attribuée en alternance pour distinguer les salles dans le calendrier
+  async function loadRooms() {
+    loading.value = true
+    error.value = ''
+    try {
+      const list = await fetchRooms()
+      rooms.splice(0, rooms.length, ...list)
+    } catch {
+      error.value = 'Impossible de charger les salles.'
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // Ces fonctions laissent remonter l'erreur : c'est la vue qui l'affiche
+  async function addRoom(data: RoomFormData): Promise<Room> {
     const tone = TONE_CYCLE[rooms.length % TONE_CYCLE.length] ?? 'blue'
-    const created: Room = { id, tone, ...data }
+    const created = await createRoom({ ...data, tone })
     rooms.push(created)
     return created
   }
 
-  function updateRoom(id: number, data: RoomFormData) {
-    const room = rooms.find((item) => item.id === id)
-    if (room) Object.assign(room, data)
+  async function updateRoom(id: string, data: RoomFormData) {
+    const updated = await apiUpdateRoom(id, data)
+    const index = rooms.findIndex((room) => room.id === id)
+    if (index >= 0) rooms[index] = updated
   }
 
-  function removeRoom(id: number) {
+  async function removeRoom(id: string) {
+    await deleteRoom(id)
     const index = rooms.findIndex((room) => room.id === id)
     if (index >= 0) rooms.splice(index, 1)
   }
 
-  return { rooms, addRoom, updateRoom, removeRoom }
+  return { rooms, loading, error, loadRooms, addRoom, updateRoom, removeRoom }
 }

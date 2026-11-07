@@ -141,7 +141,7 @@ export function buildDefenseFields(options: DefenseFieldsOptions): FormFieldConf
         if (!slot) return ''
         const taken = options.otherDefenses.some(
           (defense) =>
-            defense.roomId === Number(value) && slotOverlaps(slot, defenseSlot(defense)),
+            defense.roomId === String(value) && slotOverlaps(slot, defenseSlot(defense)),
         )
         return taken ? 'Cette salle est déjà réservée sur ce créneau.' : ''
       },
@@ -175,7 +175,7 @@ export function toDefenseData(values: FormValues): DefenseFormData {
     projectId: Number(get('project')),
     date: get('date'),
     time: get('time'),
-    roomId: Number(get('room')),
+    roomId: String(get('room')),
     presidentId: Number(get('president')),
     memberIds: MEMBER_KEYS.map(get).filter(Boolean).map(Number),
   }
