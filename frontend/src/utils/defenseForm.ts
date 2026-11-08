@@ -42,7 +42,7 @@ function professorValidator(key: string, options: DefenseFieldsOptions): Validat
     const duplicate = JURY_KEYS.some((other) => other !== key && (values[other] ?? '') === value)
     if (duplicate) return 'Ce professeur apparaît déjà dans le jury.'
 
-    const id = Number(value)
+    const id = (value)
     const professor = options.professors.find((item) => item.id === id)
     if (professor?.busyOn && professor.busyOn === (values.date ?? '')) {
       return `${displayName(professor)} est indisponible ce jour-là.`
@@ -172,11 +172,11 @@ export function defaultDefenseValues(date: string): FormValues {
 export function toDefenseData(values: FormValues): DefenseFormData {
   const get = (key: string) => values[key] ?? ''
   return {
-    projectId: Number(get('project')),
+    projectId: (get('project')),
     date: get('date'),
     time: get('time'),
     roomId: String(get('room')),
-    presidentId: Number(get('president')),
-    memberIds: MEMBER_KEYS.map(get).filter(Boolean).map(Number),
+    presidentId: (get('president')),
+    memberIds: MEMBER_KEYS.map(get).filter(Boolean).map(String),
   }
 }

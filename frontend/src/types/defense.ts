@@ -1,12 +1,12 @@
 export interface Defense {
   id: number
-  projectId: number
+  projectId: string
   date: string // ISO : 2025-06-18
   time: string // HH:MM
   duration: number // minutes
   roomId: string
-  presidentId: number
-  memberIds: number[]
+  presidentId: string
+  memberIds: string[]
 }
 
 // Données saisies dans le formulaire (la durée est gérée par l'application)

@@ -6,8 +6,8 @@ export interface ProjectMeta {
   description: string
 }
 
-export const projectMeta: Record<number, ProjectMeta> = {
-  1: {
+export const projectMeta: Record<string, ProjectMeta> = {
+  '1': {
     validatedOn: '2025-05-28',
     reportDeadline: '2025-06-12',
     description:

@@ -10,7 +10,7 @@ export interface ProfessorDefense {
 
 // Un professeur peut cumuler plusieurs rôles sur une soutenance : on affiche le principal
 // (président > encadrant > examinateur).
-function roleOf(view: DefenseView, professorId: number): JuryRole | null {
+function roleOf(view: DefenseView, professorId: string): JuryRole | null {
   if (view.defense.presidentId === professorId) return 'president'
   if (
     view.project?.supervisorId === professorId ||
@@ -23,7 +23,7 @@ function roleOf(view: DefenseView, professorId: number): JuryRole | null {
 }
 
 // TODO backend : remplacer par GET /professors/me/defenses
-export function useProfessorDefenses(professorId: number) {
+export function useProfessorDefenses(professorId: string) {
   const { views } = useDefensesData()
 
   // `views` est déjà trié par date puis par heure

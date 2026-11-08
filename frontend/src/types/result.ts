@@ -1,7 +1,7 @@
 export type PublicationState = 'published' | 'toValidate' | 'missing'
 
 export interface Grade {
-  professorId: number
+  professorId: string
   value: number // sur 20
 }
 
