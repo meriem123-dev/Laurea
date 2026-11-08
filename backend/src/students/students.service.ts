@@ -13,7 +13,7 @@ import { randomBytes } from "node:crypto";
 import { AuthService } from "../auth/auth.service";
 
 // On n'expose jamais le passwordHash
-const include = { user: { omit: { passwordHash: true } } } as const;
+const include = { user: { omit: { passwordHash: true } },project: { select: { status: true } }, } as const;
 
 @Injectable()
 export class StudentsService {

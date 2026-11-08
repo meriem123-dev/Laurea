@@ -37,7 +37,7 @@ export function slotOverlaps(a: Slot, b: Slot): boolean {
   return a.date === b.date && a.start < b.end && b.start < a.end
 }
 
-export function juryIdsOf(defense: Defense): number[] {
+export function juryIdsOf(defense: Defense): string[] {
   return [defense.presidentId, ...defense.memberIds]
 }
 

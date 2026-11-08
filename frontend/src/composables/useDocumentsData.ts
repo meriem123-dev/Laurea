@@ -8,7 +8,7 @@ import { todayISO } from '../utils/calendar'
 const documents = ref<ProjectDocument[]>(documentsMock.map((document) => ({ ...document })))
 
 export function useDocumentsData() {
-  function documentsOf(projectId: number): ProjectDocument[] {
+  function documentsOf(projectId: string): ProjectDocument[] {
     return documents.value.filter((document) => document.projectId === projectId)
   }
 
@@ -21,7 +21,7 @@ export function useDocumentsData() {
 
   // TODO backend : POST /projects/:id/documents (multipart). Ici : seul le nom et la taille sont
   // conservés en mémoire, le fichier lui-même n'est pas envoyé.
-  function addDocument(projectId: number, file: { name: string; sizeKb: number }): ProjectDocument {
+  function addDocument(projectId: string, file: { name: string; sizeKb: number }): ProjectDocument {
     const id = Math.max(0, ...documents.value.map((document) => document.id)) + 1
     const created: ProjectDocument = {
       id,

@@ -1,17 +1,18 @@
 import type { ProjectStatus } from "./student";
+import type{ Speciality } from "./student";
 
 export type TeamType = "solo" | "pair" | "trio" |"quad";
 
 export interface Project {
-  id: number;
+  id: string;
   title: string;
-  domain: string;
+  domain: Speciality;
   company: string;
   academicYear: string;
   teamType: TeamType;
   studentIds: string[];
-  supervisorId: number;
-  coSupervisorId: number | null;
+  supervisorId: string;
+  coSupervisorId: string | null;
   notes: string;
   status: ProjectStatus;
 }
@@ -19,11 +20,11 @@ export interface Project {
 export interface ProjectFormData {
   title: string;
   academicYear: string;
-  domain: string;
+  domain: Speciality;
   company: string;
   teamType: TeamType;
   studentIds: string[];
-  supervisorId: number;
-  coSupervisorId: number | null;
+  supervisorId: string;
+  coSupervisorId: string | null;
   notes: string;
 }

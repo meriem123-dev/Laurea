@@ -33,7 +33,7 @@ const jury = computed(() => {
   if (!current) return []
 
   const list: { professor: Professor; role: string }[] = []
-  const seen = new Set<number>()
+  const seen = new Set<string>()
   const add = (professor: Professor | undefined, role: string) => {
     if (!professor || seen.has(professor.id)) return
     seen.add(professor.id)

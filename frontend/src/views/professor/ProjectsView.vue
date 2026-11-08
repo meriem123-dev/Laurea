@@ -15,9 +15,9 @@ import { TEAM_TYPES, teamMembers } from '../../utils/project'
 import { PROJECT_STATUS_META } from '../../utils/projectStatus'
 import { fullName } from '../../utils/student'
 import type { Project } from '../../types/project'
+import { CURRENT_PROFESSOR_ID } from '../../mocks/currentProfessor.js'
 
-// TODO backend : id du professeur connecté (store auth) + GET /professors/me/projects
-const CURRENT_PROFESSOR_ID = 1
+
 
 const students = ref(studentsMock)
 const myProjects = computed(() =>
@@ -51,7 +51,7 @@ function openDetails(project: Project) {
   isDetailsOpen.value = true
 }
 
-function professorLabel(id: number | null): string {
+function professorLabel(id: string | null): string {
   const professor = professors.find((item) => item.id === id)
   return professor ? displayName(professor) : ''
 }

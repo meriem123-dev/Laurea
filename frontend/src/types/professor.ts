@@ -1,7 +1,7 @@
 export type ProfessorTitle = 'Pr.' | 'Dr.'
 
 export interface Professor {
-  id: number
+  id: string
   title?: ProfessorTitle
   name: string
   email: string
