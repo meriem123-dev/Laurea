@@ -14,18 +14,11 @@ export const useProfessorsStore = defineStore("professors", () => {
   const loading = ref(false);
   const error = ref<string | null>(null);
 
-  // Professor.id est un number (type inchangé) : on attribue un id d'affichage,
-  // l'uuid du back sert pour les appels à l'API
-  let lastId = 0;
+  // l'id est directement l'uuid renvoyé par le back
   const withId = (professor: ProfessorData): ApiProfessor => ({
     ...professor,
-    id: ++lastId,
+    id: professor.uuid,
   });
-  const uuidOf = (id: number) => {
-    const professor = items.value.find((p) => p.id === id);
-    if (!professor) throw new Error("Professeur introuvable.");
-    return professor.uuid;
-  };
 
   async function fetchAll() {
     loading.value = true;
@@ -42,22 +35,19 @@ export const useProfessorsStore = defineStore("professors", () => {
     }
   }
 
-  // Les actions d'écriture laissent remonter l'erreur : la vue décide quoi afficher
   async function create(data: ProfessorPayload) {
     const { professor, emailSent } = await professorsApi.createProfessor(data);
     items.value.unshift(withId(professor));
     return emailSent;
   }
 
-  async function update(id: number, data: ProfessorPayload) {
-    const updated = await professorsApi.updateProfessor(uuidOf(id), data);
-    items.value = items.value.map((p) =>
-      p.id === id ? { ...updated, id } : p,
-    );
+  async function update(id: string, data: ProfessorPayload) {
+    const updated = await professorsApi.updateProfessor(id, data);
+    items.value = items.value.map((p) => (p.id === id ? withId(updated) : p));
   }
 
-  async function remove(id: number) {
-    await professorsApi.deleteProfessor(uuidOf(id));
+  async function remove(id: string) {
+    await professorsApi.deleteProfessor(id);
     items.value = items.value.filter((p) => p.id !== id);
   }
 

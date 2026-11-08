@@ -3,7 +3,7 @@ import type { Professor } from '../types/professor'
 // Données fictives : à remplacer par les appels API (api/ + store)
 export const professors: Professor[] = [
   {
-    id: 1,
+    id: "1",
     title: 'Pr.',
     name: 'Karim Mansouri',
     email: 'karim.mansouri@univ.fr',
@@ -12,7 +12,7 @@ export const professors: Professor[] = [
     projectCount: 3,
   },
   {
-    id: 2,
+    id: "2",
     title: 'Pr.',
     name: 'Leïla Amrane',
     email: 'leila.amrane@univ.fr',
@@ -21,7 +21,7 @@ export const professors: Professor[] = [
     projectCount: 3,
   },
   {
-    id: 3,
+    id: "3",
     title: 'Dr.',
     name: 'Sofiane Belkacem',
     email: 'sofiane.belkacem@univ.fr',
@@ -31,7 +31,7 @@ export const professors: Professor[] = [
     projectCount: 3,
   },
   {
-    id: 4,
+    id: "4",
     title: 'Dr.',
     name: 'Samia Rahal',
     email: 'samia.rahal@univ.fr',
@@ -40,7 +40,7 @@ export const professors: Professor[] = [
     projectCount: 3,
   },
   {
-    id: 5,
+    id: "5",
     title: 'Pr.',
     name: 'Nadir Boudiaf',
     email: 'nadir.boudiaf@univ.fr',
@@ -49,7 +49,7 @@ export const professors: Professor[] = [
     projectCount: 2,
   },
   {
-    id: 6,
+    id: "6",
     title: 'Dr.',
     name: 'Amel Zerrouki',
     email: 'amel.zerrouki@univ.fr',
@@ -59,7 +59,7 @@ export const professors: Professor[] = [
     projectCount: 4,
   },
   {
-    id: 7,
+    id: "7",
     title: 'Pr.',
     name: 'Hocine Ferhat',
     email: 'hocine.ferhat@univ.fr',
@@ -68,7 +68,7 @@ export const professors: Professor[] = [
     projectCount: 2,
   },
   {
-    id: 8,
+    id: "8",
     title: 'Dr.',
     name: 'Yasmine Merabet',
     email: 'yasmine.merabet@univ.fr',

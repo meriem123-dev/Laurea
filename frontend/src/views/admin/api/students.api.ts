@@ -5,7 +5,7 @@ import type {
   Speciality,
   Cursus,
   ImportError,
-  ImportResult,
+  ImportResult,ProjectStatus
 } from "../../../types/student";
 import { http } from "../../../api/http";
 
@@ -24,6 +24,7 @@ export interface StudentDto {
     lastName: string;
     isActive: boolean;
   };
+  project: { status: ProjectStatus } | null;
 }
 
 export interface StudentFilters {
@@ -49,7 +50,7 @@ export function toStudent(dto: StudentDto): Student {
     cursus: dto.cursus,
     accountStatus: dto.accountStatus,
     // pas encore fourni par le back
-    projectStatus: "deposited",
+    projectStatus: dto.project?.status||null,
   };
 }
 

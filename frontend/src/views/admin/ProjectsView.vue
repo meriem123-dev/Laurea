@@ -1,57 +1,84 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { BookOpen, Pencil, Plus } from '@lucide/vue'
-import BaseButton from '../../components/common/BaseButton.vue'
-import ConfirmDialog from '../../components/common/ConfirmDialog.vue'
-import DetailsModal from '../../components/common/DetailsModal.vue'
-import FilterBar from '../../components/common/FilterBar.vue'
-import EntityFormModal from '../../components/forms/EntityFormModal.vue'
-import PageHeader from '../../components/layout/PageHeader.vue'
-import ProjectCard from '../../components/projects/ProjectCard.vue'
-import { useProjectFilters } from '../../composables/useProjectFilters'
-import { professors as professorsMock } from '../../mocks/professors'
-import { projects as projectsMock } from '../../mocks/projects'
-import { students as studentsMock } from '../../mocks/students'
-import { displayName } from '../../utils/professor'
-import { TEAM_TYPES, teamMembers } from '../../utils/project'
+import { computed, onMounted, ref } from "vue";
+import { storeToRefs } from "pinia";
+import { BookOpen, Pencil, Plus } from "@lucide/vue";
+import BaseButton from "../../components/common/BaseButton.vue";
+import ConfirmDialog from "../../components/common/ConfirmDialog.vue";
+import DetailsModal from "../../components/common/DetailsModal.vue";
+import FilterBar from "../../components/common/FilterBar.vue";
+import EntityFormModal from "../../components/forms/EntityFormModal.vue";
+import PageHeader from "../../components/layout/PageHeader.vue";
+import ProjectCard from "../../components/projects/ProjectCard.vue";
+import { useProjectFilters } from "../../composables/useProjectFilters";
+import { useProjectsStore } from "./stores/projects";
+import { useStudentsStore } from "./stores/students";
+import { useProfessorsStore } from "./stores/professors";
+import { getErrorMessage } from "../../utils/apiError";
+import { displayName } from "../../utils/professor";
+import { TEAM_TYPES, teamMembers } from "../../utils/project";
 import {
   buildProjectFields,
   defaultProjectValues,
   projectToFormValues,
   toProjectData,
-} from '../../utils/projectForm'
-import { PROJECT_STATUS_META } from '../../utils/projectStatus'
-import { fullName } from '../../utils/student'
-import type { FormValues } from '../../types/form'
-import type { Project } from '../../types/project'
+} from "../../utils/projectForm";
+import { PROJECT_STATUS_META } from "../../utils/projectStatus";
+import { SPECIALITY_LABELS } from "../../utils/speciality";
+import { fullName } from "../../utils/student";
+import type { FormValues } from "../../types/form";
+import type { Project } from "../../types/project";
 
-// TODO backend : charger projets, étudiants et professeurs via api/ + stores
-const projects = ref(projectsMock)
-const students = ref(studentsMock)
-const professors = ref(professorsMock)
+const projectsStore = useProjectsStore();
+const studentsStore = useStudentsStore();
+const {
+  items: projects,
+  loading,
+  error: loadError,
+} = storeToRefs(projectsStore);
+const { items: students } = storeToRefs(studentsStore);
+const professorsStore = useProfessorsStore();
+const { items: professors } = storeToRefs(professorsStore);
 
-const { search, status, domain, statusOptions, domainOptions, filtered } = useProjectFilters(
-  projects,
-  students,
-)
+onMounted(() => {
+  projectsStore.fetchAll();
+  studentsStore.fetchAll();
+  professorsStore.fetchAll();
+});
+
+const isSaving = ref(false);
+const formError = ref<string | null>(null);
+const deleteError = ref<string | null>(null);
+
+const { search, status, domain, statusOptions, domainOptions, filtered } =
+  useProjectFilters(projects, students);
 
 const filterSelects = computed(() => [
-  { key: 'status', ariaLabel: 'Filtrer par statut', options: statusOptions, modelValue: status.value },
-  { key: 'domain', ariaLabel: 'Filtrer par domaine', options: domainOptions, modelValue: domain.value },
-])
+  {
+    key: "status",
+    ariaLabel: "Filtrer par statut",
+    options: statusOptions,
+    modelValue: status.value,
+  },
+  {
+    key: "domain",
+    ariaLabel: "Filtrer par domaine",
+    options: domainOptions,
+    modelValue: domain.value,
+  },
+]);
 
 function setFilter(key: string, value: string) {
-  if (key === 'status') status.value = value
-  else if (key === 'domain') domain.value = value
+  if (key === "status") status.value = value;
+  else if (key === "domain") domain.value = value;
 }
 
 // Projet ciblé par la modification, le dossier ou la suppression (null = création)
-const selected = ref<Project | null>(null)
-const isFormOpen = ref(false)
-const isDetailsOpen = ref(false)
-const isDeleteOpen = ref(false)
+const selected = ref<Project | null>(null);
+const isFormOpen = ref(false);
+const isDetailsOpen = ref(false);
+const isDeleteOpen = ref(false);
 
-const isEdit = computed(() => selected.value !== null)
+const isEdit = computed(() => selected.value !== null);
 
 // Un étudiant ne peut être que dans un seul projet : on propose ceux qui n'en ont pas
 // (et, en modification, ceux du projet modifié)
@@ -62,121 +89,135 @@ const takenStudentIds = computed(
         .filter((project) => project.id !== selected.value?.id)
         .flatMap((project) => project.studentIds),
     ),
-)
+);
 
 const studentOptions = computed(() =>
   students.value
     .filter((student) => !takenStudentIds.value.has(student.id))
-    .map((student) => ({ value: String(student.id), label: `${fullName(student)} · ${student.matricule}` })),
-)
+    .map((student) => ({
+      value: student.id,
+      label: `${fullName(student)} · ${student.matricule}`,
+    })),
+);
 
 const professorOptions = computed(() =>
-  professors.value.map((professor) => ({ value: String(professor.id), label: displayName(professor) })),
-)
+  professors.value.map((professor) => ({
+    value: professor.id,
+    label: displayName(professor),
+  })),
+);
 
 const formFields = computed(() =>
   buildProjectFields({
     studentOptions: studentOptions.value,
     professorOptions: professorOptions.value,
   }),
-)
+);
 
 const initialValues = computed(() =>
   selected.value ? projectToFormValues(selected.value) : defaultProjectValues(),
-)
+);
 
-function professorLabel(id: number | null): string {
-  const professor = professors.value.find((item) => item.id === id)
-  return professor ? displayName(professor) : ''
+function professorLabel(id: string | null): string {
+  const professor = professors.value.find((item) => item.id === id);
+  return professor ? displayName(professor) : "";
 }
 
 const detailsFields = computed(() => {
-  const project = selected.value
-  if (!project) return []
+  const project = selected.value;
+  if (!project) return [];
   return [
-    { label: 'Domaine', value: project.domain },
-    { label: 'Année académique', value: project.academicYear },
-    { label: 'Type d’équipe', value: TEAM_TYPES[project.teamType].label },
-    { label: 'Entreprise', value: project.company },
+    { label: "Domaine", value: SPECIALITY_LABELS[project.domain] },
+    { label: "Année académique", value: project.academicYear },
+    { label: "Type d’équipe", value: TEAM_TYPES[project.teamType].label },
+    { label: "Entreprise", value: project.company },
     {
-      label: 'Étudiants',
+      label: "Étudiants",
       value: teamMembers(project, students.value)
         .map((student) => fullName(student))
-        .join(', '),
+        .join(", "),
     },
-    { label: 'Encadrant principal', value: professorLabel(project.supervisorId) },
-    { label: 'Co-encadrant', value: professorLabel(project.coSupervisorId) },
-    { label: 'Notes', value: project.notes },
-  ]
-})
+    {
+      label: "Encadrant principal",
+      value: professorLabel(project.supervisorId),
+    },
+    { label: "Co-encadrant", value: professorLabel(project.coSupervisorId) },
+    { label: "Notes", value: project.notes },
+  ];
+});
 
 const detailsBadge = computed(() => {
-  const project = selected.value
-  if (!project) return undefined
-  const meta = PROJECT_STATUS_META[project.status]
-  return { label: 'Statut', text: meta.label, tone: meta.tone }
-})
+  const project = selected.value;
+  if (!project) return undefined;
+  const meta = PROJECT_STATUS_META[project.status];
+  return { label: "Statut", text: meta.label, tone: meta.tone };
+});
 
 // Avertit si le projet est déjà avancé dans le workflow
 const deleteMessage = computed(() => {
-  const project = selected.value
-  if (!project) return ''
+  const project = selected.value;
+  if (!project) return "";
   const advanced =
-    project.status === 'deposited'
-      ? ''
-      : ` Il est au statut « ${PROJECT_STATUS_META[project.status].label} ».`
-  return `Le projet « ${project.title} » sera supprimé.${advanced} Cette action est irréversible.`
-})
+    project.status === "deposited"
+      ? ""
+      : ` Il est au statut « ${PROJECT_STATUS_META[project.status].label} ».`;
+  return `Le projet « ${project.title} » sera supprimé.${advanced} Cette action est irréversible.`;
+});
 
 function openCreate() {
-  selected.value = null
-  isFormOpen.value = true
+  formError.value = "";
+  selected.value = null;
+  isFormOpen.value = true;
 }
 
 function openDetails(project: Project) {
-  selected.value = project
-  isDetailsOpen.value = true
+  selected.value = project;
+  isDetailsOpen.value = true;
 }
 
 function openEdit(project: Project) {
-  selected.value = project
-  isFormOpen.value = true
+  formError.value = "";
+  selected.value = project;
+  isFormOpen.value = true;
 }
 
 function editFromDetails() {
-  isDetailsOpen.value = false
-  isFormOpen.value = true
+  formError.value = "";
+  isDetailsOpen.value = false;
+  isFormOpen.value = true;
 }
 
 function openDelete(project: Project) {
-  selected.value = project
-  isDeleteOpen.value = true
+  selected.value = project;
+  isDeleteOpen.value = true;
 }
 
-function saveProject(values: FormValues) {
-  // TODO backend : POST /projects ou PUT /projects/:id. Le backend doit vérifier qu'aucun étudiant
-  // n'est déjà rattaché à un autre projet. Ici : modification locale, non enregistrée.
-  const data = toProjectData(values)
-  const current = selected.value
-
-  if (current) {
-    // Le statut du workflow est conservé tel quel
-    projects.value = projects.value.map((project) =>
-      project.id === current.id ? { ...project, ...data } : project,
-    )
-  } else {
-    const nextId = Math.max(0, ...projects.value.map((project) => project.id)) + 1
-    projects.value = [{ id: nextId, ...data, status: 'deposited' }, ...projects.value]
+async function saveProject(values: FormValues) {
+  const data = toProjectData(values);
+  formError.value = null;
+  isSaving.value = true;
+  try {
+    if (selected.value) await projectsStore.update(selected.value.id, data);
+    else await projectsStore.create(data);
+    isFormOpen.value = false; // on ne ferme que si tout s'est bien passé
+  } catch (e) {
+    formError.value = getErrorMessage(e, "Enregistrement impossible.");
+  } finally {
+    isSaving.value = false;
   }
-  isFormOpen.value = false
 }
 
-function deleteProject() {
-  // TODO backend : DELETE /projects/:id. Ici : suppression locale, non enregistrée.
-  const current = selected.value
-  if (!current) return
-  projects.value = projects.value.filter((project) => project.id !== current.id)
-  isDeleteOpen.value = false
+async function deleteProject() {
+  const current = selected.value;
+  if (!current) return;
+  deleteError.value = null;
+  try {
+    await projectsStore.remove(current.id);
+  } catch (e) {
+    deleteError.value = getErrorMessage(e, "Suppression impossible.");
+  } finally {
+    isDeleteOpen.value = false;
+  }
 }
 </script>
 
@@ -219,7 +260,11 @@ function deleteProject() {
           :project="project"
           :members="teamMembers(project, students)"
           :supervisor="professorLabel(project.supervisorId)"
-          :coSupervisor="project.coSupervisorId ? professorLabel(project.coSupervisorId) : undefined"
+          :coSupervisor="
+            project.coSupervisorId
+              ? professorLabel(project.coSupervisorId)
+              : undefined
+          "
           @view="openDetails"
           @edit="openEdit"
           @delete="openDelete"

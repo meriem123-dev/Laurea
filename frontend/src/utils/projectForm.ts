@@ -4,6 +4,7 @@ import type {
   FormValues,
 } from "../types/form";
 import type { Project, ProjectFormData, TeamType } from "../types/project";
+import type { Speciality } from "../types/student";
 import {
   ACADEMIC_YEARS,
   PROJECT_DOMAIN_OPTIONS,
@@ -16,7 +17,7 @@ interface ProjectFieldsOptions {
   professorOptions: FormFieldOption[];
 }
 
-const SLOTS = [1, 2, 3];
+const SLOTS = [1, 2, 3,4];
 
 export function buildProjectFields(
   options: ProjectFieldsOptions,
@@ -131,9 +132,8 @@ export function projectToFormValues(project: Project): FormValues {
     domain: project.domain,
     company: project.company,
     teamType: project.teamType,
-    supervisor: String(project.supervisorId),
-    coSupervisor:
-      project.coSupervisorId === null ? "" : String(project.coSupervisorId),
+    supervisor: project.supervisorId,
+    coSupervisor: project.coSupervisorId || "",
     notes: project.notes,
   };
   SLOTS.forEach((slot) => {
@@ -153,13 +153,13 @@ export function toProjectData(values: FormValues): ProjectFormData {
   return {
     title: get("title"),
     academicYear: get("academicYear"),
-    domain: get("domain"),
+    domain: get("domain") as Speciality,
     company: get("company"),
     teamType: get("teamType") as TeamType,
     // Les champs d'étudiants masqués arrivent vides et sont écartés
     studentIds: SLOTS.map((slot) => get(`student${slot}`)).filter(Boolean),
-    supervisorId: Number(get("supervisor")),
-    coSupervisorId: get("coSupervisor") ? Number(get("coSupervisor")) : null,
+    supervisorId: (get("supervisor")),
+    coSupervisorId: get("coSupervisor") ? (get("coSupervisor")) : null,
     notes: get("notes"),
   };
 }

@@ -7,6 +7,7 @@ import { PROJECT_STATUS_META } from '../../utils/projectStatus'
 import { fullName, initials } from '../../utils/student'
 import type { Project } from '../../types/project'
 import type { Student } from '../../types/student'
+import { SPECIALITY_LABELS } from '../../utils/speciality'
 
 const props = defineProps<{
   project: Project
@@ -57,7 +58,7 @@ function onAction(key: string) {
     </div>
 
     <h2 class="mt-4 break-words font-display text-xl leading-snug text-ink">{{ project.title }}</h2>
-    <p class="mt-1 text-xs text-text-muted">{{ project.domain }}</p>
+    <p class="mt-1 text-xs text-text-muted">{{ SPECIALITY_LABELS[project.domain] }}</p>
 
     <ul class="mt-5 flex-1 space-y-3 border-t border-border pt-4">
       <li v-for="member in members" :key="member.id" class="flex items-center gap-3">
