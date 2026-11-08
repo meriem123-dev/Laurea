@@ -36,10 +36,12 @@ const { documentsOf, evaluate } = useDocumentsData()
 const { views: resultViews } = useResultsData()
 
 // ?project=ID permet d'arriver directement sur un projet (lien « Consulter le mémoire »)
-const queryId = Number(route.query.project)
-const selectedProjectId = ref<number | null>(
+const queryId = typeof route.query.project === 'string' ? route.query.project : ''
+const selectedProjectId = ref<string | null>(
   projects.value.find((item) => item.id === queryId)?.id ?? projects.value[0]?.id ?? null,
 )
+
+
 const selectedDocumentId = ref<number | null>(null)
 const pvError = ref('')
 
@@ -67,7 +69,7 @@ function initialsOf(item: Project): string {
   return first ? initials(first) : ''
 }
 
-function selectProject(id: number) {
+function selectProject(id: string) {
   selectedProjectId.value = id
   selectedDocumentId.value = null
   pvError.value = ''

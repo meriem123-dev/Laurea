@@ -9,7 +9,7 @@ import {
 } from '../../utils/grading'
 
 export interface GridJuror {
-  id: number
+  id: string
   name: string
   roleLabel: string
   scores: CriterionScores
@@ -19,7 +19,7 @@ export interface GridJuror {
 const props = defineProps<{
   criteria: Criterion[]
   jurors: GridJuror[]
-  currentId: number // professeur connecté : sa colonne est mise en évidence
+  currentId: string // professeur connecté : sa colonne est mise en évidence
   editable: boolean // sa colonne est-elle modifiable ?
 }>()
 

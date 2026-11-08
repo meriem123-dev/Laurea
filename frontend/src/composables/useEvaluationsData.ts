@@ -37,7 +37,7 @@ export function useEvaluationsData() {
   // est membre du jury et que la note n'est pas verrouillée)
   function setScore(
     defenseId: number,
-    professorId: number,
+    professorId: string,
     criterionId: string,
     value: number | null,
   ) {

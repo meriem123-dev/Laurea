@@ -8,7 +8,7 @@ import BaseTextarea from '../forms/BaseTextarea.vue'
 import { MAX_SCORE, formatPreciseGrade } from '../../utils/grading'
 
 const props = defineProps<{
-  members: { id: number; name: string; grade: number | null }[]
+  members: { id: string; name: string; grade: number | null }[]
   average: number | null
   finalGrade: number | null // note retenue (par défaut : la moyenne)
   justification: string

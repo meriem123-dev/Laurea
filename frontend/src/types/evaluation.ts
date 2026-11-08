@@ -10,7 +10,7 @@ export type CriterionScores = Record<string, number>
 
 export interface DefenseEvaluation {
   defenseId: number
-  scores: Record<number, CriterionScores> // identifiant du professeur -> ses notes
+  scores: Record<string, CriterionScores> // identifiant du professeur -> ses notes
   finalGrade: number | null // note retenue ; null = moyenne du jury
   justification: string
   observations: string

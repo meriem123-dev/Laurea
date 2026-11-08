@@ -1,6 +1,6 @@
 export interface ProjectDocument {
   id: number
-  projectId: number
+  projectId: string
   name: string
   submittedOn: string // date ISO : 2025-06-02
   sizeKb: number

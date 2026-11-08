@@ -5,7 +5,7 @@ import type { ProjectDocument } from '../types/document'
 export const documents: ProjectDocument[] = [
   {
     id: 6,
-    projectId: 1,
+    projectId: "1",
     name: 'Cahier des charges - v2.pdf',
     submittedOn: '2025-05-28',
     sizeKb: 1400,
@@ -15,7 +15,7 @@ export const documents: ProjectDocument[] = [
   },
   {
     id: 1,
-    projectId: 1,
+    projectId: "1",
     name: 'Rapport intermédiaire.pdf',
     submittedOn: '2025-05-12',
     sizeKb: 1800,
@@ -24,7 +24,7 @@ export const documents: ProjectDocument[] = [
   },
   {
     id: 2,
-    projectId: 1,
+    projectId: "1",
     name: 'Mémoire final.pdf',
     submittedOn: '2025-06-02',
     sizeKb: 4300,
@@ -33,7 +33,7 @@ export const documents: ProjectDocument[] = [
   },
   {
     id: 3,
-    projectId: 2,
+    projectId: "2",
     name: 'Cahier des charges.pdf',
     submittedOn: '2025-04-20',
     sizeKb: 640,
@@ -42,7 +42,7 @@ export const documents: ProjectDocument[] = [
   },
   {
     id: 4,
-    projectId: 3,
+    projectId: "3",
     name: 'Rapport intermédiaire.pdf',
     submittedOn: '2025-05-18',
     sizeKb: 2100,
@@ -51,7 +51,7 @@ export const documents: ProjectDocument[] = [
   },
   {
     id: 5,
-    projectId: 5,
+    projectId: "5",
     name: 'Rapport de stage.pdf',
     submittedOn: '2025-03-14',
     sizeKb: 3200,

@@ -14,9 +14,9 @@ import { useProfessorDefenses } from '../../composables/useProfessorDefenses'
 import { initialCursor, todayISO } from '../../utils/calendar'
 import { describeConflict, findConflicts } from '../../utils/defense'
 import type { Defense } from '../../types/defense'
+import { CURRENT_PROFESSOR_ID } from '../../mocks/currentProfessor.js'
 
-// TODO backend : id du professeur connecté (store auth)
-const CURRENT_PROFESSOR_ID = 1
+
 
 const { defenses, rooms, professors } = useDefensesData()
 const { items } = useProfessorDefenses(CURRENT_PROFESSOR_ID)
