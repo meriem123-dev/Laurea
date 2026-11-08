@@ -17,7 +17,7 @@ interface ProjectFieldsOptions {
   professorOptions: FormFieldOption[];
 }
 
-const SLOTS = [1, 2, 3,4];
+const SLOTS = [1, 2, 3, 4];
 
 export function buildProjectFields(
   options: ProjectFieldsOptions,
@@ -27,7 +27,16 @@ export function buildProjectFields(
     label: `Étudiant ${slot}`,
     type: "select",
     placeholder: "Sélectionner un étudiant",
-    options: options.studentOptions,
+    options: options.studentOptions, //valeur par défaut
+    optionsWhen: (values) => {
+      const size = teamSize(values.teamType ?? "");
+      const taken = new Set(
+        SLOTS.filter((other) => other !== slot && size >= other)
+          .map((other) => values[`student${other}`])
+          .filter(Boolean),
+      );
+      return options.studentOptions.filter((o) => !taken.has(String(o.value)));
+    },
     hint:
       options.studentOptions.length === 0
         ? "Aucun étudiant disponible : tous ont déjà un projet."
@@ -107,6 +116,12 @@ export function buildProjectFields(
       type: "select",
       // Pas de placeholder : « Aucun » (valeur vide) est l'état de départ
       options: [{ value: "", label: "Aucun" }, ...options.professorOptions],
+      optionsWhen: (values) => [
+        { value: "", label: "Aucun" },
+        ...options.professorOptions.filter(
+          (p) => p.value !== values.supervisor,
+        ),
+      ],
       half: true,
       validate: (value, values) =>
         value === values.supervisor
@@ -158,8 +173,8 @@ export function toProjectData(values: FormValues): ProjectFormData {
     teamType: get("teamType") as TeamType,
     // Les champs d'étudiants masqués arrivent vides et sont écartés
     studentIds: SLOTS.map((slot) => get(`student${slot}`)).filter(Boolean),
-    supervisorId: (get("supervisor")),
-    coSupervisorId: get("coSupervisor") ? (get("coSupervisor")) : null,
+    supervisorId: get("supervisor"),
+    coSupervisorId: get("coSupervisor") ? get("coSupervisor") : null,
     notes: get("notes"),
   };
 }
