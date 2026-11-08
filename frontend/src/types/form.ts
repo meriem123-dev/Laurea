@@ -24,4 +24,5 @@ export interface FormFieldConfig {
   normalize?: (value: string) => string // appliquée avant validation et avant l'envoi
   // Retourne un message d'erreur, ou '' si valide. `values` = tous les champs du formulaire.
   validate?: (value: string, values: FormValues) => string
+  optionsWhen?: (values: FormValues) => FormFieldOption[];
 }

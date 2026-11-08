@@ -30,6 +30,7 @@ import type { Project } from "../../types/project";
 
 const projectsStore = useProjectsStore();
 const studentsStore = useStudentsStore();
+
 const {
   items: projects,
   loading,
@@ -38,6 +39,17 @@ const {
 const { items: students } = storeToRefs(studentsStore);
 const professorsStore = useProfessorsStore();
 const { items: professors } = storeToRefs(professorsStore);
+
+const feedback = ref<{
+  tone: "success" | "warning" | "error";
+  text: string;
+} | null>(null);
+
+const FEEDBACK_CLASSES = {
+  success: "border-green-200 bg-green-50 text-green-800",
+  warning: "border-amber-200 bg-amber-50 text-amber-800",
+  error: "border-red-200 bg-red-50 text-red-800",
+} as const;
 
 onMounted(() => {
   projectsStore.fetchAll();
@@ -195,11 +207,17 @@ function openDelete(project: Project) {
 async function saveProject(values: FormValues) {
   const data = toProjectData(values);
   formError.value = null;
+  feedback.value = null;
   isSaving.value = true;
   try {
-    if (selected.value) await projectsStore.update(selected.value.id, data);
-    else await projectsStore.create(data);
-    isFormOpen.value = false; // on ne ferme que si tout s'est bien passé
+    if (selected.value) {
+      await projectsStore.update(selected.value.id, data);
+      feedback.value = { tone: "success", text: "Projet mis à jour." };
+    } else {
+      await projectsStore.create(data);
+      feedback.value = { tone: "success", text: "Projet créé." };
+    }
+    isFormOpen.value = false;
   } catch (e) {
     formError.value = getErrorMessage(e, "Enregistrement impossible.");
   } finally {
@@ -210,11 +228,15 @@ async function saveProject(values: FormValues) {
 async function deleteProject() {
   const current = selected.value;
   if (!current) return;
-  deleteError.value = null;
+  feedback.value = null;
   try {
     await projectsStore.remove(current.id);
+    feedback.value = { tone: "success", text: "Projet supprimé." };
   } catch (e) {
-    deleteError.value = getErrorMessage(e, "Suppression impossible.");
+    feedback.value = {
+      tone: "error",
+      text: getErrorMessage(e, "Suppression impossible."),
+    };
   } finally {
     isDeleteOpen.value = false;
   }
@@ -243,7 +265,34 @@ async function deleteProject() {
     />
 
     <p
-      v-if="filtered.length === 0"
+      v-if="feedback"
+      role="status"
+      :class="[
+        'rounded-lg border p-4 text-sm',
+        FEEDBACK_CLASSES[feedback.tone],
+      ]"
+    >
+      {{ feedback.text }}
+    </p>
+
+    <p v-if="loading" class="text-sm text-slate-500">Chargement des projets…</p>
+    <div
+      v-else-if="loadError"
+      role="alert"
+      class="flex items-center justify-between gap-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800"
+    >
+      <span>{{ loadError }}</span>
+      <BaseButton
+        variant="secondary"
+        size="md"
+        @click="projectsStore.fetchAll()"
+      >
+        Réessayer
+      </BaseButton>
+    </div>
+
+    <p
+      v-else-if="filtered.length === 0"
       class="rounded-xl border border-dashed border-border-strong bg-card/60 py-16 text-center text-sm text-text-muted"
     >
       Aucun projet ne correspond à votre recherche.
@@ -285,6 +334,8 @@ async function deleteProject() {
       :fields="formFields"
       :initialValues="initialValues"
       :submitLabel="isEdit ? 'Enregistrer' : 'Créer le projet'"
+      :error="formError"
+      :loading="isSaving"
       @submit="saveProject"
     />
 

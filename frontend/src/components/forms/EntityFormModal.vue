@@ -6,7 +6,7 @@ import BaseModal from "../common/BaseModal.vue";
 import BaseInput from "./BaseInput.vue";
 import BaseSelect from "./BaseSelect.vue";
 import BaseTextarea from "./BaseTextarea.vue";
-import type { FormFieldConfig, FormValues } from "../../types/form";
+import type { FormFieldConfig, FormValues,FormFieldOption } from "../../types/form";
 
 const props = withDefaults(
   defineProps<{
@@ -82,7 +82,18 @@ function inputType(
 
 function onInput(key: string, value: string) {
   values[key] = value;
-  errors[key] = ""; // l'erreur disparaît dès qu'on modifie le champ
+  errors[key] = "";
+
+  // Si une valeur choisie ailleurs devient indisponible, on la vide
+  for (const field of props.fields) {
+    if (field.key === key || !field.optionsWhen) continue;
+    const current = values[field.key];
+    if (!current) continue;
+    const stillValid = field.optionsWhen(values).some(
+      (o) => String(o.value) === current,
+    );
+    if (!stillValid) values[field.key] = "";
+  }
 }
 
 function normalized(field: FormFieldConfig, raw: string): string {
@@ -90,6 +101,10 @@ function normalized(field: FormFieldConfig, raw: string): string {
   if (field.type === "password") return raw;
   if (field.type === "email") return raw.trim().toLowerCase();
   return raw.trim();
+}
+
+function optionsOf(field: FormFieldConfig):FormFieldOption[] {
+  return field.optionsWhen ? field.optionsWhen(values) : (field.options ?? []);
 }
 
 function validate(): FormValues | null {
@@ -180,7 +195,7 @@ function close() {
             v-if="row.field.type === 'select'"
             :id="`${formId}-${row.field.key}`"
             :modelValue="values[row.field.key] ?? ''"
-            :options="row.field.options ?? []"
+            :options="optionsOf(row.field)"
             :label="row.field.label"
             :placeholder="row.field.placeholder"
             size="lg"
