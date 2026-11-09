@@ -277,6 +277,23 @@ export type EnumProjectStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumProjectStatusFilter<$PrismaModel>
 }
 
+export type EnumJuryResponseFilter<$PrismaModel = never> = {
+  equals?: $Enums.JuryResponse | Prisma.EnumJuryResponseFieldRefInput<$PrismaModel>
+  in?: $Enums.JuryResponse[] | Prisma.ListEnumJuryResponseFieldRefInput<$PrismaModel>
+  notIn?: $Enums.JuryResponse[] | Prisma.ListEnumJuryResponseFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumJuryResponseFilter<$PrismaModel> | $Enums.JuryResponse
+}
+
+export type EnumJuryResponseWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.JuryResponse | Prisma.EnumJuryResponseFieldRefInput<$PrismaModel>
+  in?: $Enums.JuryResponse[] | Prisma.ListEnumJuryResponseFieldRefInput<$PrismaModel>
+  notIn?: $Enums.JuryResponse[] | Prisma.ListEnumJuryResponseFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumJuryResponseWithAggregatesFilter<$PrismaModel> | $Enums.JuryResponse
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumJuryResponseFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumJuryResponseFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -551,6 +568,23 @@ export type NestedEnumProjectStatusWithAggregatesFilter<$PrismaModel = never> = 
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumProjectStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumProjectStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumJuryResponseFilter<$PrismaModel = never> = {
+  equals?: $Enums.JuryResponse | Prisma.EnumJuryResponseFieldRefInput<$PrismaModel>
+  in?: $Enums.JuryResponse[] | Prisma.ListEnumJuryResponseFieldRefInput<$PrismaModel>
+  notIn?: $Enums.JuryResponse[] | Prisma.ListEnumJuryResponseFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumJuryResponseFilter<$PrismaModel> | $Enums.JuryResponse
+}
+
+export type NestedEnumJuryResponseWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.JuryResponse | Prisma.EnumJuryResponseFieldRefInput<$PrismaModel>
+  in?: $Enums.JuryResponse[] | Prisma.ListEnumJuryResponseFieldRefInput<$PrismaModel>
+  notIn?: $Enums.JuryResponse[] | Prisma.ListEnumJuryResponseFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumJuryResponseWithAggregatesFilter<$PrismaModel> | $Enums.JuryResponse
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumJuryResponseFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumJuryResponseFilter<$PrismaModel>
 }
 
 

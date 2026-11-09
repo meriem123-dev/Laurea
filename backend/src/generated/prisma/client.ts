@@ -69,3 +69,18 @@ export type Room = Prisma.RoomModel
  * 
  */
 export type Project = Prisma.ProjectModel
+/**
+ * Model Defense
+ * 
+ */
+export type Defense = Prisma.DefenseModel
+/**
+ * Model DefenseMember
+ * 
+ */
+export type DefenseMember = Prisma.DefenseMemberModel
+/**
+ * Model JuryConfirmation
+ * 
+ */
+export type JuryConfirmation = Prisma.JuryConfirmationModel

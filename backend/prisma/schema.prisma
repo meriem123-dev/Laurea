@@ -40,6 +40,13 @@ enum TeamType {
   quad
 }
 
+// réponse d'un membre du jury à son invitation
+enum JuryResponse {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
 enum ProjectStatus {
   deposited
   validated
@@ -83,45 +90,94 @@ model Student {
   group         String?
   cursus        Cursus
   accountStatus AccountStatus @default(PENDING)
-  projectId String?
-  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  projectId     String?
+  project       Project?      @relation(fields: [projectId], references: [id], onDelete: SetNull)
 }
 
 model Teacher {
-  id            String        @id @default(uuid())
-  userId        String        @unique
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title         String? // "Pr." ou "Dr." (comme ProfessorTitle du front)
-  specialty     String // texte libre, comme dans le front
-  accountStatus AccountStatus @default(PENDING)
-  supervised   Project[] @relation("Supervisor")
-  coSupervised Project[] @relation("CoSupervisor")
+  id                String             @id @default(uuid())
+  userId            String             @unique
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title             String? // "Pr." ou "Dr." (comme ProfessorTitle du front)
+  specialty         String // texte libre, comme dans le front
+  accountStatus     AccountStatus      @default(PENDING)
+  supervised        Project[]          @relation("Supervisor")
+  coSupervised      Project[]          @relation("CoSupervisor")
+  presidedDefenses  Defense[]
+  juryMemberships   DefenseMember[]
+  juryConfirmations JuryConfirmation[]
 }
 
 model Room {
-  id        String @id @default(uuid())
-  name      String @unique
-  block     String @default("")
-  pole      String @default("")
-  equipment String @default("")
+  id        String    @id @default(uuid())
+  name      String    @unique
+  block     String    @default("")
+  pole      String    @default("")
+  equipment String    @default("")
   capacity  Int
-  tone      String @default("blue")
+  tone      String    @default("blue")
+  defenses  Defense[]
 }
 
 model Project {
-  id              String        @id @default(uuid())
-  title           String
-  domain          Speciality
-  company         String        @default("")
-  academicYear    String
-  teamType        TeamType
-  supervisorId    String
-  supervisor      Teacher       @relation("Supervisor", fields: [supervisorId], references: [id])
-  coSupervisorId  String?
-  coSupervisor    Teacher?      @relation("CoSupervisor", fields: [coSupervisorId], references: [id])
-  notes           String        @default("")
-  status          ProjectStatus @default(deposited)
-  students        Student[]
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id             String        @id @default(uuid())
+  title          String
+  domain         Speciality
+  company        String        @default("")
+  academicYear   String
+  teamType       TeamType
+  supervisorId   String
+  supervisor     Teacher       @relation("Supervisor", fields: [supervisorId], references: [id])
+  coSupervisorId String?
+  coSupervisor   Teacher?      @relation("CoSupervisor", fields: [coSupervisorId], references: [id])
+  notes          String        @default("")
+  status         ProjectStatus @default(deposited)
+  students       Student[]
+  defense        Defense?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+// Soutenance : même forme que l'interface Defense du front (id numérique)
+model Defense {
+  id            Int                @id @default(autoincrement())
+  projectId     String             @unique // un projet n'a qu'une soutenance
+  project       Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  date          DateTime           @db.Date // jour de la soutenance (2026-06-18)
+  time          String // heure de début "HH:MM"
+  duration      Int                @default(60) // minutes
+  roomId        String
+  room          Room               @relation(fields: [roomId], references: [id], onDelete: Restrict)
+  presidentId   String
+  president     Teacher            @relation(fields: [presidentId], references: [id], onDelete: Restrict)
+  members       DefenseMember[]
+  confirmations JuryConfirmation[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  @@index([date])
+}
+
+// Jurés d'une soutenance (hors président), dans l'ordre Juré 1, Juré 2, Juré 3
+model DefenseMember {
+  defenseId Int
+  defense   Defense @relation(fields: [defenseId], references: [id], onDelete: Cascade)
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  position  Int
+
+  @@id([defenseId, teacherId])
+}
+
+// Confirmation de participation de chaque membre du jury (président + jurés)
+model JuryConfirmation {
+  defenseId   Int
+  defense     Defense      @relation(fields: [defenseId], references: [id], onDelete: Cascade)
+  teacherId   String
+  teacher     Teacher      @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  status      JuryResponse @default(PENDING)
+  tokenHash   String       @unique // lien envoyé par mail (on ne stocke que le hash, comme pour les mots de passe oubliés)
+  respondedAt DateTime?
+
+  @@id([defenseId, teacherId])
 }

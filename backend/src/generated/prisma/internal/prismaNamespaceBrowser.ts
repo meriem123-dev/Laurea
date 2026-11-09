@@ -56,7 +56,10 @@ export const ModelName = {
   Student: 'Student',
   Teacher: 'Teacher',
   Room: 'Room',
-  Project: 'Project'
+  Project: 'Project',
+  Defense: 'Defense',
+  DefenseMember: 'DefenseMember',
+  JuryConfirmation: 'JuryConfirmation'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -156,6 +159,41 @@ export const ProjectScalarFieldEnum = {
 } as const
 
 export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
+
+
+export const DefenseScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  date: 'date',
+  time: 'time',
+  duration: 'duration',
+  roomId: 'roomId',
+  presidentId: 'presidentId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DefenseScalarFieldEnum = (typeof DefenseScalarFieldEnum)[keyof typeof DefenseScalarFieldEnum]
+
+
+export const DefenseMemberScalarFieldEnum = {
+  defenseId: 'defenseId',
+  teacherId: 'teacherId',
+  position: 'position'
+} as const
+
+export type DefenseMemberScalarFieldEnum = (typeof DefenseMemberScalarFieldEnum)[keyof typeof DefenseMemberScalarFieldEnum]
+
+
+export const JuryConfirmationScalarFieldEnum = {
+  defenseId: 'defenseId',
+  teacherId: 'teacherId',
+  status: 'status',
+  tokenHash: 'tokenHash',
+  respondedAt: 'respondedAt'
+} as const
+
+export type JuryConfirmationScalarFieldEnum = (typeof JuryConfirmationScalarFieldEnum)[keyof typeof JuryConfirmationScalarFieldEnum]
 
 
 export const SortOrder = {

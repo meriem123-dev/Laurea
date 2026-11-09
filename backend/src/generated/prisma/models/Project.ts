@@ -241,6 +241,7 @@ export type ProjectWhereInput = {
   supervisor?: Prisma.XOR<Prisma.TeacherScalarRelationFilter, Prisma.TeacherWhereInput>
   coSupervisor?: Prisma.XOR<Prisma.TeacherNullableScalarRelationFilter, Prisma.TeacherWhereInput> | null
   students?: Prisma.StudentListRelationFilter
+  defense?: Prisma.XOR<Prisma.DefenseNullableScalarRelationFilter, Prisma.DefenseWhereInput> | null
 }
 
 export type ProjectOrderByWithRelationInput = {
@@ -259,6 +260,7 @@ export type ProjectOrderByWithRelationInput = {
   supervisor?: Prisma.TeacherOrderByWithRelationInput
   coSupervisor?: Prisma.TeacherOrderByWithRelationInput
   students?: Prisma.StudentOrderByRelationAggregateInput
+  defense?: Prisma.DefenseOrderByWithRelationInput
 }
 
 export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -280,6 +282,7 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   supervisor?: Prisma.XOR<Prisma.TeacherScalarRelationFilter, Prisma.TeacherWhereInput>
   coSupervisor?: Prisma.XOR<Prisma.TeacherNullableScalarRelationFilter, Prisma.TeacherWhereInput> | null
   students?: Prisma.StudentListRelationFilter
+  defense?: Prisma.XOR<Prisma.DefenseNullableScalarRelationFilter, Prisma.DefenseWhereInput> | null
 }, "id">
 
 export type ProjectOrderByWithAggregationInput = {
@@ -332,6 +335,7 @@ export type ProjectCreateInput = {
   supervisor: Prisma.TeacherCreateNestedOneWithoutSupervisedInput
   coSupervisor?: Prisma.TeacherCreateNestedOneWithoutCoSupervisedInput
   students?: Prisma.StudentCreateNestedManyWithoutProjectInput
+  defense?: Prisma.DefenseCreateNestedOneWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateInput = {
@@ -348,6 +352,7 @@ export type ProjectUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   students?: Prisma.StudentUncheckedCreateNestedManyWithoutProjectInput
+  defense?: Prisma.DefenseUncheckedCreateNestedOneWithoutProjectInput
 }
 
 export type ProjectUpdateInput = {
@@ -364,6 +369,7 @@ export type ProjectUpdateInput = {
   supervisor?: Prisma.TeacherUpdateOneRequiredWithoutSupervisedNestedInput
   coSupervisor?: Prisma.TeacherUpdateOneWithoutCoSupervisedNestedInput
   students?: Prisma.StudentUpdateManyWithoutProjectNestedInput
+  defense?: Prisma.DefenseUpdateOneWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateInput = {
@@ -380,6 +386,7 @@ export type ProjectUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   students?: Prisma.StudentUncheckedUpdateManyWithoutProjectNestedInput
+  defense?: Prisma.DefenseUncheckedUpdateOneWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyInput = {
@@ -483,6 +490,11 @@ export type ProjectMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type ProjectScalarRelationFilter = {
+  is?: Prisma.ProjectWhereInput
+  isNot?: Prisma.ProjectWhereInput
 }
 
 export type ProjectCreateNestedOneWithoutStudentsInput = {
@@ -593,6 +605,20 @@ export type EnumProjectStatusFieldUpdateOperationsInput = {
   set?: $Enums.ProjectStatus
 }
 
+export type ProjectCreateNestedOneWithoutDefenseInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutDefenseInput, Prisma.ProjectUncheckedCreateWithoutDefenseInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutDefenseInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutDefenseNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutDefenseInput, Prisma.ProjectUncheckedCreateWithoutDefenseInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutDefenseInput
+  upsert?: Prisma.ProjectUpsertWithoutDefenseInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutDefenseInput, Prisma.ProjectUpdateWithoutDefenseInput>, Prisma.ProjectUncheckedUpdateWithoutDefenseInput>
+}
+
 export type ProjectCreateWithoutStudentsInput = {
   id?: string
   title: string
@@ -606,6 +632,7 @@ export type ProjectCreateWithoutStudentsInput = {
   updatedAt?: Date | string
   supervisor: Prisma.TeacherCreateNestedOneWithoutSupervisedInput
   coSupervisor?: Prisma.TeacherCreateNestedOneWithoutCoSupervisedInput
+  defense?: Prisma.DefenseCreateNestedOneWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutStudentsInput = {
@@ -621,6 +648,7 @@ export type ProjectUncheckedCreateWithoutStudentsInput = {
   status?: $Enums.ProjectStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  defense?: Prisma.DefenseUncheckedCreateNestedOneWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutStudentsInput = {
@@ -652,6 +680,7 @@ export type ProjectUpdateWithoutStudentsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   supervisor?: Prisma.TeacherUpdateOneRequiredWithoutSupervisedNestedInput
   coSupervisor?: Prisma.TeacherUpdateOneWithoutCoSupervisedNestedInput
+  defense?: Prisma.DefenseUpdateOneWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutStudentsInput = {
@@ -667,6 +696,7 @@ export type ProjectUncheckedUpdateWithoutStudentsInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  defense?: Prisma.DefenseUncheckedUpdateOneWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutSupervisorInput = {
@@ -682,6 +712,7 @@ export type ProjectCreateWithoutSupervisorInput = {
   updatedAt?: Date | string
   coSupervisor?: Prisma.TeacherCreateNestedOneWithoutCoSupervisedInput
   students?: Prisma.StudentCreateNestedManyWithoutProjectInput
+  defense?: Prisma.DefenseCreateNestedOneWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutSupervisorInput = {
@@ -697,6 +728,7 @@ export type ProjectUncheckedCreateWithoutSupervisorInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   students?: Prisma.StudentUncheckedCreateNestedManyWithoutProjectInput
+  defense?: Prisma.DefenseUncheckedCreateNestedOneWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutSupervisorInput = {
@@ -722,6 +754,7 @@ export type ProjectCreateWithoutCoSupervisorInput = {
   updatedAt?: Date | string
   supervisor: Prisma.TeacherCreateNestedOneWithoutSupervisedInput
   students?: Prisma.StudentCreateNestedManyWithoutProjectInput
+  defense?: Prisma.DefenseCreateNestedOneWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutCoSupervisorInput = {
@@ -737,6 +770,7 @@ export type ProjectUncheckedCreateWithoutCoSupervisorInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   students?: Prisma.StudentUncheckedCreateNestedManyWithoutProjectInput
+  defense?: Prisma.DefenseUncheckedCreateNestedOneWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutCoSupervisorInput = {
@@ -799,6 +833,86 @@ export type ProjectUpdateManyWithWhereWithoutCoSupervisorInput = {
   data: Prisma.XOR<Prisma.ProjectUpdateManyMutationInput, Prisma.ProjectUncheckedUpdateManyWithoutCoSupervisorInput>
 }
 
+export type ProjectCreateWithoutDefenseInput = {
+  id?: string
+  title: string
+  domain: $Enums.Speciality
+  company?: string
+  academicYear: string
+  teamType: $Enums.TeamType
+  notes?: string
+  status?: $Enums.ProjectStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  supervisor: Prisma.TeacherCreateNestedOneWithoutSupervisedInput
+  coSupervisor?: Prisma.TeacherCreateNestedOneWithoutCoSupervisedInput
+  students?: Prisma.StudentCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutDefenseInput = {
+  id?: string
+  title: string
+  domain: $Enums.Speciality
+  company?: string
+  academicYear: string
+  teamType: $Enums.TeamType
+  supervisorId: string
+  coSupervisorId?: string | null
+  notes?: string
+  status?: $Enums.ProjectStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutDefenseInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutDefenseInput, Prisma.ProjectUncheckedCreateWithoutDefenseInput>
+}
+
+export type ProjectUpsertWithoutDefenseInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutDefenseInput, Prisma.ProjectUncheckedUpdateWithoutDefenseInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutDefenseInput, Prisma.ProjectUncheckedCreateWithoutDefenseInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutDefenseInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutDefenseInput, Prisma.ProjectUncheckedUpdateWithoutDefenseInput>
+}
+
+export type ProjectUpdateWithoutDefenseInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  domain?: Prisma.EnumSpecialityFieldUpdateOperationsInput | $Enums.Speciality
+  company?: Prisma.StringFieldUpdateOperationsInput | string
+  academicYear?: Prisma.StringFieldUpdateOperationsInput | string
+  teamType?: Prisma.EnumTeamTypeFieldUpdateOperationsInput | $Enums.TeamType
+  notes?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  supervisor?: Prisma.TeacherUpdateOneRequiredWithoutSupervisedNestedInput
+  coSupervisor?: Prisma.TeacherUpdateOneWithoutCoSupervisedNestedInput
+  students?: Prisma.StudentUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutDefenseInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  domain?: Prisma.EnumSpecialityFieldUpdateOperationsInput | $Enums.Speciality
+  company?: Prisma.StringFieldUpdateOperationsInput | string
+  academicYear?: Prisma.StringFieldUpdateOperationsInput | string
+  teamType?: Prisma.EnumTeamTypeFieldUpdateOperationsInput | $Enums.TeamType
+  supervisorId?: Prisma.StringFieldUpdateOperationsInput | string
+  coSupervisorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  students?: Prisma.StudentUncheckedUpdateManyWithoutProjectNestedInput
+}
+
 export type ProjectCreateManySupervisorInput = {
   id?: string
   title: string
@@ -840,6 +954,7 @@ export type ProjectUpdateWithoutSupervisorInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coSupervisor?: Prisma.TeacherUpdateOneWithoutCoSupervisedNestedInput
   students?: Prisma.StudentUpdateManyWithoutProjectNestedInput
+  defense?: Prisma.DefenseUpdateOneWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutSupervisorInput = {
@@ -855,6 +970,7 @@ export type ProjectUncheckedUpdateWithoutSupervisorInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   students?: Prisma.StudentUncheckedUpdateManyWithoutProjectNestedInput
+  defense?: Prisma.DefenseUncheckedUpdateOneWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutSupervisorInput = {
@@ -884,6 +1000,7 @@ export type ProjectUpdateWithoutCoSupervisorInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   supervisor?: Prisma.TeacherUpdateOneRequiredWithoutSupervisedNestedInput
   students?: Prisma.StudentUpdateManyWithoutProjectNestedInput
+  defense?: Prisma.DefenseUpdateOneWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutCoSupervisorInput = {
@@ -899,6 +1016,7 @@ export type ProjectUncheckedUpdateWithoutCoSupervisorInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   students?: Prisma.StudentUncheckedUpdateManyWithoutProjectNestedInput
+  defense?: Prisma.DefenseUncheckedUpdateOneWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutCoSupervisorInput = {
@@ -962,6 +1080,7 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   supervisor?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
   coSupervisor?: boolean | Prisma.Project$coSupervisorArgs<ExtArgs>
   students?: boolean | Prisma.Project$studentsArgs<ExtArgs>
+  defense?: boolean | Prisma.Project$defenseArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["project"]>
 
@@ -1019,6 +1138,7 @@ export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   supervisor?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
   coSupervisor?: boolean | Prisma.Project$coSupervisorArgs<ExtArgs>
   students?: boolean | Prisma.Project$studentsArgs<ExtArgs>
+  defense?: boolean | Prisma.Project$defenseArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProjectIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1036,6 +1156,7 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     supervisor: Prisma.$TeacherPayload<ExtArgs>
     coSupervisor: Prisma.$TeacherPayload<ExtArgs> | null
     students: Prisma.$StudentPayload<ExtArgs>[]
+    defense: Prisma.$DefensePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1447,6 +1568,7 @@ export interface Prisma__ProjectClient<T, Null = never, ExtArgs extends runtime.
   supervisor<T extends Prisma.TeacherDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TeacherDefaultArgs<ExtArgs>>): Prisma.Prisma__TeacherClient<runtime.Types.Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   coSupervisor<T extends Prisma.Project$coSupervisorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$coSupervisorArgs<ExtArgs>>): Prisma.Prisma__TeacherClient<runtime.Types.Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   students<T extends Prisma.Project$studentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$studentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  defense<T extends Prisma.Project$defenseArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$defenseArgs<ExtArgs>>): Prisma.Prisma__DefenseClient<runtime.Types.Result.GetResult<Prisma.$DefensePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1929,6 +2051,25 @@ export type Project$studentsArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.StudentScalarFieldEnum | Prisma.StudentScalarFieldEnum[]
+}
+
+/**
+ * Project.defense
+ */
+export type Project$defenseArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Defense
+   */
+  select?: Prisma.DefenseSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Defense
+   */
+  omit?: Prisma.DefenseOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DefenseInclude<ExtArgs> | null
+  where?: Prisma.DefenseWhereInput
 }
 
 /**

@@ -10,9 +10,10 @@ import { StudentsModule } from './students/students.module';
 import { TeachersModule } from './teachers/teachers.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { ProjectsModule } from './projects/projects.module';
+import { DefensesModule } from './defenses/defenses.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), PrismaModule, GradingModule,UsersModule,AuthModule, StudentsModule, TeachersModule, RoomsModule,ProjectsModule],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), PrismaModule, GradingModule,UsersModule,AuthModule, StudentsModule, TeachersModule, RoomsModule,ProjectsModule, DefensesModule],
   controllers: [HealthController],
 })
 export class AppModule {}

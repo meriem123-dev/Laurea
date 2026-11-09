@@ -56,6 +56,15 @@ export const TeamType = {
 export type TeamType = (typeof TeamType)[keyof typeof TeamType]
 
 
+export const JuryResponse = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  DECLINED: 'DECLINED'
+} as const
+
+export type JuryResponse = (typeof JuryResponse)[keyof typeof JuryResponse]
+
+
 export const ProjectStatus = {
   deposited: 'deposited',
   validated: 'validated',

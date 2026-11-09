@@ -98,10 +98,22 @@ export class TeachersService {
   async remove(id: string) {
     const teacher = await this.findOne(id);
     // Supprimer le User supprime aussi le Teacher (onDelete: Cascade)
-    await this.prisma.user.delete({ where: { id: teacher.userId } });
+    try {
+      await this.prisma.user.delete({ where: { id: teacher.userId } });
+    } catch (e) {
+      // P2003 : l'enseignant encadre un projet ou fait partie d'un jury
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError &&
+        e.code === "P2003"
+      ) {
+        throw new ConflictException(
+          "Cet enseignant encadre un projet ou fait partie d'un jury : retirez-le d'abord.",
+        );
+      }
+      throw e;
+    }
     return { deleted: true };
   }
-
   // profil de l'enseignant connecté
   async findByUserId(userId: string) {
     const teacher = await this.prisma.teacher.findUnique({
