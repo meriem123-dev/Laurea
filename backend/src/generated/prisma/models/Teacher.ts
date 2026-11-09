@@ -185,6 +185,9 @@ export type TeacherWhereInput = {
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   supervised?: Prisma.ProjectListRelationFilter
   coSupervised?: Prisma.ProjectListRelationFilter
+  presidedDefenses?: Prisma.DefenseListRelationFilter
+  juryMemberships?: Prisma.DefenseMemberListRelationFilter
+  juryConfirmations?: Prisma.JuryConfirmationListRelationFilter
 }
 
 export type TeacherOrderByWithRelationInput = {
@@ -196,6 +199,9 @@ export type TeacherOrderByWithRelationInput = {
   user?: Prisma.UserOrderByWithRelationInput
   supervised?: Prisma.ProjectOrderByRelationAggregateInput
   coSupervised?: Prisma.ProjectOrderByRelationAggregateInput
+  presidedDefenses?: Prisma.DefenseOrderByRelationAggregateInput
+  juryMemberships?: Prisma.DefenseMemberOrderByRelationAggregateInput
+  juryConfirmations?: Prisma.JuryConfirmationOrderByRelationAggregateInput
 }
 
 export type TeacherWhereUniqueInput = Prisma.AtLeast<{
@@ -210,6 +216,9 @@ export type TeacherWhereUniqueInput = Prisma.AtLeast<{
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   supervised?: Prisma.ProjectListRelationFilter
   coSupervised?: Prisma.ProjectListRelationFilter
+  presidedDefenses?: Prisma.DefenseListRelationFilter
+  juryMemberships?: Prisma.DefenseMemberListRelationFilter
+  juryConfirmations?: Prisma.JuryConfirmationListRelationFilter
 }, "id" | "userId">
 
 export type TeacherOrderByWithAggregationInput = {
@@ -242,6 +251,9 @@ export type TeacherCreateInput = {
   user: Prisma.UserCreateNestedOneWithoutTeacherInput
   supervised?: Prisma.ProjectCreateNestedManyWithoutSupervisorInput
   coSupervised?: Prisma.ProjectCreateNestedManyWithoutCoSupervisorInput
+  presidedDefenses?: Prisma.DefenseCreateNestedManyWithoutPresidentInput
+  juryMemberships?: Prisma.DefenseMemberCreateNestedManyWithoutTeacherInput
+  juryConfirmations?: Prisma.JuryConfirmationCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateInput = {
@@ -252,6 +264,9 @@ export type TeacherUncheckedCreateInput = {
   accountStatus?: $Enums.AccountStatus
   supervised?: Prisma.ProjectUncheckedCreateNestedManyWithoutSupervisorInput
   coSupervised?: Prisma.ProjectUncheckedCreateNestedManyWithoutCoSupervisorInput
+  presidedDefenses?: Prisma.DefenseUncheckedCreateNestedManyWithoutPresidentInput
+  juryMemberships?: Prisma.DefenseMemberUncheckedCreateNestedManyWithoutTeacherInput
+  juryConfirmations?: Prisma.JuryConfirmationUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUpdateInput = {
@@ -262,6 +277,9 @@ export type TeacherUpdateInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutTeacherNestedInput
   supervised?: Prisma.ProjectUpdateManyWithoutSupervisorNestedInput
   coSupervised?: Prisma.ProjectUpdateManyWithoutCoSupervisorNestedInput
+  presidedDefenses?: Prisma.DefenseUpdateManyWithoutPresidentNestedInput
+  juryMemberships?: Prisma.DefenseMemberUpdateManyWithoutTeacherNestedInput
+  juryConfirmations?: Prisma.JuryConfirmationUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateInput = {
@@ -272,6 +290,9 @@ export type TeacherUncheckedUpdateInput = {
   accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   supervised?: Prisma.ProjectUncheckedUpdateManyWithoutSupervisorNestedInput
   coSupervised?: Prisma.ProjectUncheckedUpdateManyWithoutCoSupervisorNestedInput
+  presidedDefenses?: Prisma.DefenseUncheckedUpdateManyWithoutPresidentNestedInput
+  juryMemberships?: Prisma.DefenseMemberUncheckedUpdateManyWithoutTeacherNestedInput
+  juryConfirmations?: Prisma.JuryConfirmationUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherCreateManyInput = {
@@ -393,6 +414,48 @@ export type TeacherUpdateOneWithoutCoSupervisedNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TeacherUpdateToOneWithWhereWithoutCoSupervisedInput, Prisma.TeacherUpdateWithoutCoSupervisedInput>, Prisma.TeacherUncheckedUpdateWithoutCoSupervisedInput>
 }
 
+export type TeacherCreateNestedOneWithoutPresidedDefensesInput = {
+  create?: Prisma.XOR<Prisma.TeacherCreateWithoutPresidedDefensesInput, Prisma.TeacherUncheckedCreateWithoutPresidedDefensesInput>
+  connectOrCreate?: Prisma.TeacherCreateOrConnectWithoutPresidedDefensesInput
+  connect?: Prisma.TeacherWhereUniqueInput
+}
+
+export type TeacherUpdateOneRequiredWithoutPresidedDefensesNestedInput = {
+  create?: Prisma.XOR<Prisma.TeacherCreateWithoutPresidedDefensesInput, Prisma.TeacherUncheckedCreateWithoutPresidedDefensesInput>
+  connectOrCreate?: Prisma.TeacherCreateOrConnectWithoutPresidedDefensesInput
+  upsert?: Prisma.TeacherUpsertWithoutPresidedDefensesInput
+  connect?: Prisma.TeacherWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TeacherUpdateToOneWithWhereWithoutPresidedDefensesInput, Prisma.TeacherUpdateWithoutPresidedDefensesInput>, Prisma.TeacherUncheckedUpdateWithoutPresidedDefensesInput>
+}
+
+export type TeacherCreateNestedOneWithoutJuryMembershipsInput = {
+  create?: Prisma.XOR<Prisma.TeacherCreateWithoutJuryMembershipsInput, Prisma.TeacherUncheckedCreateWithoutJuryMembershipsInput>
+  connectOrCreate?: Prisma.TeacherCreateOrConnectWithoutJuryMembershipsInput
+  connect?: Prisma.TeacherWhereUniqueInput
+}
+
+export type TeacherUpdateOneRequiredWithoutJuryMembershipsNestedInput = {
+  create?: Prisma.XOR<Prisma.TeacherCreateWithoutJuryMembershipsInput, Prisma.TeacherUncheckedCreateWithoutJuryMembershipsInput>
+  connectOrCreate?: Prisma.TeacherCreateOrConnectWithoutJuryMembershipsInput
+  upsert?: Prisma.TeacherUpsertWithoutJuryMembershipsInput
+  connect?: Prisma.TeacherWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TeacherUpdateToOneWithWhereWithoutJuryMembershipsInput, Prisma.TeacherUpdateWithoutJuryMembershipsInput>, Prisma.TeacherUncheckedUpdateWithoutJuryMembershipsInput>
+}
+
+export type TeacherCreateNestedOneWithoutJuryConfirmationsInput = {
+  create?: Prisma.XOR<Prisma.TeacherCreateWithoutJuryConfirmationsInput, Prisma.TeacherUncheckedCreateWithoutJuryConfirmationsInput>
+  connectOrCreate?: Prisma.TeacherCreateOrConnectWithoutJuryConfirmationsInput
+  connect?: Prisma.TeacherWhereUniqueInput
+}
+
+export type TeacherUpdateOneRequiredWithoutJuryConfirmationsNestedInput = {
+  create?: Prisma.XOR<Prisma.TeacherCreateWithoutJuryConfirmationsInput, Prisma.TeacherUncheckedCreateWithoutJuryConfirmationsInput>
+  connectOrCreate?: Prisma.TeacherCreateOrConnectWithoutJuryConfirmationsInput
+  upsert?: Prisma.TeacherUpsertWithoutJuryConfirmationsInput
+  connect?: Prisma.TeacherWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TeacherUpdateToOneWithWhereWithoutJuryConfirmationsInput, Prisma.TeacherUpdateWithoutJuryConfirmationsInput>, Prisma.TeacherUncheckedUpdateWithoutJuryConfirmationsInput>
+}
+
 export type TeacherCreateWithoutUserInput = {
   id?: string
   title?: string | null
@@ -400,6 +463,9 @@ export type TeacherCreateWithoutUserInput = {
   accountStatus?: $Enums.AccountStatus
   supervised?: Prisma.ProjectCreateNestedManyWithoutSupervisorInput
   coSupervised?: Prisma.ProjectCreateNestedManyWithoutCoSupervisorInput
+  presidedDefenses?: Prisma.DefenseCreateNestedManyWithoutPresidentInput
+  juryMemberships?: Prisma.DefenseMemberCreateNestedManyWithoutTeacherInput
+  juryConfirmations?: Prisma.JuryConfirmationCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutUserInput = {
@@ -409,6 +475,9 @@ export type TeacherUncheckedCreateWithoutUserInput = {
   accountStatus?: $Enums.AccountStatus
   supervised?: Prisma.ProjectUncheckedCreateNestedManyWithoutSupervisorInput
   coSupervised?: Prisma.ProjectUncheckedCreateNestedManyWithoutCoSupervisorInput
+  presidedDefenses?: Prisma.DefenseUncheckedCreateNestedManyWithoutPresidentInput
+  juryMemberships?: Prisma.DefenseMemberUncheckedCreateNestedManyWithoutTeacherInput
+  juryConfirmations?: Prisma.JuryConfirmationUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutUserInput = {
@@ -434,6 +503,9 @@ export type TeacherUpdateWithoutUserInput = {
   accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   supervised?: Prisma.ProjectUpdateManyWithoutSupervisorNestedInput
   coSupervised?: Prisma.ProjectUpdateManyWithoutCoSupervisorNestedInput
+  presidedDefenses?: Prisma.DefenseUpdateManyWithoutPresidentNestedInput
+  juryMemberships?: Prisma.DefenseMemberUpdateManyWithoutTeacherNestedInput
+  juryConfirmations?: Prisma.JuryConfirmationUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutUserInput = {
@@ -443,6 +515,9 @@ export type TeacherUncheckedUpdateWithoutUserInput = {
   accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   supervised?: Prisma.ProjectUncheckedUpdateManyWithoutSupervisorNestedInput
   coSupervised?: Prisma.ProjectUncheckedUpdateManyWithoutCoSupervisorNestedInput
+  presidedDefenses?: Prisma.DefenseUncheckedUpdateManyWithoutPresidentNestedInput
+  juryMemberships?: Prisma.DefenseMemberUncheckedUpdateManyWithoutTeacherNestedInput
+  juryConfirmations?: Prisma.JuryConfirmationUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherCreateWithoutSupervisedInput = {
@@ -452,6 +527,9 @@ export type TeacherCreateWithoutSupervisedInput = {
   accountStatus?: $Enums.AccountStatus
   user: Prisma.UserCreateNestedOneWithoutTeacherInput
   coSupervised?: Prisma.ProjectCreateNestedManyWithoutCoSupervisorInput
+  presidedDefenses?: Prisma.DefenseCreateNestedManyWithoutPresidentInput
+  juryMemberships?: Prisma.DefenseMemberCreateNestedManyWithoutTeacherInput
+  juryConfirmations?: Prisma.JuryConfirmationCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutSupervisedInput = {
@@ -461,6 +539,9 @@ export type TeacherUncheckedCreateWithoutSupervisedInput = {
   specialty: string
   accountStatus?: $Enums.AccountStatus
   coSupervised?: Prisma.ProjectUncheckedCreateNestedManyWithoutCoSupervisorInput
+  presidedDefenses?: Prisma.DefenseUncheckedCreateNestedManyWithoutPresidentInput
+  juryMemberships?: Prisma.DefenseMemberUncheckedCreateNestedManyWithoutTeacherInput
+  juryConfirmations?: Prisma.JuryConfirmationUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutSupervisedInput = {
@@ -475,6 +556,9 @@ export type TeacherCreateWithoutCoSupervisedInput = {
   accountStatus?: $Enums.AccountStatus
   user: Prisma.UserCreateNestedOneWithoutTeacherInput
   supervised?: Prisma.ProjectCreateNestedManyWithoutSupervisorInput
+  presidedDefenses?: Prisma.DefenseCreateNestedManyWithoutPresidentInput
+  juryMemberships?: Prisma.DefenseMemberCreateNestedManyWithoutTeacherInput
+  juryConfirmations?: Prisma.JuryConfirmationCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutCoSupervisedInput = {
@@ -484,6 +568,9 @@ export type TeacherUncheckedCreateWithoutCoSupervisedInput = {
   specialty: string
   accountStatus?: $Enums.AccountStatus
   supervised?: Prisma.ProjectUncheckedCreateNestedManyWithoutSupervisorInput
+  presidedDefenses?: Prisma.DefenseUncheckedCreateNestedManyWithoutPresidentInput
+  juryMemberships?: Prisma.DefenseMemberUncheckedCreateNestedManyWithoutTeacherInput
+  juryConfirmations?: Prisma.JuryConfirmationUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutCoSupervisedInput = {
@@ -509,6 +596,9 @@ export type TeacherUpdateWithoutSupervisedInput = {
   accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   user?: Prisma.UserUpdateOneRequiredWithoutTeacherNestedInput
   coSupervised?: Prisma.ProjectUpdateManyWithoutCoSupervisorNestedInput
+  presidedDefenses?: Prisma.DefenseUpdateManyWithoutPresidentNestedInput
+  juryMemberships?: Prisma.DefenseMemberUpdateManyWithoutTeacherNestedInput
+  juryConfirmations?: Prisma.JuryConfirmationUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutSupervisedInput = {
@@ -518,6 +608,9 @@ export type TeacherUncheckedUpdateWithoutSupervisedInput = {
   specialty?: Prisma.StringFieldUpdateOperationsInput | string
   accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   coSupervised?: Prisma.ProjectUncheckedUpdateManyWithoutCoSupervisorNestedInput
+  presidedDefenses?: Prisma.DefenseUncheckedUpdateManyWithoutPresidentNestedInput
+  juryMemberships?: Prisma.DefenseMemberUncheckedUpdateManyWithoutTeacherNestedInput
+  juryConfirmations?: Prisma.JuryConfirmationUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUpsertWithoutCoSupervisedInput = {
@@ -538,6 +631,9 @@ export type TeacherUpdateWithoutCoSupervisedInput = {
   accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   user?: Prisma.UserUpdateOneRequiredWithoutTeacherNestedInput
   supervised?: Prisma.ProjectUpdateManyWithoutSupervisorNestedInput
+  presidedDefenses?: Prisma.DefenseUpdateManyWithoutPresidentNestedInput
+  juryMemberships?: Prisma.DefenseMemberUpdateManyWithoutTeacherNestedInput
+  juryConfirmations?: Prisma.JuryConfirmationUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutCoSupervisedInput = {
@@ -547,6 +643,201 @@ export type TeacherUncheckedUpdateWithoutCoSupervisedInput = {
   specialty?: Prisma.StringFieldUpdateOperationsInput | string
   accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   supervised?: Prisma.ProjectUncheckedUpdateManyWithoutSupervisorNestedInput
+  presidedDefenses?: Prisma.DefenseUncheckedUpdateManyWithoutPresidentNestedInput
+  juryMemberships?: Prisma.DefenseMemberUncheckedUpdateManyWithoutTeacherNestedInput
+  juryConfirmations?: Prisma.JuryConfirmationUncheckedUpdateManyWithoutTeacherNestedInput
+}
+
+export type TeacherCreateWithoutPresidedDefensesInput = {
+  id?: string
+  title?: string | null
+  specialty: string
+  accountStatus?: $Enums.AccountStatus
+  user: Prisma.UserCreateNestedOneWithoutTeacherInput
+  supervised?: Prisma.ProjectCreateNestedManyWithoutSupervisorInput
+  coSupervised?: Prisma.ProjectCreateNestedManyWithoutCoSupervisorInput
+  juryMemberships?: Prisma.DefenseMemberCreateNestedManyWithoutTeacherInput
+  juryConfirmations?: Prisma.JuryConfirmationCreateNestedManyWithoutTeacherInput
+}
+
+export type TeacherUncheckedCreateWithoutPresidedDefensesInput = {
+  id?: string
+  userId: string
+  title?: string | null
+  specialty: string
+  accountStatus?: $Enums.AccountStatus
+  supervised?: Prisma.ProjectUncheckedCreateNestedManyWithoutSupervisorInput
+  coSupervised?: Prisma.ProjectUncheckedCreateNestedManyWithoutCoSupervisorInput
+  juryMemberships?: Prisma.DefenseMemberUncheckedCreateNestedManyWithoutTeacherInput
+  juryConfirmations?: Prisma.JuryConfirmationUncheckedCreateNestedManyWithoutTeacherInput
+}
+
+export type TeacherCreateOrConnectWithoutPresidedDefensesInput = {
+  where: Prisma.TeacherWhereUniqueInput
+  create: Prisma.XOR<Prisma.TeacherCreateWithoutPresidedDefensesInput, Prisma.TeacherUncheckedCreateWithoutPresidedDefensesInput>
+}
+
+export type TeacherUpsertWithoutPresidedDefensesInput = {
+  update: Prisma.XOR<Prisma.TeacherUpdateWithoutPresidedDefensesInput, Prisma.TeacherUncheckedUpdateWithoutPresidedDefensesInput>
+  create: Prisma.XOR<Prisma.TeacherCreateWithoutPresidedDefensesInput, Prisma.TeacherUncheckedCreateWithoutPresidedDefensesInput>
+  where?: Prisma.TeacherWhereInput
+}
+
+export type TeacherUpdateToOneWithWhereWithoutPresidedDefensesInput = {
+  where?: Prisma.TeacherWhereInput
+  data: Prisma.XOR<Prisma.TeacherUpdateWithoutPresidedDefensesInput, Prisma.TeacherUncheckedUpdateWithoutPresidedDefensesInput>
+}
+
+export type TeacherUpdateWithoutPresidedDefensesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specialty?: Prisma.StringFieldUpdateOperationsInput | string
+  accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  user?: Prisma.UserUpdateOneRequiredWithoutTeacherNestedInput
+  supervised?: Prisma.ProjectUpdateManyWithoutSupervisorNestedInput
+  coSupervised?: Prisma.ProjectUpdateManyWithoutCoSupervisorNestedInput
+  juryMemberships?: Prisma.DefenseMemberUpdateManyWithoutTeacherNestedInput
+  juryConfirmations?: Prisma.JuryConfirmationUpdateManyWithoutTeacherNestedInput
+}
+
+export type TeacherUncheckedUpdateWithoutPresidedDefensesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specialty?: Prisma.StringFieldUpdateOperationsInput | string
+  accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  supervised?: Prisma.ProjectUncheckedUpdateManyWithoutSupervisorNestedInput
+  coSupervised?: Prisma.ProjectUncheckedUpdateManyWithoutCoSupervisorNestedInput
+  juryMemberships?: Prisma.DefenseMemberUncheckedUpdateManyWithoutTeacherNestedInput
+  juryConfirmations?: Prisma.JuryConfirmationUncheckedUpdateManyWithoutTeacherNestedInput
+}
+
+export type TeacherCreateWithoutJuryMembershipsInput = {
+  id?: string
+  title?: string | null
+  specialty: string
+  accountStatus?: $Enums.AccountStatus
+  user: Prisma.UserCreateNestedOneWithoutTeacherInput
+  supervised?: Prisma.ProjectCreateNestedManyWithoutSupervisorInput
+  coSupervised?: Prisma.ProjectCreateNestedManyWithoutCoSupervisorInput
+  presidedDefenses?: Prisma.DefenseCreateNestedManyWithoutPresidentInput
+  juryConfirmations?: Prisma.JuryConfirmationCreateNestedManyWithoutTeacherInput
+}
+
+export type TeacherUncheckedCreateWithoutJuryMembershipsInput = {
+  id?: string
+  userId: string
+  title?: string | null
+  specialty: string
+  accountStatus?: $Enums.AccountStatus
+  supervised?: Prisma.ProjectUncheckedCreateNestedManyWithoutSupervisorInput
+  coSupervised?: Prisma.ProjectUncheckedCreateNestedManyWithoutCoSupervisorInput
+  presidedDefenses?: Prisma.DefenseUncheckedCreateNestedManyWithoutPresidentInput
+  juryConfirmations?: Prisma.JuryConfirmationUncheckedCreateNestedManyWithoutTeacherInput
+}
+
+export type TeacherCreateOrConnectWithoutJuryMembershipsInput = {
+  where: Prisma.TeacherWhereUniqueInput
+  create: Prisma.XOR<Prisma.TeacherCreateWithoutJuryMembershipsInput, Prisma.TeacherUncheckedCreateWithoutJuryMembershipsInput>
+}
+
+export type TeacherUpsertWithoutJuryMembershipsInput = {
+  update: Prisma.XOR<Prisma.TeacherUpdateWithoutJuryMembershipsInput, Prisma.TeacherUncheckedUpdateWithoutJuryMembershipsInput>
+  create: Prisma.XOR<Prisma.TeacherCreateWithoutJuryMembershipsInput, Prisma.TeacherUncheckedCreateWithoutJuryMembershipsInput>
+  where?: Prisma.TeacherWhereInput
+}
+
+export type TeacherUpdateToOneWithWhereWithoutJuryMembershipsInput = {
+  where?: Prisma.TeacherWhereInput
+  data: Prisma.XOR<Prisma.TeacherUpdateWithoutJuryMembershipsInput, Prisma.TeacherUncheckedUpdateWithoutJuryMembershipsInput>
+}
+
+export type TeacherUpdateWithoutJuryMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specialty?: Prisma.StringFieldUpdateOperationsInput | string
+  accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  user?: Prisma.UserUpdateOneRequiredWithoutTeacherNestedInput
+  supervised?: Prisma.ProjectUpdateManyWithoutSupervisorNestedInput
+  coSupervised?: Prisma.ProjectUpdateManyWithoutCoSupervisorNestedInput
+  presidedDefenses?: Prisma.DefenseUpdateManyWithoutPresidentNestedInput
+  juryConfirmations?: Prisma.JuryConfirmationUpdateManyWithoutTeacherNestedInput
+}
+
+export type TeacherUncheckedUpdateWithoutJuryMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specialty?: Prisma.StringFieldUpdateOperationsInput | string
+  accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  supervised?: Prisma.ProjectUncheckedUpdateManyWithoutSupervisorNestedInput
+  coSupervised?: Prisma.ProjectUncheckedUpdateManyWithoutCoSupervisorNestedInput
+  presidedDefenses?: Prisma.DefenseUncheckedUpdateManyWithoutPresidentNestedInput
+  juryConfirmations?: Prisma.JuryConfirmationUncheckedUpdateManyWithoutTeacherNestedInput
+}
+
+export type TeacherCreateWithoutJuryConfirmationsInput = {
+  id?: string
+  title?: string | null
+  specialty: string
+  accountStatus?: $Enums.AccountStatus
+  user: Prisma.UserCreateNestedOneWithoutTeacherInput
+  supervised?: Prisma.ProjectCreateNestedManyWithoutSupervisorInput
+  coSupervised?: Prisma.ProjectCreateNestedManyWithoutCoSupervisorInput
+  presidedDefenses?: Prisma.DefenseCreateNestedManyWithoutPresidentInput
+  juryMemberships?: Prisma.DefenseMemberCreateNestedManyWithoutTeacherInput
+}
+
+export type TeacherUncheckedCreateWithoutJuryConfirmationsInput = {
+  id?: string
+  userId: string
+  title?: string | null
+  specialty: string
+  accountStatus?: $Enums.AccountStatus
+  supervised?: Prisma.ProjectUncheckedCreateNestedManyWithoutSupervisorInput
+  coSupervised?: Prisma.ProjectUncheckedCreateNestedManyWithoutCoSupervisorInput
+  presidedDefenses?: Prisma.DefenseUncheckedCreateNestedManyWithoutPresidentInput
+  juryMemberships?: Prisma.DefenseMemberUncheckedCreateNestedManyWithoutTeacherInput
+}
+
+export type TeacherCreateOrConnectWithoutJuryConfirmationsInput = {
+  where: Prisma.TeacherWhereUniqueInput
+  create: Prisma.XOR<Prisma.TeacherCreateWithoutJuryConfirmationsInput, Prisma.TeacherUncheckedCreateWithoutJuryConfirmationsInput>
+}
+
+export type TeacherUpsertWithoutJuryConfirmationsInput = {
+  update: Prisma.XOR<Prisma.TeacherUpdateWithoutJuryConfirmationsInput, Prisma.TeacherUncheckedUpdateWithoutJuryConfirmationsInput>
+  create: Prisma.XOR<Prisma.TeacherCreateWithoutJuryConfirmationsInput, Prisma.TeacherUncheckedCreateWithoutJuryConfirmationsInput>
+  where?: Prisma.TeacherWhereInput
+}
+
+export type TeacherUpdateToOneWithWhereWithoutJuryConfirmationsInput = {
+  where?: Prisma.TeacherWhereInput
+  data: Prisma.XOR<Prisma.TeacherUpdateWithoutJuryConfirmationsInput, Prisma.TeacherUncheckedUpdateWithoutJuryConfirmationsInput>
+}
+
+export type TeacherUpdateWithoutJuryConfirmationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specialty?: Prisma.StringFieldUpdateOperationsInput | string
+  accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  user?: Prisma.UserUpdateOneRequiredWithoutTeacherNestedInput
+  supervised?: Prisma.ProjectUpdateManyWithoutSupervisorNestedInput
+  coSupervised?: Prisma.ProjectUpdateManyWithoutCoSupervisorNestedInput
+  presidedDefenses?: Prisma.DefenseUpdateManyWithoutPresidentNestedInput
+  juryMemberships?: Prisma.DefenseMemberUpdateManyWithoutTeacherNestedInput
+}
+
+export type TeacherUncheckedUpdateWithoutJuryConfirmationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specialty?: Prisma.StringFieldUpdateOperationsInput | string
+  accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  supervised?: Prisma.ProjectUncheckedUpdateManyWithoutSupervisorNestedInput
+  coSupervised?: Prisma.ProjectUncheckedUpdateManyWithoutCoSupervisorNestedInput
+  presidedDefenses?: Prisma.DefenseUncheckedUpdateManyWithoutPresidentNestedInput
+  juryMemberships?: Prisma.DefenseMemberUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 
@@ -557,11 +848,17 @@ export type TeacherUncheckedUpdateWithoutCoSupervisedInput = {
 export type TeacherCountOutputType = {
   supervised: number
   coSupervised: number
+  presidedDefenses: number
+  juryMemberships: number
+  juryConfirmations: number
 }
 
 export type TeacherCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   supervised?: boolean | TeacherCountOutputTypeCountSupervisedArgs
   coSupervised?: boolean | TeacherCountOutputTypeCountCoSupervisedArgs
+  presidedDefenses?: boolean | TeacherCountOutputTypeCountPresidedDefensesArgs
+  juryMemberships?: boolean | TeacherCountOutputTypeCountJuryMembershipsArgs
+  juryConfirmations?: boolean | TeacherCountOutputTypeCountJuryConfirmationsArgs
 }
 
 /**
@@ -588,6 +885,27 @@ export type TeacherCountOutputTypeCountCoSupervisedArgs<ExtArgs extends runtime.
   where?: Prisma.ProjectWhereInput
 }
 
+/**
+ * TeacherCountOutputType without action
+ */
+export type TeacherCountOutputTypeCountPresidedDefensesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DefenseWhereInput
+}
+
+/**
+ * TeacherCountOutputType without action
+ */
+export type TeacherCountOutputTypeCountJuryMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DefenseMemberWhereInput
+}
+
+/**
+ * TeacherCountOutputType without action
+ */
+export type TeacherCountOutputTypeCountJuryConfirmationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.JuryConfirmationWhereInput
+}
+
 
 export type TeacherSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -598,6 +916,9 @@ export type TeacherSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   supervised?: boolean | Prisma.Teacher$supervisedArgs<ExtArgs>
   coSupervised?: boolean | Prisma.Teacher$coSupervisedArgs<ExtArgs>
+  presidedDefenses?: boolean | Prisma.Teacher$presidedDefensesArgs<ExtArgs>
+  juryMemberships?: boolean | Prisma.Teacher$juryMembershipsArgs<ExtArgs>
+  juryConfirmations?: boolean | Prisma.Teacher$juryConfirmationsArgs<ExtArgs>
   _count?: boolean | Prisma.TeacherCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["teacher"]>
 
@@ -632,6 +953,9 @@ export type TeacherInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   supervised?: boolean | Prisma.Teacher$supervisedArgs<ExtArgs>
   coSupervised?: boolean | Prisma.Teacher$coSupervisedArgs<ExtArgs>
+  presidedDefenses?: boolean | Prisma.Teacher$presidedDefensesArgs<ExtArgs>
+  juryMemberships?: boolean | Prisma.Teacher$juryMembershipsArgs<ExtArgs>
+  juryConfirmations?: boolean | Prisma.Teacher$juryConfirmationsArgs<ExtArgs>
   _count?: boolean | Prisma.TeacherCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TeacherIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -647,6 +971,9 @@ export type $TeacherPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     user: Prisma.$UserPayload<ExtArgs>
     supervised: Prisma.$ProjectPayload<ExtArgs>[]
     coSupervised: Prisma.$ProjectPayload<ExtArgs>[]
+    presidedDefenses: Prisma.$DefensePayload<ExtArgs>[]
+    juryMemberships: Prisma.$DefenseMemberPayload<ExtArgs>[]
+    juryConfirmations: Prisma.$JuryConfirmationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1051,6 +1378,9 @@ export interface Prisma__TeacherClient<T, Null = never, ExtArgs extends runtime.
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   supervised<T extends Prisma.Teacher$supervisedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Teacher$supervisedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   coSupervised<T extends Prisma.Teacher$coSupervisedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Teacher$coSupervisedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  presidedDefenses<T extends Prisma.Teacher$presidedDefensesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Teacher$presidedDefensesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DefensePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  juryMemberships<T extends Prisma.Teacher$juryMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Teacher$juryMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DefenseMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  juryConfirmations<T extends Prisma.Teacher$juryConfirmationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Teacher$juryConfirmationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$JuryConfirmationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1531,6 +1861,78 @@ export type Teacher$coSupervisedArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.ProjectScalarFieldEnum | Prisma.ProjectScalarFieldEnum[]
+}
+
+/**
+ * Teacher.presidedDefenses
+ */
+export type Teacher$presidedDefensesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Defense
+   */
+  select?: Prisma.DefenseSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Defense
+   */
+  omit?: Prisma.DefenseOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DefenseInclude<ExtArgs> | null
+  where?: Prisma.DefenseWhereInput
+  orderBy?: Prisma.DefenseOrderByWithRelationInput | Prisma.DefenseOrderByWithRelationInput[]
+  cursor?: Prisma.DefenseWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DefenseScalarFieldEnum | Prisma.DefenseScalarFieldEnum[]
+}
+
+/**
+ * Teacher.juryMemberships
+ */
+export type Teacher$juryMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DefenseMember
+   */
+  select?: Prisma.DefenseMemberSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DefenseMember
+   */
+  omit?: Prisma.DefenseMemberOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DefenseMemberInclude<ExtArgs> | null
+  where?: Prisma.DefenseMemberWhereInput
+  orderBy?: Prisma.DefenseMemberOrderByWithRelationInput | Prisma.DefenseMemberOrderByWithRelationInput[]
+  cursor?: Prisma.DefenseMemberWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DefenseMemberScalarFieldEnum | Prisma.DefenseMemberScalarFieldEnum[]
+}
+
+/**
+ * Teacher.juryConfirmations
+ */
+export type Teacher$juryConfirmationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the JuryConfirmation
+   */
+  select?: Prisma.JuryConfirmationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the JuryConfirmation
+   */
+  omit?: Prisma.JuryConfirmationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.JuryConfirmationInclude<ExtArgs> | null
+  where?: Prisma.JuryConfirmationWhereInput
+  orderBy?: Prisma.JuryConfirmationOrderByWithRelationInput | Prisma.JuryConfirmationOrderByWithRelationInput[]
+  cursor?: Prisma.JuryConfirmationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.JuryConfirmationScalarFieldEnum | Prisma.JuryConfirmationScalarFieldEnum[]
 }
 
 /**
