@@ -35,6 +35,7 @@ import {
   isWeekend,
   slotsOverlap,
   toSlot,
+  isInPast,
 } from "./defense.rules";
 
 // jurés dans l'ordre Juré 1, Juré 2, Juré 3 + réponses du jury
@@ -281,7 +282,9 @@ export class DefensesService {
     if (planOf(data) === planOf(previous)) {
       return { ...previous, notifications: { sent: 0, failed: 0 } };
     }
-    await this.check(data, id);
+    // la date ou l'heure change : elle doit être dans le futur
+    const moved = data.date !== previous.date || data.time !== previous.time;
+    await this.check(data, id, moved);
     const before = await this.loadDetails(id); // pour prévenir ceux qui ne sont plus concernés
 
     // nouvelle date / heure / durée : tout le jury doit reconfirmer
@@ -584,16 +587,22 @@ export class DefensesService {
   }
 
   // toutes les règles de planification (excludeId = la soutenance modifiée)
-  private async check(data: PlanData, excludeId?: number) {
+  // checkFuture = false : modification sans changement de date/heure (on peut corriger le jury)
+  private async check(data: PlanData, excludeId?: number, checkFuture = true) {
     const slot = toSlot(data.date, data.time, data.duration);
 
     // 1. date et heure
     if (!isRealDate(data.date)) {
       throw new BadRequestException("Cette date n'existe pas.");
     }
+    if (checkFuture && isInPast(data.date, data.time)) {
+      throw new BadRequestException(
+        "Cette date est déjà passée : choisissez une date et une heure à venir.",
+      );
+    }
     if (isWeekend(data.date)) {
       throw new BadRequestException(
-        "Choisissez un jour ouvré (du lundi au vendredi).",
+        "Choisissez un jour ouvré (du dimanche au jeudi).",
       );
     }
     if (!fitsInDay(slot)) {
@@ -631,16 +640,18 @@ export class DefensesService {
         "Le projet doit être validé avant de planifier sa soutenance.",
       );
     }
-    // l'encadrant et le co-encadrant ne peuvent pas présider le jury
-    if (
-      data.presidentId === project.supervisorId ||
-      data.presidentId === project.coSupervisorId
-    ) {
+    // l'encadrant et le co-encadrant assistent déjà à la soutenance : ils ne font pas partie du jury
+    const supervisors = [project.supervisorId, project.coSupervisorId];
+    if (supervisors.includes(data.presidentId)) {
       throw new BadRequestException(
         "L'encadrant du projet ne peut pas présider le jury.",
       );
     }
-
+    if (data.memberIds.some((id) => supervisors.includes(id))) {
+      throw new BadRequestException(
+        "L'encadrant du projet ne peut pas être membre du jury.",
+      );
+    }
     // 4. salle
     const room = await this.prisma.room.findUnique({
       where: { id: data.roomId },

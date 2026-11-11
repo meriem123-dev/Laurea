@@ -11,7 +11,6 @@ import EntityFormModal from "../../components/forms/EntityFormModal.vue";
 import BaseInput from "../../components/forms/BaseInput.vue";
 import PageHeader from "../../components/layout/PageHeader.vue";
 import RoomCard from "../../components/rooms/RoomCard.vue";
-import { useDefensesData } from "../../composables/useDefensesData";
 import { todayISO } from "../../utils/calendar";
 import { formatDayMonth } from "../../utils/format";
 import {
@@ -30,6 +29,7 @@ import { useRoomsStore } from "./stores/rooms.js";
 import { storeToRefs } from "pinia";
 import { isAxiosError } from "axios";
 import { getErrorMessage } from "../../utils/apiError";
+import { useAdminDefenses } from "../../composables/useAdminDefenses";
 
 const roomsStore = useRoomsStore();
 const { items: rooms, loading, error } = storeToRefs(roomsStore);
@@ -47,8 +47,9 @@ function apiMessage(e: unknown): string {
   return "Une erreur est survenue. Réessayez.";
 }
 
-const { defenses } = useDefensesData();
-
+// soutenances du back (disponibilité des salles, nombre de soutenances par salle)
+const { defenses, fetchDefenses } = useAdminDefenses();
+onMounted(() => fetchDefenses());
 // Jour pour lequel on calcule la disponibilité (par défaut : aujourd'hui)
 const date = ref(todayISO());
 const day = computed(() => date.value || todayISO());

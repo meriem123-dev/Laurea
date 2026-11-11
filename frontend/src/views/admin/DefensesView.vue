@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { Plus } from '@lucide/vue'
 import CalendarToolbar from '../../components/calendar/CalendarToolbar.vue'
 import MonthGrid from '../../components/calendar/MonthGrid.vue'
@@ -13,16 +13,48 @@ import DefenseFormModal from '../../components/defenses/DefenseFormModal.vue'
 import DefenseList from '../../components/defenses/DefenseList.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
 import { useCalendarNavigation } from '../../composables/useCalendarNavigation'
-import { useDefensesData, type DefenseView } from '../../composables/useDefensesData'
+import { useAdminDefenses } from '../../composables/useAdminDefenses'
+import type { DefenseView } from '../../composables/useDefensesData'
+import type { DefenseNotifications } from './api/defenses.api'
+import { getErrorMessage } from '../../utils/apiError'
 import { formatDayMonth } from '../../utils/format'
 import { initialCursor, nearestWeekday, todayISO } from '../../utils/calendar'
 import { describeConflict, findConflicts } from '../../utils/defense'
 import type { Defense } from '../../types/defense'
 
-const { defenses, views, rooms, professors, removeDefense } = useDefensesData()
+// soutenances, projets, professeurs et salles chargés depuis le back
+const { defenses, views, rooms, professors, loading, error, loadAll, removeDefense } =
+  useAdminDefenses()
 
 const { view, cursor, days, weeks, range, rangeLabel, shift, goToday, goTo } =
   useCalendarNavigation(initialCursor(defenses.value.map((defense) => defense.date)))
+
+// au premier chargement, le calendrier se place sur la prochaine soutenance (comme avant)
+onMounted(async () => {
+  await loadAll()
+  goTo(initialCursor(defenses.value.map((defense) => defense.date)))
+})
+
+// Retours à l'utilisateur (enregistrement, suppression, mails envoyés)
+const feedback = ref<{ tone: 'success' | 'warning' | 'error'; text: string } | null>(null)
+
+const FEEDBACK_CLASSES = {
+  success: 'border-green-200 bg-green-50 text-green-800',
+  warning: 'border-amber-200 bg-amber-50 text-amber-800',
+  error: 'border-red-200 bg-red-50 text-red-800',
+} as const
+
+function mailFeedback(action: string, notifications: DefenseNotifications) {
+  if (notifications.failed > 0) {
+    feedback.value = {
+      tone: 'warning',
+      text: `${action}, mais ${notifications.failed} e-mail(s) n’ont pas pu être envoyés.`,
+    }
+  } else {
+    const mails = notifications.sent ? ` ${notifications.sent} e-mail(s) envoyé(s).` : ''
+    feedback.value = { tone: 'success', text: `${action}.${mails}` }
+  }
+}
 
 const today = todayISO()
 
@@ -37,7 +69,7 @@ const visibleViews = computed(() =>
 const conflictMessages = computed(() => {
   const visible = visibleViews.value.map((item) => item.defense)
   return findConflicts(visible).map((conflict) =>
-    describeConflict(conflict, rooms, professors, defenses.value),
+    describeConflict(conflict, rooms.value, professors.value, defenses.value),
   )
 })
 
@@ -55,6 +87,11 @@ const isDeleteOpen = ref(false)
 
 const formDate = computed(() => nearestWeekday(cursor.value))
 
+// la fiche affiche la soutenance enrichie avec les données du back
+const selectedView = computed(() =>
+  selected.value ? (views.value.find((item) => item.defense.id === selected.value?.id) ?? null) : null,
+)
+
 const deleteMessage = computed(() => {
   const current = selected.value
   if (!current) return ''
@@ -66,6 +103,19 @@ function openCreate() {
   selected.value = null
   isFormOpen.value = true
 }
+
+// après enregistrement : on va à la date de la soutenance et on indique les mails envoyés
+function onSaved(date: string, notifications: DefenseNotifications) {
+  goTo(date)
+  mailFeedback(selected.value ? 'Soutenance modifiée' : 'Soutenance planifiée', notifications)
+}
+
+// la soutenance sélectionnée peut avoir été mise à jour par le back (réponses du jury…)
+watch(defenses, () => {
+  if (selected.value) {
+    selected.value = defenses.value.find((item) => item.id === selected.value?.id) ?? null
+  }
+})
 
 function openDetails(item: DefenseView) {
   selected.value = item.defense
@@ -87,12 +137,18 @@ function openDay(date: string) {
   view.value = 'day'
 }
 
-function confirmDelete() {
-  // TODO backend : DELETE /defenses/:id. Ici : suppression locale, non enregistrée.
+// DELETE /defenses/:id : le back envoie les annulations par mail
+async function confirmDelete() {
   const current = selected.value
   if (!current) return
-  removeDefense(current.id)
-  isDeleteOpen.value = false
+  feedback.value = null
+  try {
+    mailFeedback('Soutenance supprimée', await removeDefense(current.id))
+  } catch (e) {
+    feedback.value = { tone: 'error', text: getErrorMessage(e, 'Suppression impossible.') }
+  } finally {
+    isDeleteOpen.value = false
+  }
 }
 </script>
 
@@ -109,6 +165,23 @@ function confirmDelete() {
       </BaseButton>
     </PageHeader>
 
+        <p
+      v-if="feedback"
+      role="status"
+      :class="['rounded-lg border p-4 text-sm', FEEDBACK_CLASSES[feedback.tone]]"
+    >
+      {{ feedback.text }}
+    </p>
+
+    <p v-if="loading" class="text-sm text-text-muted">Chargement des soutenances…</p>
+    <div
+      v-else-if="error"
+      role="alert"
+      class="flex items-center justify-between gap-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800"
+    >
+      <span>{{ error }}</span>
+      <BaseButton variant="secondary" size="md" @click="loadAll()">Réessayer</BaseButton>
+    </div>
     <CalendarToolbar
       v-model:view="view"
       :rangeLabel="rangeLabel"
@@ -156,7 +229,7 @@ function confirmDelete() {
       v-model="isFormOpen"
       :defense="selected"
       :initialDate="formDate"
-      @saved="goTo"
+      @saved="onSaved"
     />
 
     <DefenseDetailsModal
@@ -166,6 +239,7 @@ function confirmDelete() {
       deletable
       @edit="editFromDetails"
       @delete="deleteFromDetails"
+      :view="selectedView"
     />
 
     <ConfirmDialog

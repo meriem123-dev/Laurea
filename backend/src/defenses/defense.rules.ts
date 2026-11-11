@@ -37,10 +37,10 @@ export function slotsOverlap(a: Slot, b: Slot): boolean {
   return a.date === b.date && a.start < b.end && b.start < a.end;
 }
 
-// samedi ou dimanche ("2026-06-20" -> true)
+// vendredi ou samedi : les soutenances ont lieu du dimanche au jeudi ("2026-06-19" -> true)
 export function isWeekend(date: string): boolean {
   const day = new Date(`${date}T00:00:00Z`).getUTCDay();
-  return day === 0 || day === 6;
+  return day === 5 || day === 6;
 }
 
 // le créneau tient dans la journée de soutenances (08:00 - 17:00)
@@ -52,4 +52,38 @@ export function fitsInDay(slot: Slot): boolean {
 export function isRealDate(date: string): boolean {
   const d = new Date(`${date}T00:00:00Z`);
   return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === date;
+}
+
+// date et heure actuelles en Algérie (le serveur peut tourner en UTC, ex. Render)
+export function nowInAlgiers(now = new Date()): {
+  date: string;
+  minutes: number;
+} {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Africa/Algiers",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    })
+      .formatToParts(now)
+      .map((p) => [p.type, p.value]),
+  );
+  return {
+    date: `${parts.year}-${parts.month}-${parts.day}`,
+    minutes: Number(parts.hour) * 60 + Number(parts.minute),
+  };
+}
+
+// la soutenance commence avant maintenant (date passée, ou aujourd'hui à une heure déjà passée)
+export function isInPast(
+  date: string,
+  time: string,
+  now = nowInAlgiers(),
+): boolean {
+  if (date !== now.date) return date < now.date;
+  return toMinutes(time) <= now.minutes;
 }
