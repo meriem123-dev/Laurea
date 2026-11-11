@@ -8,7 +8,7 @@ import { NAV_BY_ROLE } from '../utils/navigation'
 import { ROLE_LABELS } from '../utils/roles'
 import { useAuthStore } from '../views/auth/store.js'
 import type { UserRole } from '../types/auth'
-
+import { useMyProjectsStore } from '../stores/myProjects'
 const NOTIFICATIONS_PATH_BY_ROLE: Record<UserRole, string> = {
   ADMIN_STAFF: '/admin/notifications',
   TEACHER: '/professor/notifications',
@@ -66,7 +66,8 @@ watch(
 )
 
 function logout() {
-  auth.logout() // vide token + user
+  auth.logout()
+  useMyProjectsStore().reset()
   void router.push('/login')
 }
 </script>

@@ -75,3 +75,11 @@ export const ProjectStatus = {
 } as const
 
 export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus]
+
+
+export const DocumentStatus = {
+  PENDING: 'PENDING',
+  EVALUATED: 'EVALUATED'
+} as const
+
+export type DocumentStatus = (typeof DocumentStatus)[keyof typeof DocumentStatus]

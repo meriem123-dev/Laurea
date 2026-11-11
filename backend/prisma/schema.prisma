@@ -92,6 +92,7 @@ model Student {
   accountStatus AccountStatus @default(PENDING)
   projectId     String?
   project       Project?      @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  documents     Document[]
 }
 
 model Teacher {
@@ -106,6 +107,7 @@ model Teacher {
   presidedDefenses  Defense[]
   juryMemberships   DefenseMember[]
   juryConfirmations JuryConfirmation[]
+  evaluatedDocuments Document[]
 }
 
 model Room {
@@ -134,6 +136,7 @@ model Project {
   status         ProjectStatus @default(deposited)
   students       Student[]
   defense        Defense?
+  documents      Document[]
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 }
@@ -180,4 +183,28 @@ model JuryConfirmation {
   respondedAt DateTime?
 
   @@id([defenseId, teacherId])
+}
+// Document déposé par un étudiant sur son projet (PDF stocké sur disque)
+model Document {
+  id            Int            @id @default(autoincrement())
+  projectId     String
+  project       Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  uploadedById  String?
+  uploadedBy    Student?       @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+  originalName  String
+  storedName    String         @unique
+  sizeBytes     Int
+  status        DocumentStatus @default(PENDING)
+  grade         Float? // sur 20
+  comment       String         @default("")
+  evaluatedAt   DateTime?
+  evaluatedById String?
+  evaluatedBy   Teacher?       @relation(fields: [evaluatedById], references: [id], onDelete: SetNull)
+  createdAt     DateTime       @default(now())
+
+  @@index([projectId])
+}
+enum DocumentStatus {
+  PENDING   // déposé, pas encore noté
+  EVALUATED // noté par l'encadrant
 }

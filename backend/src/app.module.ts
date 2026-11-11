@@ -11,9 +11,8 @@ import { TeachersModule } from './teachers/teachers.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { ProjectsModule } from './projects/projects.module';
 import { DefensesModule } from './defenses/defenses.module';
-
+import { DocumentsModule } from './documents/documents.module';
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), PrismaModule, GradingModule,UsersModule,AuthModule, StudentsModule, TeachersModule, RoomsModule,ProjectsModule, DefensesModule],
-  controllers: [HealthController],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), PrismaModule, GradingModule, UsersModule, AuthModule, StudentsModule, TeachersModule, RoomsModule, ProjectsModule, DefensesModule, DocumentsModule],  controllers: [HealthController],
 })
 export class AppModule {}

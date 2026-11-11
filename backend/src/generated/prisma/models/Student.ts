@@ -208,6 +208,7 @@ export type StudentWhereInput = {
   projectId?: Prisma.StringNullableFilter<"Student"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
+  documents?: Prisma.DocumentListRelationFilter
 }
 
 export type StudentOrderByWithRelationInput = {
@@ -221,6 +222,7 @@ export type StudentOrderByWithRelationInput = {
   projectId?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   project?: Prisma.ProjectOrderByWithRelationInput
+  documents?: Prisma.DocumentOrderByRelationAggregateInput
 }
 
 export type StudentWhereUniqueInput = Prisma.AtLeast<{
@@ -237,6 +239,7 @@ export type StudentWhereUniqueInput = Prisma.AtLeast<{
   projectId?: Prisma.StringNullableFilter<"Student"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
+  documents?: Prisma.DocumentListRelationFilter
 }, "id" | "userId" | "matricule">
 
 export type StudentOrderByWithAggregationInput = {
@@ -276,6 +279,7 @@ export type StudentCreateInput = {
   accountStatus?: $Enums.AccountStatus
   user: Prisma.UserCreateNestedOneWithoutStudentInput
   project?: Prisma.ProjectCreateNestedOneWithoutStudentsInput
+  documents?: Prisma.DocumentCreateNestedManyWithoutUploadedByInput
 }
 
 export type StudentUncheckedCreateInput = {
@@ -287,6 +291,7 @@ export type StudentUncheckedCreateInput = {
   cursus: $Enums.Cursus
   accountStatus?: $Enums.AccountStatus
   projectId?: string | null
+  documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutUploadedByInput
 }
 
 export type StudentUpdateInput = {
@@ -298,6 +303,7 @@ export type StudentUpdateInput = {
   accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
   project?: Prisma.ProjectUpdateOneWithoutStudentsNestedInput
+  documents?: Prisma.DocumentUpdateManyWithoutUploadedByNestedInput
 }
 
 export type StudentUncheckedUpdateInput = {
@@ -309,6 +315,7 @@ export type StudentUncheckedUpdateInput = {
   cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
   accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documents?: Prisma.DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
 }
 
 export type StudentCreateManyInput = {
@@ -480,6 +487,22 @@ export type StudentUncheckedUpdateManyWithoutProjectNestedInput = {
   deleteMany?: Prisma.StudentScalarWhereInput | Prisma.StudentScalarWhereInput[]
 }
 
+export type StudentCreateNestedOneWithoutDocumentsInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutDocumentsInput, Prisma.StudentUncheckedCreateWithoutDocumentsInput>
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutDocumentsInput
+  connect?: Prisma.StudentWhereUniqueInput
+}
+
+export type StudentUpdateOneWithoutDocumentsNestedInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutDocumentsInput, Prisma.StudentUncheckedCreateWithoutDocumentsInput>
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutDocumentsInput
+  upsert?: Prisma.StudentUpsertWithoutDocumentsInput
+  disconnect?: Prisma.StudentWhereInput | boolean
+  delete?: Prisma.StudentWhereInput | boolean
+  connect?: Prisma.StudentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StudentUpdateToOneWithWhereWithoutDocumentsInput, Prisma.StudentUpdateWithoutDocumentsInput>, Prisma.StudentUncheckedUpdateWithoutDocumentsInput>
+}
+
 export type StudentCreateWithoutUserInput = {
   id?: string
   matricule: string
@@ -488,6 +511,7 @@ export type StudentCreateWithoutUserInput = {
   cursus: $Enums.Cursus
   accountStatus?: $Enums.AccountStatus
   project?: Prisma.ProjectCreateNestedOneWithoutStudentsInput
+  documents?: Prisma.DocumentCreateNestedManyWithoutUploadedByInput
 }
 
 export type StudentUncheckedCreateWithoutUserInput = {
@@ -498,6 +522,7 @@ export type StudentUncheckedCreateWithoutUserInput = {
   cursus: $Enums.Cursus
   accountStatus?: $Enums.AccountStatus
   projectId?: string | null
+  documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutUploadedByInput
 }
 
 export type StudentCreateOrConnectWithoutUserInput = {
@@ -524,6 +549,7 @@ export type StudentUpdateWithoutUserInput = {
   cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
   accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   project?: Prisma.ProjectUpdateOneWithoutStudentsNestedInput
+  documents?: Prisma.DocumentUpdateManyWithoutUploadedByNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutUserInput = {
@@ -534,6 +560,7 @@ export type StudentUncheckedUpdateWithoutUserInput = {
   cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
   accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documents?: Prisma.DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
 }
 
 export type StudentCreateWithoutProjectInput = {
@@ -544,6 +571,7 @@ export type StudentCreateWithoutProjectInput = {
   cursus: $Enums.Cursus
   accountStatus?: $Enums.AccountStatus
   user: Prisma.UserCreateNestedOneWithoutStudentInput
+  documents?: Prisma.DocumentCreateNestedManyWithoutUploadedByInput
 }
 
 export type StudentUncheckedCreateWithoutProjectInput = {
@@ -554,6 +582,7 @@ export type StudentUncheckedCreateWithoutProjectInput = {
   group?: string | null
   cursus: $Enums.Cursus
   accountStatus?: $Enums.AccountStatus
+  documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutUploadedByInput
 }
 
 export type StudentCreateOrConnectWithoutProjectInput = {
@@ -596,6 +625,66 @@ export type StudentScalarWhereInput = {
   projectId?: Prisma.StringNullableFilter<"Student"> | string | null
 }
 
+export type StudentCreateWithoutDocumentsInput = {
+  id?: string
+  matricule: string
+  speciality: $Enums.Speciality
+  group?: string | null
+  cursus: $Enums.Cursus
+  accountStatus?: $Enums.AccountStatus
+  user: Prisma.UserCreateNestedOneWithoutStudentInput
+  project?: Prisma.ProjectCreateNestedOneWithoutStudentsInput
+}
+
+export type StudentUncheckedCreateWithoutDocumentsInput = {
+  id?: string
+  userId: string
+  matricule: string
+  speciality: $Enums.Speciality
+  group?: string | null
+  cursus: $Enums.Cursus
+  accountStatus?: $Enums.AccountStatus
+  projectId?: string | null
+}
+
+export type StudentCreateOrConnectWithoutDocumentsInput = {
+  where: Prisma.StudentWhereUniqueInput
+  create: Prisma.XOR<Prisma.StudentCreateWithoutDocumentsInput, Prisma.StudentUncheckedCreateWithoutDocumentsInput>
+}
+
+export type StudentUpsertWithoutDocumentsInput = {
+  update: Prisma.XOR<Prisma.StudentUpdateWithoutDocumentsInput, Prisma.StudentUncheckedUpdateWithoutDocumentsInput>
+  create: Prisma.XOR<Prisma.StudentCreateWithoutDocumentsInput, Prisma.StudentUncheckedCreateWithoutDocumentsInput>
+  where?: Prisma.StudentWhereInput
+}
+
+export type StudentUpdateToOneWithWhereWithoutDocumentsInput = {
+  where?: Prisma.StudentWhereInput
+  data: Prisma.XOR<Prisma.StudentUpdateWithoutDocumentsInput, Prisma.StudentUncheckedUpdateWithoutDocumentsInput>
+}
+
+export type StudentUpdateWithoutDocumentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  matricule?: Prisma.StringFieldUpdateOperationsInput | string
+  speciality?: Prisma.EnumSpecialityFieldUpdateOperationsInput | $Enums.Speciality
+  group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
+  accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutStudentsNestedInput
+}
+
+export type StudentUncheckedUpdateWithoutDocumentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  matricule?: Prisma.StringFieldUpdateOperationsInput | string
+  speciality?: Prisma.EnumSpecialityFieldUpdateOperationsInput | $Enums.Speciality
+  group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
+  accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
 export type StudentCreateManyProjectInput = {
   id?: string
   userId: string
@@ -614,6 +703,7 @@ export type StudentUpdateWithoutProjectInput = {
   cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
   accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
+  documents?: Prisma.DocumentUpdateManyWithoutUploadedByNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutProjectInput = {
@@ -624,6 +714,7 @@ export type StudentUncheckedUpdateWithoutProjectInput = {
   group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cursus?: Prisma.EnumCursusFieldUpdateOperationsInput | $Enums.Cursus
   accountStatus?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  documents?: Prisma.DocumentUncheckedUpdateManyWithoutUploadedByNestedInput
 }
 
 export type StudentUncheckedUpdateManyWithoutProjectInput = {
@@ -637,6 +728,35 @@ export type StudentUncheckedUpdateManyWithoutProjectInput = {
 }
 
 
+/**
+ * Count Type StudentCountOutputType
+ */
+
+export type StudentCountOutputType = {
+  documents: number
+}
+
+export type StudentCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  documents?: boolean | StudentCountOutputTypeCountDocumentsArgs
+}
+
+/**
+ * StudentCountOutputType without action
+ */
+export type StudentCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StudentCountOutputType
+   */
+  select?: Prisma.StudentCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * StudentCountOutputType without action
+ */
+export type StudentCountOutputTypeCountDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DocumentWhereInput
+}
+
 
 export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -649,6 +769,8 @@ export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   projectId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   project?: boolean | Prisma.Student$projectArgs<ExtArgs>
+  documents?: boolean | Prisma.Student$documentsArgs<ExtArgs>
+  _count?: boolean | Prisma.StudentCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["student"]>
 
 export type StudentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -692,6 +814,8 @@ export type StudentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 export type StudentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   project?: boolean | Prisma.Student$projectArgs<ExtArgs>
+  documents?: boolean | Prisma.Student$documentsArgs<ExtArgs>
+  _count?: boolean | Prisma.StudentCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type StudentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -707,6 +831,7 @@ export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     project: Prisma.$ProjectPayload<ExtArgs> | null
+    documents: Prisma.$DocumentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1113,6 +1238,7 @@ export interface Prisma__StudentClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   project<T extends Prisma.Student$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  documents<T extends Prisma.Student$documentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1567,6 +1693,30 @@ export type Student$projectArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   include?: Prisma.ProjectInclude<ExtArgs> | null
   where?: Prisma.ProjectWhereInput
+}
+
+/**
+ * Student.documents
+ */
+export type Student$documentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Document
+   */
+  select?: Prisma.DocumentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Document
+   */
+  omit?: Prisma.DocumentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DocumentInclude<ExtArgs> | null
+  where?: Prisma.DocumentWhereInput
+  orderBy?: Prisma.DocumentOrderByWithRelationInput | Prisma.DocumentOrderByWithRelationInput[]
+  cursor?: Prisma.DocumentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DocumentScalarFieldEnum | Prisma.DocumentScalarFieldEnum[]
 }
 
 /**
