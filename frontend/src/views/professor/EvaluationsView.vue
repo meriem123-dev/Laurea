@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { toast } from 'vue-sonner'
 import { FileText } from '@lucide/vue'
 import BaseAlert from '../../components/common/BaseAlert.vue'
@@ -12,61 +13,68 @@ import IconTile from '../../components/common/IconTile.vue'
 import InitialsAvatar from '../../components/common/InitialsAvatar.vue'
 import DocumentPanel from '../../components/evaluations/DocumentPanel.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
+import { openDocument } from '../../api/myProjects.api'
 import { useDefensesData } from '../../composables/useDefensesData'
-import { useDocumentsData } from '../../composables/useDocumentsData'
-import { useProfessorProjects } from '../../composables/useProfessorProjects'
 import { useResultsData } from '../../composables/useResultsData'
-import { CURRENT_PROFESSOR_ID } from '../../mocks/currentProfessor'
-import { students } from '../../mocks/students'
+import { useMyProjectsStore } from '../../stores/myProjects'
+import { getErrorMessage } from '../../utils/apiError'
 import { formatLongDay } from '../../utils/calendar'
+import { documentStatusOf } from '../../utils/documentStatus'
 import { formatFileSize } from '../../utils/document'
 import { openPrintWindow } from '../../utils/download'
 import { formatDayMonth } from '../../utils/format'
-import { teamMembers } from '../../utils/project'
 import { PROJECT_STATUS_META } from '../../utils/projectStatus'
 import { formatGrade } from '../../utils/result'
 import { buildReportHtml } from '../../utils/resultExport'
 import { fullName, initials } from '../../utils/student'
-import type { Project } from '../../types/project'
+import type { MyProject } from '../../types/project'
 
 const route = useRoute()
-const { projects } = useProfessorProjects(CURRENT_PROFESSOR_ID)
+const store = useMyProjectsStore()
+const { items: projects, loading, error } = storeToRefs(store)
 const { defenses } = useDefensesData()
-const { documentsOf, evaluate } = useDocumentsData()
 const { views: resultViews } = useResultsData()
 
 // ?project=ID permet d'arriver directement sur un projet (lien « Consulter le mémoire »)
 const queryId = typeof route.query.project === 'string' ? route.query.project : ''
-const selectedProjectId = ref<string | null>(
-  projects.value.find((item) => item.id === queryId)?.id ?? projects.value[0]?.id ?? null,
-)
-
-
+const selectedProjectId = ref<string | null>(null)
 const selectedDocumentId = ref<number | null>(null)
+const isSaving = ref(false)
 const pvError = ref('')
+
+onMounted(async () => {
+  await store.fetchAll()
+  selectedProjectId.value =
+    projects.value.find((item) => item.id === queryId)?.id ?? projects.value[0]?.id ?? null
+})
 
 const project = computed(
   () => projects.value.find((item) => item.id === selectedProjectId.value) ?? null,
 )
 const memberNames = computed(() => (project.value ? namesOf(project.value) : ''))
 const defense = computed(() => defenses.value.find((item) => item.projectId === project.value?.id))
-const documents = computed(() => (project.value ? documentsOf(project.value.id) : []))
+const documents = computed(() => (project.value ? store.documentsOf(project.value.id) : []))
 const selectedDocument = computed(
   () => documents.value.find((item) => item.id === selectedDocumentId.value) ?? null,
 )
 const result = computed(
   () => resultViews.value.find((view) => view.project?.id === project.value?.id) ?? null,
 )
+const pendingCount = computed(
+  () => documents.value.filter((d) => documentStatusOf(d) === 'PENDING').length,
+)
 
-function namesOf(item: Project): string {
-  return teamMembers(item, students)
-    .map((student) => fullName(student))
-    .join(', ')
+function namesOf(item: MyProject): string {
+  return item.team.map((student) => fullName(student)).join(', ')
 }
 
-function initialsOf(item: Project): string {
-  const first = teamMembers(item, students)[0]
+function initialsOf(item: MyProject): string {
+  const first = item.team[0]
   return first ? initials(first) : ''
+}
+
+function pendingOf(item: MyProject): number {
+  return store.documentsOf(item.id).filter((d) => documentStatusOf(d) === 'PENDING').length
 }
 
 function selectProject(id: string) {
@@ -75,11 +83,26 @@ function selectProject(id: string) {
   pvError.value = ''
 }
 
-function saveEvaluation(grade: number | null, comment: string) {
-  // TODO backend : PATCH /documents/:id/evaluation. Ici : enregistrement local en mémoire.
+async function saveEvaluation(grade: number | null, comment: string) {
   if (selectedDocumentId.value === null) return
-  evaluate(selectedDocumentId.value, grade, comment)
-  toast.success('Évaluation enregistrée.')
+  isSaving.value = true
+  try {
+    await store.evaluate(selectedDocumentId.value, grade, comment)
+    toast.success('Évaluation enregistrée.')
+ } catch (e) {
+  console.error('Évaluation :', e)
+  toast.error(getErrorMessage(e, 'Enregistrement impossible.'))
+  } finally {
+    isSaving.value = false
+  }
+}
+
+async function openPdf(id: number) {
+  try {
+    await openDocument(id)
+  } catch (e) {
+    toast.error(getErrorMessage(e, 'Impossible d’ouvrir le document.'))
+  }
 }
 
 function openPv() {
@@ -114,7 +137,16 @@ function openPv() {
       </div>
     </PageHeader>
 
-    <EmptyState v-if="projects.length === 0" message="Aucun projet encadré pour le moment." />
+    <p v-if="loading" class="text-sm text-text-muted">Chargement des projets…</p>
+
+    <BaseAlert v-else-if="error" variant="error">
+      {{ error }}
+      <button type="button" class="ml-2 font-semibold underline" @click="store.fetchAll()">
+        Réessayer
+      </button>
+    </BaseAlert>
+
+    <EmptyState v-else-if="projects.length === 0" message="Aucun projet encadré pour le moment." />
 
     <template v-else-if="project">
       <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="Projets encadrés">
@@ -137,7 +169,13 @@ function openPv() {
                 {{ namesOf(item) }}
               </span>
             </span>
-            <BaseBadge tone="info" :dot="false">{{ documentsOf(item.id).length }}</BaseBadge>
+            <BaseBadge
+              :tone="pendingOf(item) > 0 ? 'warning' : 'info'"
+              :dot="false"
+              :title="`${pendingOf(item)} dépôt(s) à évaluer`"
+            >
+              {{ pendingOf(item) > 0 ? `${pendingOf(item)} à noter` : store.documentsOf(item.id).length }}
+            </BaseBadge>
           </button>
         </li>
       </ul>
@@ -170,6 +208,7 @@ function openPv() {
           <template #action>
             <span class="shrink-0 text-xs text-text-muted">
               {{ documents.length }} {{ documents.length > 1 ? 'dépôts' : 'dépôt' }}
+              <template v-if="pendingCount > 0"> · {{ pendingCount }} à évaluer</template>
             </span>
           </template>
 
@@ -198,10 +237,20 @@ function openPv() {
                 </p>
               </div>
 
-              <BaseBadge :tone="document.grade === null ? 'neutral' : 'success'" :dot="false">
-                {{ document.grade === null ? 'À noter' : `${formatGrade(document.grade)}/20` }}
+              <BaseBadge
+                :tone="documentStatusOf(document) === 'EVALUATED' ? 'success' : 'neutral'"
+                :dot="false"
+              >
+                {{
+                  documentStatusOf(document) === 'EVALUATED' && document.grade !== null
+                    ? `${formatGrade(document.grade)}/20`
+                    : 'À noter'
+                }}
               </BaseBadge>
 
+              <BaseButton variant="secondary" size="sm" @click="openPdf(document.id)">
+                PDF
+              </BaseButton>
               <BaseButton variant="secondary" size="sm" @click="selectedDocumentId = document.id">
                 Voir
               </BaseButton>
@@ -209,7 +258,7 @@ function openPv() {
           </ul>
         </BaseCard>
 
-        <DocumentPanel :document="selectedDocument" @save="saveEvaluation" />
+        <DocumentPanel :document="selectedDocument" :saving="isSaving" @save="saveEvaluation" />
       </div>
 
       <BaseAlert v-if="pvError" variant="error">{{ pvError }}</BaseAlert>

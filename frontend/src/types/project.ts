@@ -28,3 +28,23 @@ export interface ProjectFormData {
   coSupervisorId: string | null;
   notes: string;
 }
+export interface TeamMember {
+  id: string;
+  matricule: string;
+  firstName: string;
+  lastName: string;
+}
+
+export interface ProjectPerson {
+  title: "Pr." | "Dr." | null;
+  specialty: string;
+  firstName: string;
+  lastName: string;
+}
+
+// réponse de GET /api/projects/me
+export interface MyProject extends Project {
+  team: TeamMember[];
+  supervisor: ProjectPerson;
+  coSupervisor: ProjectPerson | null;
+}

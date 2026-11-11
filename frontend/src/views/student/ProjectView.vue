@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { toast } from 'vue-sonner'
-import { BookOpen, FileText, Pencil, Plus } from '@lucide/vue'
+import { BookOpen, FileText, Plus } from '@lucide/vue'
 import BaseAlert from '../../components/common/BaseAlert.vue'
 import BaseBadge from '../../components/common/BaseBadge.vue'
 import BaseButton from '../../components/common/BaseButton.vue'
@@ -9,28 +10,38 @@ import BaseCard from '../../components/common/BaseCard.vue'
 import EmptyState from '../../components/common/EmptyState.vue'
 import IconTile from '../../components/common/IconTile.vue'
 import InitialsAvatar from '../../components/common/InitialsAvatar.vue'
-import EntityFormModal from '../../components/forms/EntityFormModal.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
-import { useDocumentsData } from '../../composables/useDocumentsData'
-import { useStudentSpace } from '../../composables/useStudentSpace'
-import { CURRENT_STUDENT_ID } from '../../mocks/currentStudent'
+import { openDocument } from '../../api/myProjects.api'
+import { useMyProjectsStore } from '../../stores/myProjects'
+import { getErrorMessage } from '../../utils/apiError'
 import { formatFullDate } from '../../utils/dateLabels'
 import { formatFileSize } from '../../utils/document'
 import { displayName, initials as professorInitials } from '../../utils/professor'
 import { PROJECT_STATUS_META } from '../../utils/projectStatus'
 import { formatGrade } from '../../utils/result'
+import { SPECIALITY_LABELS } from '../../utils/speciality'
 import { fullName } from '../../utils/student'
-import type { FormFieldConfig, FormValues } from '../../types/form'
 import type { ProjectDocument } from '../../types/document'
-
-const CURSUS_LABELS = { MASTER: 'Master', INGENIEUR: 'Ingénieur' } as const
+import type { ProjectPerson } from '../../types/project'
+import { DOCUMENT_STATUS_META, documentStatusOf } from '../../utils/documentStatus'
 const MAX_FILE_MB = 10
 
-const { student, project, team, supervisor, meta, description, setDescription } =
-  useStudentSpace(CURRENT_STUDENT_ID)
-const { documentsOf, addDocument } = useDocumentsData()
+const store = useMyProjectsStore()
+const { items, loading, error } = storeToRefs(store)
+onMounted(() => store.fetchAll())
 
-const documents = computed(() => (project.value ? documentsOf(project.value.id) : []))
+// un étudiant a au plus un projet
+const project = computed(() => items.value[0] ?? null)
+const team = computed(() => project.value?.team ?? [])
+const documents = computed(() => (project.value ? store.documentsOf(project.value.id) : []))
+
+function toProfessor(p: ProjectPerson | null) {
+  return p
+    ? { title: p.title ?? undefined, name: `${p.firstName} ${p.lastName}`, specialty: p.specialty }
+    : null
+}
+const supervisor = computed(() => toProfessor(project.value?.supervisor ?? null))
+const coSupervisor = computed(() => toProfessor(project.value?.coSupervisor ?? null))
 
 // Par défaut, le premier dépôt est sélectionné
 const selectedId = ref<number | null>(null)
@@ -39,16 +50,15 @@ const selected = computed(
 )
 
 function statusOf(document: ProjectDocument) {
-  return document.grade === null
-    ? { label: 'En cours d’évaluation', tone: 'info' as const }
-    : { label: 'Évalué', tone: 'success' as const }
+  return DOCUMENT_STATUS_META[documentStatusOf(document)]
 }
 
 // Dépôt d'un document
 const fileInput = ref<HTMLInputElement | null>(null)
 const uploadError = ref('')
+const isUploading = ref(false)
 
-function onFile(event: Event) {
+async function onFile(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
   input.value = '' // permet de redéposer le même fichier
@@ -65,36 +75,24 @@ function onFile(event: Event) {
   }
 
   uploadError.value = ''
-  // TODO backend : POST /projects/:id/documents (le backend doit aussi contrôler type et taille)
-  const created = addDocument(project.value.id, {
-    name: file.name,
-    sizeKb: Math.max(1, Math.round(file.size / 1024)),
-  })
-  selectedId.value = created.id
-  toast.success('Document déposé.')
+  isUploading.value = true
+  try {
+    const created = await store.upload(project.value.id, file)
+    selectedId.value = created.id
+    toast.success('Document déposé.')
+  } catch (e) {
+    uploadError.value = getErrorMessage(e, 'Dépôt impossible.')
+  } finally {
+    isUploading.value = false
+  }
 }
 
-// Modification de la description
-const isEditOpen = ref(false)
-
-const descriptionFields: FormFieldConfig[] = [
-  {
-    key: 'description',
-    label: 'Description du projet',
-    type: 'textarea',
-    rows: 6,
-    required: true,
-    requiredMessage: 'La description est obligatoire.',
-  },
-]
-
-const initialValues = computed<FormValues>(() => ({ description: description.value }))
-
-function saveDescription(values: FormValues) {
-  // TODO backend : PATCH /projects/:id/description
-  setDescription(values.description ?? '')
-  isEditOpen.value = false
-  toast.success('Description mise à jour.')
+async function openPdf(document: ProjectDocument) {
+  try {
+    await openDocument(document.id)
+  } catch (e) {
+    toast.error(getErrorMessage(e, 'Impossible d’ouvrir le document.'))
+  }
 }
 
 const labelClass = 'text-[0.625rem] font-bold uppercase tracking-[0.14em] text-text-muted'
@@ -105,12 +103,24 @@ const labelClass = 'text-[0.625rem] font-bold uppercase tracking-[0.14em] text-t
     <PageHeader
       eyebrow="Espace étudiant"
       title="Mon projet PFE"
-      subtitle="Consultez et mettez à jour les informations de votre projet."
+      subtitle="Consultez votre projet et déposez vos documents."
     >
       <BaseBadge tone="neutral" :dot="false">Vue étudiante</BaseBadge>
     </PageHeader>
 
-    <EmptyState v-if="!project" message="Aucun projet n’est rattaché à votre compte pour le moment." />
+    <p v-if="loading" class="text-sm text-text-muted">Chargement de votre projet…</p>
+
+    <BaseAlert v-else-if="error" variant="error">
+      {{ error }}
+      <button type="button" class="ml-2 font-semibold underline" @click="store.fetchAll()">
+        Réessayer
+      </button>
+    </BaseAlert>
+
+    <EmptyState
+      v-else-if="!project"
+      message="Aucun projet n’est rattaché à votre compte pour le moment."
+    />
 
     <template v-else>
       <BaseCard>
@@ -125,18 +135,9 @@ const labelClass = 'text-[0.625rem] font-bold uppercase tracking-[0.14em] text-t
               {{ project.title }}
             </h2>
             <p class="mt-1 text-xs text-text-muted">
-              Projet PFE
-              <template v-if="student">
-                · {{ CURSUS_LABELS[student.cursus] }} {{ student.speciality }}
-              </template>
-              · {{ project.academicYear }}
+              Projet PFE · {{ SPECIALITY_LABELS[project.domain] }} · {{ project.academicYear }}
             </p>
           </div>
-
-          <BaseButton variant="secondary" size="sm" class="shrink-0" @click="isEditOpen = true">
-            <Pencil class="h-3.5 w-3.5" aria-hidden="true" />
-            Modifier
-          </BaseButton>
         </div>
 
         <dl class="mt-5 grid grid-cols-1 gap-4 rounded-lg bg-surface p-4 sm:grid-cols-3">
@@ -157,21 +158,22 @@ const labelClass = 'text-[0.625rem] font-bold uppercase tracking-[0.14em] text-t
               <span v-if="supervisor" class="block text-xs text-text-muted">
                 {{ supervisor.specialty }}
               </span>
+              <span v-if="coSupervisor" class="mt-1 block text-xs text-text-secondary">
+                Co-encadrant : {{ displayName(coSupervisor) }}
+              </span>
             </dd>
           </div>
 
           <div class="min-w-0">
-            <dt :class="labelClass">Date de validation</dt>
-            <dd class="mt-1.5 text-sm font-semibold text-ink">
-              {{ meta ? formatFullDate(meta.validatedOn) : '—' }}
-            </dd>
+            <dt :class="labelClass">Entreprise</dt>
+            <dd class="mt-1.5 text-sm font-semibold text-ink">{{ project.company || '—' }}</dd>
           </div>
         </dl>
 
         <div class="mt-5">
-          <p :class="labelClass">Description du projet</p>
+          <p :class="labelClass">Notes du projet</p>
           <p class="mt-1.5 text-sm leading-relaxed text-text-body">
-            {{ description || 'Aucune description pour le moment.' }}
+            {{ project.notes || 'Aucune note pour le moment.' }}
           </p>
         </div>
       </BaseCard>
@@ -181,7 +183,13 @@ const labelClass = 'text-[0.625rem] font-bold uppercase tracking-[0.14em] text-t
         subtitle="Déposez les livrables requis avant les échéances."
       >
         <template #action>
-          <BaseButton size="md" class="shrink-0" @click="fileInput?.click()">
+          <BaseButton
+            size="md"
+            class="shrink-0"
+            :loading="isUploading"
+            :disabled="project.status === 'defended' || project.status === 'graded' || project.status === 'closed'"
+            @click="fileInput?.click()"
+          >
             <Plus class="h-4 w-4" aria-hidden="true" />
             Déposer un document
           </BaseButton>
@@ -260,12 +268,17 @@ const labelClass = 'text-[0.625rem] font-bold uppercase tracking-[0.14em] text-t
               </p>
               <p class="mt-1.5 truncate font-display text-lg text-ink">{{ selected.name }}</p>
             </div>
-            <p
-              v-if="selected.grade !== null"
-              class="shrink-0 font-display text-3xl leading-none tabular-nums text-success-dark"
-            >
-              {{ formatGrade(selected.grade) }}<small class="text-sm text-text-muted">/20</small>
-            </p>
+            <div class="flex shrink-0 items-center gap-3">
+              <p
+                v-if="selected.grade !== null"
+                class="font-display text-3xl leading-none tabular-nums text-success-dark"
+              >
+                {{ formatGrade(selected.grade) }}<small class="text-sm text-text-muted">/20</small>
+              </p>
+              <BaseButton variant="secondary" size="sm" @click="openPdf(selected)">
+                Ouvrir le PDF
+              </BaseButton>
+            </div>
           </div>
 
           <p v-if="selected.grade === null" class="mt-3 text-sm text-text-secondary">
@@ -295,16 +308,5 @@ const labelClass = 'text-[0.625rem] font-bold uppercase tracking-[0.14em] text-t
         </section>
       </BaseCard>
     </template>
-
-    <EntityFormModal
-      v-model="isEditOpen"
-      title="Modifier la description"
-      subtitle="Mettez à jour la description de votre projet."
-      :icon="Pencil"
-      :fields="descriptionFields"
-      :initialValues="initialValues"
-      submitLabel="Enregistrer"
-      @submit="saveDescription"
-    />
   </div>
 </template>

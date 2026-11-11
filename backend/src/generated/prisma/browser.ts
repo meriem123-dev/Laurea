@@ -62,3 +62,8 @@ export type DefenseMember = Prisma.DefenseMemberModel
  * 
  */
 export type JuryConfirmation = Prisma.JuryConfirmationModel
+/**
+ * Model Document
+ * 
+ */
+export type Document = Prisma.DocumentModel

@@ -9,7 +9,7 @@ import { TeamType } from "../generated/prisma/client";
 import { CreateProjectDto } from "./dto/create-project.dto";
 import { UpdateProjectDto } from "./dto/update-project.dto";
 import { ProjectStatus } from "../generated/prisma/client";
-
+import { AuthUser, projectScope } from "./project-scope";
 const SIZE: Record<TeamType, number> = { solo: 1, pair: 2, trio: 3, quad: 4 };
 const include = { students: { select: { id: true } } };
 // transitions autorisées : une étape en avant, ou un retour arrière d'une étape
@@ -27,7 +27,34 @@ const toApi = ({ students, ...p }: any) => ({
   ...p,
   studentIds: students.map((s: any) => s.id),
 });
+// détail pour les espaces étudiant / enseignant : équipe + encadrants avec leurs noms
+const person = { select: { firstName: true, lastName: true } } as const;
+const detailedInclude = {
+  students: { select: { id: true, matricule: true, user: person } },
+  supervisor: { select: { title: true, specialty: true, user: person } },
+  coSupervisor: { select: { title: true, specialty: true, user: person } },
+} as const;
 
+const toPerson = (t: any) =>
+  t && {
+    title: t.title,
+    specialty: t.specialty,
+    firstName: t.user.firstName,
+    lastName: t.user.lastName,
+  };
+
+const toDetailedApi = ({ students, supervisor, coSupervisor, ...p }: any) => ({
+  ...p,
+  studentIds: students.map((s: any) => s.id),
+  team: students.map((s: any) => ({
+    id: s.id,
+    matricule: s.matricule,
+    firstName: s.user.firstName,
+    lastName: s.user.lastName,
+  })),
+  supervisor: toPerson(supervisor),
+  coSupervisor: toPerson(coSupervisor),
+});
 @Injectable()
 export class ProjectsService {
   constructor(private prisma: PrismaService) {}
@@ -98,6 +125,24 @@ export class ProjectsService {
     const p = await this.prisma.project.findUnique({ where: { id }, include });
     if (!p) throw new NotFoundException("Projet introuvable");
     return toApi(p);
+  }
+    // projets de l'utilisateur connecté (liste : 0 ou 1 pour un étudiant, N pour un enseignant)
+   async findMine(user: AuthUser) {
+    const projects = await this.prisma.project.findMany({
+      where: projectScope(user),
+      include: detailedInclude,
+      orderBy: { createdAt: "desc" },
+    });
+    return projects.map(toDetailedApi);
+  }
+
+  async findOneFor(id: string, user: AuthUser) {
+    const p = await this.prisma.project.findFirst({
+      where: { id, ...projectScope(user) },
+      include: detailedInclude,
+    });
+    if (!p) throw new NotFoundException("Projet introuvable");
+    return toDetailedApi(p);
   }
 
   //modif prjt

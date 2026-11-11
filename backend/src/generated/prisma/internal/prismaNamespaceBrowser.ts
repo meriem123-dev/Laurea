@@ -59,7 +59,8 @@ export const ModelName = {
   Project: 'Project',
   Defense: 'Defense',
   DefenseMember: 'DefenseMember',
-  JuryConfirmation: 'JuryConfirmation'
+  JuryConfirmation: 'JuryConfirmation',
+  Document: 'Document'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -194,6 +195,24 @@ export const JuryConfirmationScalarFieldEnum = {
 } as const
 
 export type JuryConfirmationScalarFieldEnum = (typeof JuryConfirmationScalarFieldEnum)[keyof typeof JuryConfirmationScalarFieldEnum]
+
+
+export const DocumentScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  uploadedById: 'uploadedById',
+  originalName: 'originalName',
+  storedName: 'storedName',
+  sizeBytes: 'sizeBytes',
+  status: 'status',
+  grade: 'grade',
+  comment: 'comment',
+  evaluatedAt: 'evaluatedAt',
+  evaluatedById: 'evaluatedById',
+  createdAt: 'createdAt'
+} as const
+
+export type DocumentScalarFieldEnum = (typeof DocumentScalarFieldEnum)[keyof typeof DocumentScalarFieldEnum]
 
 
 export const SortOrder = {

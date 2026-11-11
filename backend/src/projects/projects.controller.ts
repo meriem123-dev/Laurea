@@ -1,12 +1,28 @@
-import { Body, Controller, Get, Param, Patch, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
 import { ProjectsService } from "./projects.service";
 import { CreateProjectDto } from "./dto/create-project.dto";
-import { UpdateProjectDto } from "./dto/update-project.dto";
+import {
+  UpdateProjectDto,
+  UpdateProjectStatusDto,
+} from "./dto/update-project.dto";
 import { Roles } from "../common/roles.decorator";
+import { RolesGuard } from "../common/roles.guard";
 import { Role } from "../generated/prisma/enums";
-import { Delete } from "@nestjs/common";
-import { UpdateProjectStatusDto } from "./dto/update-project.dto";
+import type { AuthUser } from "./project-scope";
 
+@UseGuards(AuthGuard("jwt"), RolesGuard)
 @Controller("projects")
 export class ProjectsController {
   constructor(private projects: ProjectsService) {}
@@ -23,27 +39,40 @@ export class ProjectsController {
     return this.projects.findAll();
   }
 
-  @Roles(Role.ADMIN_STAFF, Role.TEACHER)
+  // "me" doit rester AVANT ":id", sinon Nest prend "me" pour un id
+  @Roles(Role.STUDENT, Role.TEACHER)
+  @Get("me")
+  findMine(@Req() req: { user: AuthUser }) {
+    return this.projects.findMine(req.user);
+  }
+
+  @Roles(Role.ADMIN_STAFF, Role.TEACHER, Role.STUDENT)
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.projects.findOne(id);
+  findOne(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Req() req: { user: AuthUser },
+  ) {
+    return this.projects.findOneFor(id, req.user);
   }
 
   @Roles(Role.ADMIN_STAFF)
   @Patch(":id")
-  update(@Param("id") id: string, @Body() dto: UpdateProjectDto) {
+  update(@Param("id", ParseUUIDPipe) id: string, @Body() dto: UpdateProjectDto) {
     return this.projects.update(id, dto);
   }
 
-  @Roles(Role.ADMIN_STAFF,Role.TEACHER)
+  @Roles(Role.ADMIN_STAFF, Role.TEACHER)
   @Patch(":id/status")
-  updateStatus(@Param("id") id: string, @Body() dto: UpdateProjectStatusDto) {
+  updateStatus(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Body() dto: UpdateProjectStatusDto,
+  ) {
     return this.projects.updateStatus(id, dto.status);
   }
 
   @Roles(Role.ADMIN_STAFF)
   @Delete(":id")
-  remove(@Param("id") id: string) {
+  remove(@Param("id", ParseUUIDPipe) id: string) {
     return this.projects.remove(id);
   }
 }
