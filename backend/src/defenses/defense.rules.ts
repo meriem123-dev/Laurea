@@ -4,8 +4,8 @@
 export const DAY_START = 8; // les soutenances commencent au plus tôt à 08:00
 export const DAY_END = 17; // et se terminent au plus tard à 17:00
 export const DEFAULT_DURATION = 60; // minutes
-// TODO : le nombre de membres peut varier selon le cursus (Master / Ingénieur)
 export const JURY_MEMBER_COUNT = 3; // jurés en plus du président
+export const MIN_JURY_MEMBER_COUNT = 2;
 
 export interface Slot {
   date: string; // "2026-06-18"

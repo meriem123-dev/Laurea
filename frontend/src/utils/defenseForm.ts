@@ -20,6 +20,8 @@ import {
 } from "./defense";
 import { displayName } from "./professor";
 
+const MIN_MEMBER_COUNT = 2;
+
 interface DefenseFieldsOptions {
   projectOptions: FormFieldOption[]; // projets pas encore planifiés (+ celui de la soutenance modifiée)
   professorOptions: FormFieldOption[];
@@ -52,6 +54,7 @@ function professorValidator(
   options: DefenseFieldsOptions,
 ): Validate {
   return (value, values) => {
+    if (!value) return ""
     const duplicate = JURY_KEYS.some(
       (other) => other !== key && (values[other] ?? "") === value,
     );
@@ -140,20 +143,21 @@ export function buildDefenseFields(
       half: true,
       validate: professorValidator("president", options),
     },
-    ...MEMBER_KEYS.map(
-      (key, index): FormFieldConfig => ({
+    ...MEMBER_KEYS.map((key, index): FormFieldConfig => {
+      const optional = index >= MIN_MEMBER_COUNT;
+      return {
         key,
-        label: `Juré ${index + 1}`,
+        label: optional ? `Juré ${index + 1} (optionnel)` : `Juré ${index + 1}`,
         type: "select",
-        placeholder: "Sélectionner un professeur",
+        placeholder: optional ? "Aucun" : "Sélectionner un professeur",
         optionsWhen: (values) => juryOptions(values, options),
-        required: true,
+        required: !optional,
         requiredMessage: `Sélectionnez le juré ${index + 1}.`,
         section: "Jury",
         half: true,
         validate: professorValidator(key, options),
-      }),
-    ),
+      };
+    }),
   ];
 
   return [
