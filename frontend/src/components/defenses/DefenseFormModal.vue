@@ -65,6 +65,7 @@ const fields = computed(() =>
     professors: professors.value,
     projects: projects.value,
     otherDefenses: otherDefenses.value,
+    editedDefense: props.defense,
     duration: props.defense?.duration ?? DEFAULT_DURATION,
   }),
 )
