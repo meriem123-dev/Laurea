@@ -49,7 +49,13 @@ export class RoomsService {
 
   async remove(id: string) {
     await this.findOne(id);
-    // TODO : refuser la suppression si des soutenances utilisent cette salle (quand Defense existera)
+    // une salle utilisée par des soutenances ne peut pas être supprimée
+    const used = await this.prisma.defense.count({ where: { roomId: id } });
+    if (used > 0) {
+      throw new ConflictException(
+        `Impossible de supprimer cette salle : ${used} soutenance(s) y sont planifiées.`,
+      );
+    }
     await this.prisma.room.delete({ where: { id } });
     return { deleted: true };
   }

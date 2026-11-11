@@ -1,18 +1,27 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import DefenseDetailsModal from '../../components/defenses/DefenseDetailsModal.vue'
 import DefenseFormModal from '../../components/defenses/DefenseFormModal.vue'
 import JuryCard from '../../components/jury/JuryCard.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
-import { useDefensesData, type DefenseView } from '../../composables/useDefensesData'
+import { useAdminDefenses } from '../../composables/useAdminDefenses'
+import type { DefenseView } from '../../composables/useDefensesData'
+import BaseButton from '../../components/common/BaseButton.vue'
 import { JURY_MEMBER_COUNT } from '../../utils/defense'
 import type { Defense } from '../../types/defense'
 
-const { views } = useDefensesData()
+// soutenances, projets, professeurs et salles chargés depuis le back
+const { views, loading, error, loadAll } = useAdminDefenses()
+onMounted(() => loadAll())
+
 
 const selected = ref<Defense | null>(null)
 const isDetailsOpen = ref(false)
 const isFormOpen = ref(false)
+// la fiche affiche la soutenance enrichie avec les données du back
+const selectedView = computed(() =>
+  selected.value ? (views.value.find((item) => item.defense.id === selected.value?.id) ?? null) : null,
+)
 
 const completeCount = computed(
   () => views.value.filter((item) => item.members.length >= JURY_MEMBER_COUNT).length,
@@ -45,9 +54,19 @@ function editFromDetails() {
         </span>
       </div>
     </PageHeader>
+    
+        <p v-if="loading" class="text-sm text-text-muted">Chargement des jurys…</p>
+        <div
+          v-else-if="error"
+          role="alert"
+          class="flex items-center justify-between gap-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800"
+        >
+          <span>{{ error }}</span>
+          <BaseButton variant="secondary" size="md" @click="loadAll()">Réessayer</BaseButton>
+        </div>
 
     <p
-      v-if="views.length === 0"
+      v-else-if="views.length === 0"
       class="rounded-xl border border-dashed border-border-strong bg-card/60 py-16 text-center text-sm text-text-muted"
     >
       Aucune soutenance planifiée pour le moment.
@@ -64,8 +83,13 @@ function editFromDetails() {
       </li>
     </ul>
 
-    <DefenseDetailsModal v-model="isDetailsOpen" :defense="selected" editable @edit="editFromDetails" />
-
+    <DefenseDetailsModal
+      v-model="isDetailsOpen"
+      :defense="selected"
+      :view="selectedView"
+      editable
+      @edit="editFromDetails"
+    />
     <DefenseFormModal
       v-model="isFormOpen"
       :defense="selected"
