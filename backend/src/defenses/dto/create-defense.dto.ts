@@ -9,7 +9,7 @@ import {
   Max,
   Min,
 } from "class-validator";
-import { JURY_MEMBER_COUNT } from "../defense.rules";
+import { JURY_MEMBER_COUNT,MIN_JURY_MEMBER_COUNT } from "../defense.rules";
 
 // mêmes champs que DefenseFormData du front (+ durée facultative)
 export class CreateDefenseDto {
@@ -40,8 +40,8 @@ export class CreateDefenseDto {
   presidentId!: string;
 
   @IsArray()
-  @ArrayMinSize(JURY_MEMBER_COUNT, {
-    message: `Le jury doit compter ${JURY_MEMBER_COUNT} jurés en plus du président`,
+  @ArrayMinSize(MIN_JURY_MEMBER_COUNT, {
+    message: `Le jury doit compter au moins ${JURY_MEMBER_COUNT} jurés en plus du président`,
   })
   @ArrayMaxSize(JURY_MEMBER_COUNT, {
     message: `Le jury doit compter ${JURY_MEMBER_COUNT} jurés en plus du président`,
