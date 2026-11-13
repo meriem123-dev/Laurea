@@ -1,28 +1,55 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { Building2, CalendarDays, Clock } from '@lucide/vue'
+import { computed, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { Building2, Clock } from '@lucide/vue'
+import BaseAlert from '../../components/common/BaseAlert.vue'
 import BaseBadge from '../../components/common/BaseBadge.vue'
 import BaseCard from '../../components/common/BaseCard.vue'
 import EmptyState from '../../components/common/EmptyState.vue'
 import InitialsAvatar from '../../components/common/InitialsAvatar.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
-import { useStudentSpace } from '../../composables/useStudentSpace'
-import { CURRENT_STUDENT_ID } from '../../mocks/currentStudent'
 import { formatLongDay } from '../../utils/calendar'
-import { JURY_MEMBER_COUNT, defenseSlot, formatTime } from '../../utils/defense'
+import { defenseSlot, formatTime } from '../../utils/defense'
 import { formatDay, formatMonthShort } from '../../utils/format'
 import { displayName, initials } from '../../utils/professor'
 import { roomLocation } from '../../utils/room'
+import { useMyDefenseStore } from './stores/useMyDefenseStore'
+import { toProfessor } from './api/defense.api'
 import type { Professor } from '../../types/professor'
 
-const { project, supervisor, defense } = useStudentSpace(CURRENT_STUDENT_ID)
+const store = useMyDefenseStore()
+const { defense: dto, loading, error } = storeToRefs(store)
+onMounted(store.fetchMe)
+
+const project = computed(() => (dto.value ? { title: dto.value.project.title } : null))
+const supervisor = computed(() => (dto.value ? toProfessor(dto.value.supervisor) : undefined))
+
+// même forme que l'ancien « view » : le template change très peu
+const defense = computed(() => {
+  const d = dto.value
+  if (!d) return null
+  return {
+    defense: {
+      id: d.id,
+      projectId: d.project.id,
+      date: d.date,
+      time: d.time,
+      duration: d.duration,
+      roomId: d.room.id,
+      presidentId: d.president.id,
+      memberIds: d.members.map((m) => m.id),
+    },
+    room: { ...d.room, equipment: '', capacity: 0, tone: 'blue' as const },
+    president: toProfessor(d.president),
+    members: d.members.map(toProfessor),
+  }
+})
 
 const slot = computed(() => (defense.value ? defenseSlot(defense.value.defense) : null))
 
 const status = computed(() => {
-  const current = defense.value
-  if (!current) return null
-  return current.defense.memberIds.length >= JURY_MEMBER_COUNT
+  if (!dto.value) return null
+  return dto.value.status === 'confirmed'
     ? { label: 'Confirmée', tone: 'success' as const }
     : { label: 'Planifiée', tone: 'warning' as const }
 })
@@ -63,16 +90,13 @@ const totalMinutes = steps.reduce((sum, step) => sum + step.minutes, 0)
       subtitle="Toutes les informations pratiques pour le jour J."
     />
 
+        <BaseAlert v-if="error" variant="error">{{ error }}</BaseAlert>
     <EmptyState
-      v-if="!project"
-      message="Aucun projet n’est rattaché à votre compte pour le moment."
-    />
-    <EmptyState
-      v-else-if="!defense || !slot"
+      v-if="!loading && !error && (!defense || !slot || !project)"
       message="Votre soutenance n’est pas encore planifiée. La date vous sera communiquée."
     />
 
-    <template v-else>
+    <template v-else-if="defense && slot && project">
       <BaseCard class="motion-safe:animate-fade-up">
         <div class="flex flex-col gap-5 sm:flex-row sm:items-center">
           <div

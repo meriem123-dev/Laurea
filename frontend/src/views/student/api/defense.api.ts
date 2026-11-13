@@ -1,5 +1,5 @@
 import { http } from "../../../api/http";
-
+import type { Professor, ProfessorTitle } from "../../../types/professor";
 export interface PersonDto {
   id: string;
   title: string | null;
@@ -25,4 +25,17 @@ export interface MyDefenseDto {
 export async function fetchMyDefense(): Promise<MyDefenseDto | null> {
   const { data } = await http.get<MyDefenseDto | "">("api/defenses/my-defense");
   return data === "" || data == null ? null : data;
+}
+
+// Convertit une personne de l'API en Professor (champs inconnus de l'étudiant : valeurs neutres)
+export function toProfessor(p: PersonDto): Professor {
+  return {
+    id: p.id,
+    title: (p.title ?? undefined) as ProfessorTitle | undefined,
+    name: `${p.firstName} ${p.lastName}`,
+    email: "",
+    specialty: "",
+    juryCount: 0,
+    projectCount: 0,
+  };
 }
