@@ -50,6 +50,13 @@ export class DefensesController {
     return this.defensesService.findMine(req.user);
   }
 
+    // étudiant : sa soutenance avec noms (salle, jury, encadrant)
+  @Roles(Role.STUDENT)
+  @Get("my-defense")
+  findMyDefense(@Req() req: { user: { id: string } }) {
+    return this.defensesService.findMyDefense(req.user.id);
+  }
+
   @Roles(Role.ADMIN_STAFF, Role.TEACHER)
   @Get(":id")
   findOne(@Param("id", ParseIntPipe) id: number) {

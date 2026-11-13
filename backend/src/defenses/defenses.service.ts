@@ -212,7 +212,54 @@ export class DefensesService {
     });
     return defenses.map(toApi);
   }
+     // étudiant : sa soutenance avec les noms (salle, jury, encadrant), sans données privées
+  async findMyDefense(userId: string) {
+    const defense = await this.prisma.defense.findFirst({
+      where: { project: { students: { some: { userId } } } },
+      include: {
+        room: true,
+        confirmations: { select: { teacherId: true, status: true } },
+        president: withUser,
+        members: { orderBy: { position: "asc" }, include: { teacher: withUser } },
+        project: { include: { supervisor: withUser } },
+      },
+    });
+    if (!defense) return null;
 
+    const person = (t: {
+      id: string;
+      title: string | null;
+      user: { firstName: string; lastName: string };
+    }) => ({
+      id: t.id,
+      title: t.title,
+      firstName: t.user.firstName,
+      lastName: t.user.lastName,
+    });
+
+    const jury = [defense.presidentId, ...defense.members.map((m) => m.teacherId)];
+    const confirmed = jury.every((id) =>
+      defense.confirmations.some((c) => c.teacherId === id && c.status === "ACCEPTED"),
+    );
+
+    return {
+      id: defense.id,
+      date: defense.date.toISOString().slice(0, 10),
+      time: defense.time,
+      duration: defense.duration,
+      status: confirmed ? ("confirmed" as const) : ("planned" as const),
+      project: { id: defense.project.id, title: defense.project.title },
+      room: {
+        id: defense.room.id,
+        name: defense.room.name,
+        block: defense.room.block,
+        pole: defense.room.pole,
+      },
+      president: person(defense.president),
+      members: defense.members.map((m) => person(m.teacher)),
+      supervisor: person(defense.project.supervisor),
+    };
+  }
   /* ---------- Écriture ---------- */
 
   // planifier une soutenance : le projet passe à « planifié »
