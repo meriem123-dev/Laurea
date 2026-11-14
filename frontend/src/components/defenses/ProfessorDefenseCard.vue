@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { ArrowRight } from '@lucide/vue'
 import BaseBadge from '../common/BaseBadge.vue'
-import type { ProfessorDefense } from '../../composables/useProfessorDefenses'
+import type { ProfessorDefenseItem as ProfessorDefense } from '../../views/professor/composables/useMyProfessorDefenses'
 import { formatDay, formatMonthShort } from '../../utils/format'
 import { JURY_ROLE_META } from '../../utils/juryRole'
 

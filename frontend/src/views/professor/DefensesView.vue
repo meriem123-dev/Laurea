@@ -5,18 +5,18 @@ import EmptyState from '../../components/common/EmptyState.vue'
 import SegmentedControl from '../../components/common/SegmentedControl.vue'
 import ProfessorDefenseCard from '../../components/defenses/ProfessorDefenseCard.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
+import BaseAlert from '../../components/common/BaseAlert.vue'
 import {
-  useProfessorDefenses,
-  type ProfessorDefense,
-} from '../../composables/useProfessorDefenses'
-import { CURRENT_PROFESSOR_ID } from '../../mocks/currentProfessor'
+  useMyProfessorDefenses,
+  type ProfessorDefenseItem as ProfessorDefense,
+} from './composables/useMyProfessorDefenses'
 import { JURY_ROLE_META } from '../../utils/juryRole'
 import type { JuryRole } from '../../types/dashboard'
 
 type RoleFilter = 'all' | JuryRole
 
 const router = useRouter()
-const { items } = useProfessorDefenses(CURRENT_PROFESSOR_ID)
+const { items, loading, error } = useMyProfessorDefenses()
 
 const roleFilter = ref<RoleFilter>('all')
 
@@ -69,9 +69,11 @@ function openDetails(item: ProfessorDefense) {
       ariaLabel="Filtrer par rôle"
     />
 
-    <EmptyState v-if="filtered.length === 0" :message="emptyMessage" />
+        <BaseAlert v-if="error" variant="error">{{ error }}</BaseAlert>
 
-    <ul v-else class="flex flex-col gap-4">
+    <EmptyState v-if="!loading && !error && filtered.length === 0" :message="emptyMessage" />
+
+    <ul v-else-if="filtered.length > 0" class="flex flex-col gap-4">
       <li
         v-for="(item, index) in filtered"
         :key="item.view.defense.id"

@@ -212,7 +212,133 @@ export class DefensesService {
     });
     return defenses.map(toApi);
   }
+     // étudiant : sa soutenance avec les noms (salle, jury, encadrant), sans données privées
+  async findMyDefense(userId: string) {
+    const defense = await this.prisma.defense.findFirst({
+      where: { project: { students: { some: { userId } } } },
+      include: {
+        room: true,
+        confirmations: { select: { teacherId: true, status: true } },
+        president: withUser,
+        members: { orderBy: { position: "asc" }, include: { teacher: withUser } },
+        project: { include: { supervisor: withUser } },
+      },
+    });
+    if (!defense) return null;
 
+    const person = (t: {
+      id: string;
+      title: string | null;
+      user: { firstName: string; lastName: string };
+    }) => ({
+      id: t.id,
+      title: t.title,
+      firstName: t.user.firstName,
+      lastName: t.user.lastName,
+    });
+
+    const jury = [defense.presidentId, ...defense.members.map((m) => m.teacherId)];
+    const confirmed = jury.every((id) =>
+      defense.confirmations.some((c) => c.teacherId === id && c.status === "ACCEPTED"),
+    );
+
+    return {
+      id: defense.id,
+      date: defense.date.toISOString().slice(0, 10),
+      time: defense.time,
+      duration: defense.duration,
+      status: confirmed ? ("confirmed" as const) : ("planned" as const),
+      project: { id: defense.project.id, title: defense.project.title },
+      room: {
+        id: defense.room.id,
+        name: defense.room.name,
+        block: defense.room.block,
+        pole: defense.room.pole,
+      },
+      president: person(defense.president),
+      members: defense.members.map((m) => person(m.teacher)),
+      supervisor: person(defense.project.supervisor),
+    };
+  }
+
+    // enseignant : ses soutenances avec noms, son rôle et sa réponse
+  async findTeacherDefenses(userId: string) {
+    const teacher = await this.prisma.teacher.findUnique({ where: { userId } });
+    if (!teacher) throw new NotFoundException("Profil enseignant introuvable");
+
+    const defenses = await this.prisma.defense.findMany({
+      where: {
+        OR: [
+          { presidentId: teacher.id },
+          { members: { some: { teacherId: teacher.id } } },
+          { project: { supervisorId: teacher.id } },
+          { project: { coSupervisorId: teacher.id } },
+        ],
+      },
+      include: {
+        room: true,
+        confirmations: { select: { teacherId: true, status: true } },
+        president: withUser,
+        members: { orderBy: { position: "asc" }, include: { teacher: withUser } },
+        project: {
+          include: { students: withUser, supervisor: withUser, coSupervisor: withUser },
+        },
+      },
+      orderBy: [{ date: "asc" }, { time: "asc" }],
+    });
+
+    const person = (t: {
+      id: string;
+      title: string | null;
+      user: { firstName: string; lastName: string };
+    }) => ({
+      id: t.id,
+      title: t.title,
+      firstName: t.user.firstName,
+      lastName: t.user.lastName,
+    });
+
+    return defenses.map((d) => {
+      const jury = [d.presidentId, ...d.members.map((m) => m.teacherId)];
+      const confirmed = jury.every((id) =>
+        d.confirmations.some((c) => c.teacherId === id && c.status === "ACCEPTED"),
+      );
+
+      const roles: string[] = [];
+      if (d.presidentId === teacher.id) roles.push("president");
+      if (d.members.some((m) => m.teacherId === teacher.id)) roles.push("member");
+      if (d.project.supervisorId === teacher.id) roles.push("supervisor");
+      if (d.project.coSupervisorId === teacher.id) roles.push("coSupervisor");
+
+      return {
+        id: d.id,
+        date: d.date.toISOString().slice(0, 10),
+        time: d.time,
+        duration: d.duration,
+        status: confirmed ? ("confirmed" as const) : ("planned" as const),
+        roles,
+        myResponse:
+          d.confirmations.find((c) => c.teacherId === teacher.id)?.status ?? null,
+        project: { id: d.project.id, title: d.project.title },
+        students: d.project.students.map((s) => ({
+          id: s.id,
+          firstName: s.user.firstName,
+          lastName: s.user.lastName,
+        })),
+        room: {
+          id: d.room.id,
+          name: d.room.name,
+          block: d.room.block,
+          pole: d.room.pole,
+        },
+        president: person(d.president),
+        members: d.members.map((m) => person(m.teacher)),
+        supervisor: person(d.project.supervisor),
+        coSupervisor: d.project.coSupervisor ? person(d.project.coSupervisor) : null,
+      };
+    });
+  }
+  
   /* ---------- Écriture ---------- */
 
   // planifier une soutenance : le projet passe à « planifié »
