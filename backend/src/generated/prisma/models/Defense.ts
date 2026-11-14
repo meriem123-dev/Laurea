@@ -257,6 +257,8 @@ export type DefenseWhereInput = {
   president?: Prisma.XOR<Prisma.TeacherScalarRelationFilter, Prisma.TeacherWhereInput>
   members?: Prisma.DefenseMemberListRelationFilter
   confirmations?: Prisma.JuryConfirmationListRelationFilter
+  evaluation?: Prisma.XOR<Prisma.DefenseEvaluationNullableScalarRelationFilter, Prisma.DefenseEvaluationWhereInput> | null
+  scores?: Prisma.DefenseScoreListRelationFilter
 }
 
 export type DefenseOrderByWithRelationInput = {
@@ -274,6 +276,8 @@ export type DefenseOrderByWithRelationInput = {
   president?: Prisma.TeacherOrderByWithRelationInput
   members?: Prisma.DefenseMemberOrderByRelationAggregateInput
   confirmations?: Prisma.JuryConfirmationOrderByRelationAggregateInput
+  evaluation?: Prisma.DefenseEvaluationOrderByWithRelationInput
+  scores?: Prisma.DefenseScoreOrderByRelationAggregateInput
 }
 
 export type DefenseWhereUniqueInput = Prisma.AtLeast<{
@@ -294,6 +298,8 @@ export type DefenseWhereUniqueInput = Prisma.AtLeast<{
   president?: Prisma.XOR<Prisma.TeacherScalarRelationFilter, Prisma.TeacherWhereInput>
   members?: Prisma.DefenseMemberListRelationFilter
   confirmations?: Prisma.JuryConfirmationListRelationFilter
+  evaluation?: Prisma.XOR<Prisma.DefenseEvaluationNullableScalarRelationFilter, Prisma.DefenseEvaluationWhereInput> | null
+  scores?: Prisma.DefenseScoreListRelationFilter
 }, "id" | "projectId">
 
 export type DefenseOrderByWithAggregationInput = {
@@ -339,6 +345,8 @@ export type DefenseCreateInput = {
   president: Prisma.TeacherCreateNestedOneWithoutPresidedDefensesInput
   members?: Prisma.DefenseMemberCreateNestedManyWithoutDefenseInput
   confirmations?: Prisma.JuryConfirmationCreateNestedManyWithoutDefenseInput
+  evaluation?: Prisma.DefenseEvaluationCreateNestedOneWithoutDefenseInput
+  scores?: Prisma.DefenseScoreCreateNestedManyWithoutDefenseInput
 }
 
 export type DefenseUncheckedCreateInput = {
@@ -353,6 +361,8 @@ export type DefenseUncheckedCreateInput = {
   updatedAt?: Date | string
   members?: Prisma.DefenseMemberUncheckedCreateNestedManyWithoutDefenseInput
   confirmations?: Prisma.JuryConfirmationUncheckedCreateNestedManyWithoutDefenseInput
+  evaluation?: Prisma.DefenseEvaluationUncheckedCreateNestedOneWithoutDefenseInput
+  scores?: Prisma.DefenseScoreUncheckedCreateNestedManyWithoutDefenseInput
 }
 
 export type DefenseUpdateInput = {
@@ -366,6 +376,8 @@ export type DefenseUpdateInput = {
   president?: Prisma.TeacherUpdateOneRequiredWithoutPresidedDefensesNestedInput
   members?: Prisma.DefenseMemberUpdateManyWithoutDefenseNestedInput
   confirmations?: Prisma.JuryConfirmationUpdateManyWithoutDefenseNestedInput
+  evaluation?: Prisma.DefenseEvaluationUpdateOneWithoutDefenseNestedInput
+  scores?: Prisma.DefenseScoreUpdateManyWithoutDefenseNestedInput
 }
 
 export type DefenseUncheckedUpdateInput = {
@@ -380,6 +392,8 @@ export type DefenseUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.DefenseMemberUncheckedUpdateManyWithoutDefenseNestedInput
   confirmations?: Prisma.JuryConfirmationUncheckedUpdateManyWithoutDefenseNestedInput
+  evaluation?: Prisma.DefenseEvaluationUncheckedUpdateOneWithoutDefenseNestedInput
+  scores?: Prisma.DefenseScoreUncheckedUpdateManyWithoutDefenseNestedInput
 }
 
 export type DefenseCreateManyInput = {
@@ -624,6 +638,34 @@ export type DefenseUpdateOneRequiredWithoutConfirmationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.DefenseUpdateToOneWithWhereWithoutConfirmationsInput, Prisma.DefenseUpdateWithoutConfirmationsInput>, Prisma.DefenseUncheckedUpdateWithoutConfirmationsInput>
 }
 
+export type DefenseCreateNestedOneWithoutScoresInput = {
+  create?: Prisma.XOR<Prisma.DefenseCreateWithoutScoresInput, Prisma.DefenseUncheckedCreateWithoutScoresInput>
+  connectOrCreate?: Prisma.DefenseCreateOrConnectWithoutScoresInput
+  connect?: Prisma.DefenseWhereUniqueInput
+}
+
+export type DefenseUpdateOneRequiredWithoutScoresNestedInput = {
+  create?: Prisma.XOR<Prisma.DefenseCreateWithoutScoresInput, Prisma.DefenseUncheckedCreateWithoutScoresInput>
+  connectOrCreate?: Prisma.DefenseCreateOrConnectWithoutScoresInput
+  upsert?: Prisma.DefenseUpsertWithoutScoresInput
+  connect?: Prisma.DefenseWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DefenseUpdateToOneWithWhereWithoutScoresInput, Prisma.DefenseUpdateWithoutScoresInput>, Prisma.DefenseUncheckedUpdateWithoutScoresInput>
+}
+
+export type DefenseCreateNestedOneWithoutEvaluationInput = {
+  create?: Prisma.XOR<Prisma.DefenseCreateWithoutEvaluationInput, Prisma.DefenseUncheckedCreateWithoutEvaluationInput>
+  connectOrCreate?: Prisma.DefenseCreateOrConnectWithoutEvaluationInput
+  connect?: Prisma.DefenseWhereUniqueInput
+}
+
+export type DefenseUpdateOneRequiredWithoutEvaluationNestedInput = {
+  create?: Prisma.XOR<Prisma.DefenseCreateWithoutEvaluationInput, Prisma.DefenseUncheckedCreateWithoutEvaluationInput>
+  connectOrCreate?: Prisma.DefenseCreateOrConnectWithoutEvaluationInput
+  upsert?: Prisma.DefenseUpsertWithoutEvaluationInput
+  connect?: Prisma.DefenseWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DefenseUpdateToOneWithWhereWithoutEvaluationInput, Prisma.DefenseUpdateWithoutEvaluationInput>, Prisma.DefenseUncheckedUpdateWithoutEvaluationInput>
+}
+
 export type DefenseCreateWithoutPresidentInput = {
   date: Date | string
   time: string
@@ -634,6 +676,8 @@ export type DefenseCreateWithoutPresidentInput = {
   room: Prisma.RoomCreateNestedOneWithoutDefensesInput
   members?: Prisma.DefenseMemberCreateNestedManyWithoutDefenseInput
   confirmations?: Prisma.JuryConfirmationCreateNestedManyWithoutDefenseInput
+  evaluation?: Prisma.DefenseEvaluationCreateNestedOneWithoutDefenseInput
+  scores?: Prisma.DefenseScoreCreateNestedManyWithoutDefenseInput
 }
 
 export type DefenseUncheckedCreateWithoutPresidentInput = {
@@ -647,6 +691,8 @@ export type DefenseUncheckedCreateWithoutPresidentInput = {
   updatedAt?: Date | string
   members?: Prisma.DefenseMemberUncheckedCreateNestedManyWithoutDefenseInput
   confirmations?: Prisma.JuryConfirmationUncheckedCreateNestedManyWithoutDefenseInput
+  evaluation?: Prisma.DefenseEvaluationUncheckedCreateNestedOneWithoutDefenseInput
+  scores?: Prisma.DefenseScoreUncheckedCreateNestedManyWithoutDefenseInput
 }
 
 export type DefenseCreateOrConnectWithoutPresidentInput = {
@@ -700,6 +746,8 @@ export type DefenseCreateWithoutRoomInput = {
   president: Prisma.TeacherCreateNestedOneWithoutPresidedDefensesInput
   members?: Prisma.DefenseMemberCreateNestedManyWithoutDefenseInput
   confirmations?: Prisma.JuryConfirmationCreateNestedManyWithoutDefenseInput
+  evaluation?: Prisma.DefenseEvaluationCreateNestedOneWithoutDefenseInput
+  scores?: Prisma.DefenseScoreCreateNestedManyWithoutDefenseInput
 }
 
 export type DefenseUncheckedCreateWithoutRoomInput = {
@@ -713,6 +761,8 @@ export type DefenseUncheckedCreateWithoutRoomInput = {
   updatedAt?: Date | string
   members?: Prisma.DefenseMemberUncheckedCreateNestedManyWithoutDefenseInput
   confirmations?: Prisma.JuryConfirmationUncheckedCreateNestedManyWithoutDefenseInput
+  evaluation?: Prisma.DefenseEvaluationUncheckedCreateNestedOneWithoutDefenseInput
+  scores?: Prisma.DefenseScoreUncheckedCreateNestedManyWithoutDefenseInput
 }
 
 export type DefenseCreateOrConnectWithoutRoomInput = {
@@ -751,6 +801,8 @@ export type DefenseCreateWithoutProjectInput = {
   president: Prisma.TeacherCreateNestedOneWithoutPresidedDefensesInput
   members?: Prisma.DefenseMemberCreateNestedManyWithoutDefenseInput
   confirmations?: Prisma.JuryConfirmationCreateNestedManyWithoutDefenseInput
+  evaluation?: Prisma.DefenseEvaluationCreateNestedOneWithoutDefenseInput
+  scores?: Prisma.DefenseScoreCreateNestedManyWithoutDefenseInput
 }
 
 export type DefenseUncheckedCreateWithoutProjectInput = {
@@ -764,6 +816,8 @@ export type DefenseUncheckedCreateWithoutProjectInput = {
   updatedAt?: Date | string
   members?: Prisma.DefenseMemberUncheckedCreateNestedManyWithoutDefenseInput
   confirmations?: Prisma.JuryConfirmationUncheckedCreateNestedManyWithoutDefenseInput
+  evaluation?: Prisma.DefenseEvaluationUncheckedCreateNestedOneWithoutDefenseInput
+  scores?: Prisma.DefenseScoreUncheckedCreateNestedManyWithoutDefenseInput
 }
 
 export type DefenseCreateOrConnectWithoutProjectInput = {
@@ -792,6 +846,8 @@ export type DefenseUpdateWithoutProjectInput = {
   president?: Prisma.TeacherUpdateOneRequiredWithoutPresidedDefensesNestedInput
   members?: Prisma.DefenseMemberUpdateManyWithoutDefenseNestedInput
   confirmations?: Prisma.JuryConfirmationUpdateManyWithoutDefenseNestedInput
+  evaluation?: Prisma.DefenseEvaluationUpdateOneWithoutDefenseNestedInput
+  scores?: Prisma.DefenseScoreUpdateManyWithoutDefenseNestedInput
 }
 
 export type DefenseUncheckedUpdateWithoutProjectInput = {
@@ -805,6 +861,8 @@ export type DefenseUncheckedUpdateWithoutProjectInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.DefenseMemberUncheckedUpdateManyWithoutDefenseNestedInput
   confirmations?: Prisma.JuryConfirmationUncheckedUpdateManyWithoutDefenseNestedInput
+  evaluation?: Prisma.DefenseEvaluationUncheckedUpdateOneWithoutDefenseNestedInput
+  scores?: Prisma.DefenseScoreUncheckedUpdateManyWithoutDefenseNestedInput
 }
 
 export type DefenseCreateWithoutMembersInput = {
@@ -817,6 +875,8 @@ export type DefenseCreateWithoutMembersInput = {
   room: Prisma.RoomCreateNestedOneWithoutDefensesInput
   president: Prisma.TeacherCreateNestedOneWithoutPresidedDefensesInput
   confirmations?: Prisma.JuryConfirmationCreateNestedManyWithoutDefenseInput
+  evaluation?: Prisma.DefenseEvaluationCreateNestedOneWithoutDefenseInput
+  scores?: Prisma.DefenseScoreCreateNestedManyWithoutDefenseInput
 }
 
 export type DefenseUncheckedCreateWithoutMembersInput = {
@@ -830,6 +890,8 @@ export type DefenseUncheckedCreateWithoutMembersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   confirmations?: Prisma.JuryConfirmationUncheckedCreateNestedManyWithoutDefenseInput
+  evaluation?: Prisma.DefenseEvaluationUncheckedCreateNestedOneWithoutDefenseInput
+  scores?: Prisma.DefenseScoreUncheckedCreateNestedManyWithoutDefenseInput
 }
 
 export type DefenseCreateOrConnectWithoutMembersInput = {
@@ -858,6 +920,8 @@ export type DefenseUpdateWithoutMembersInput = {
   room?: Prisma.RoomUpdateOneRequiredWithoutDefensesNestedInput
   president?: Prisma.TeacherUpdateOneRequiredWithoutPresidedDefensesNestedInput
   confirmations?: Prisma.JuryConfirmationUpdateManyWithoutDefenseNestedInput
+  evaluation?: Prisma.DefenseEvaluationUpdateOneWithoutDefenseNestedInput
+  scores?: Prisma.DefenseScoreUpdateManyWithoutDefenseNestedInput
 }
 
 export type DefenseUncheckedUpdateWithoutMembersInput = {
@@ -871,6 +935,8 @@ export type DefenseUncheckedUpdateWithoutMembersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   confirmations?: Prisma.JuryConfirmationUncheckedUpdateManyWithoutDefenseNestedInput
+  evaluation?: Prisma.DefenseEvaluationUncheckedUpdateOneWithoutDefenseNestedInput
+  scores?: Prisma.DefenseScoreUncheckedUpdateManyWithoutDefenseNestedInput
 }
 
 export type DefenseCreateWithoutConfirmationsInput = {
@@ -883,6 +949,8 @@ export type DefenseCreateWithoutConfirmationsInput = {
   room: Prisma.RoomCreateNestedOneWithoutDefensesInput
   president: Prisma.TeacherCreateNestedOneWithoutPresidedDefensesInput
   members?: Prisma.DefenseMemberCreateNestedManyWithoutDefenseInput
+  evaluation?: Prisma.DefenseEvaluationCreateNestedOneWithoutDefenseInput
+  scores?: Prisma.DefenseScoreCreateNestedManyWithoutDefenseInput
 }
 
 export type DefenseUncheckedCreateWithoutConfirmationsInput = {
@@ -896,6 +964,8 @@ export type DefenseUncheckedCreateWithoutConfirmationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   members?: Prisma.DefenseMemberUncheckedCreateNestedManyWithoutDefenseInput
+  evaluation?: Prisma.DefenseEvaluationUncheckedCreateNestedOneWithoutDefenseInput
+  scores?: Prisma.DefenseScoreUncheckedCreateNestedManyWithoutDefenseInput
 }
 
 export type DefenseCreateOrConnectWithoutConfirmationsInput = {
@@ -924,6 +994,8 @@ export type DefenseUpdateWithoutConfirmationsInput = {
   room?: Prisma.RoomUpdateOneRequiredWithoutDefensesNestedInput
   president?: Prisma.TeacherUpdateOneRequiredWithoutPresidedDefensesNestedInput
   members?: Prisma.DefenseMemberUpdateManyWithoutDefenseNestedInput
+  evaluation?: Prisma.DefenseEvaluationUpdateOneWithoutDefenseNestedInput
+  scores?: Prisma.DefenseScoreUpdateManyWithoutDefenseNestedInput
 }
 
 export type DefenseUncheckedUpdateWithoutConfirmationsInput = {
@@ -937,6 +1009,156 @@ export type DefenseUncheckedUpdateWithoutConfirmationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.DefenseMemberUncheckedUpdateManyWithoutDefenseNestedInput
+  evaluation?: Prisma.DefenseEvaluationUncheckedUpdateOneWithoutDefenseNestedInput
+  scores?: Prisma.DefenseScoreUncheckedUpdateManyWithoutDefenseNestedInput
+}
+
+export type DefenseCreateWithoutScoresInput = {
+  date: Date | string
+  time: string
+  duration?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  project: Prisma.ProjectCreateNestedOneWithoutDefenseInput
+  room: Prisma.RoomCreateNestedOneWithoutDefensesInput
+  president: Prisma.TeacherCreateNestedOneWithoutPresidedDefensesInput
+  members?: Prisma.DefenseMemberCreateNestedManyWithoutDefenseInput
+  confirmations?: Prisma.JuryConfirmationCreateNestedManyWithoutDefenseInput
+  evaluation?: Prisma.DefenseEvaluationCreateNestedOneWithoutDefenseInput
+}
+
+export type DefenseUncheckedCreateWithoutScoresInput = {
+  id?: number
+  projectId: string
+  date: Date | string
+  time: string
+  duration?: number
+  roomId: string
+  presidentId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  members?: Prisma.DefenseMemberUncheckedCreateNestedManyWithoutDefenseInput
+  confirmations?: Prisma.JuryConfirmationUncheckedCreateNestedManyWithoutDefenseInput
+  evaluation?: Prisma.DefenseEvaluationUncheckedCreateNestedOneWithoutDefenseInput
+}
+
+export type DefenseCreateOrConnectWithoutScoresInput = {
+  where: Prisma.DefenseWhereUniqueInput
+  create: Prisma.XOR<Prisma.DefenseCreateWithoutScoresInput, Prisma.DefenseUncheckedCreateWithoutScoresInput>
+}
+
+export type DefenseUpsertWithoutScoresInput = {
+  update: Prisma.XOR<Prisma.DefenseUpdateWithoutScoresInput, Prisma.DefenseUncheckedUpdateWithoutScoresInput>
+  create: Prisma.XOR<Prisma.DefenseCreateWithoutScoresInput, Prisma.DefenseUncheckedCreateWithoutScoresInput>
+  where?: Prisma.DefenseWhereInput
+}
+
+export type DefenseUpdateToOneWithWhereWithoutScoresInput = {
+  where?: Prisma.DefenseWhereInput
+  data: Prisma.XOR<Prisma.DefenseUpdateWithoutScoresInput, Prisma.DefenseUncheckedUpdateWithoutScoresInput>
+}
+
+export type DefenseUpdateWithoutScoresInput = {
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  time?: Prisma.StringFieldUpdateOperationsInput | string
+  duration?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneRequiredWithoutDefenseNestedInput
+  room?: Prisma.RoomUpdateOneRequiredWithoutDefensesNestedInput
+  president?: Prisma.TeacherUpdateOneRequiredWithoutPresidedDefensesNestedInput
+  members?: Prisma.DefenseMemberUpdateManyWithoutDefenseNestedInput
+  confirmations?: Prisma.JuryConfirmationUpdateManyWithoutDefenseNestedInput
+  evaluation?: Prisma.DefenseEvaluationUpdateOneWithoutDefenseNestedInput
+}
+
+export type DefenseUncheckedUpdateWithoutScoresInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  time?: Prisma.StringFieldUpdateOperationsInput | string
+  duration?: Prisma.IntFieldUpdateOperationsInput | number
+  roomId?: Prisma.StringFieldUpdateOperationsInput | string
+  presidentId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  members?: Prisma.DefenseMemberUncheckedUpdateManyWithoutDefenseNestedInput
+  confirmations?: Prisma.JuryConfirmationUncheckedUpdateManyWithoutDefenseNestedInput
+  evaluation?: Prisma.DefenseEvaluationUncheckedUpdateOneWithoutDefenseNestedInput
+}
+
+export type DefenseCreateWithoutEvaluationInput = {
+  date: Date | string
+  time: string
+  duration?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  project: Prisma.ProjectCreateNestedOneWithoutDefenseInput
+  room: Prisma.RoomCreateNestedOneWithoutDefensesInput
+  president: Prisma.TeacherCreateNestedOneWithoutPresidedDefensesInput
+  members?: Prisma.DefenseMemberCreateNestedManyWithoutDefenseInput
+  confirmations?: Prisma.JuryConfirmationCreateNestedManyWithoutDefenseInput
+  scores?: Prisma.DefenseScoreCreateNestedManyWithoutDefenseInput
+}
+
+export type DefenseUncheckedCreateWithoutEvaluationInput = {
+  id?: number
+  projectId: string
+  date: Date | string
+  time: string
+  duration?: number
+  roomId: string
+  presidentId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  members?: Prisma.DefenseMemberUncheckedCreateNestedManyWithoutDefenseInput
+  confirmations?: Prisma.JuryConfirmationUncheckedCreateNestedManyWithoutDefenseInput
+  scores?: Prisma.DefenseScoreUncheckedCreateNestedManyWithoutDefenseInput
+}
+
+export type DefenseCreateOrConnectWithoutEvaluationInput = {
+  where: Prisma.DefenseWhereUniqueInput
+  create: Prisma.XOR<Prisma.DefenseCreateWithoutEvaluationInput, Prisma.DefenseUncheckedCreateWithoutEvaluationInput>
+}
+
+export type DefenseUpsertWithoutEvaluationInput = {
+  update: Prisma.XOR<Prisma.DefenseUpdateWithoutEvaluationInput, Prisma.DefenseUncheckedUpdateWithoutEvaluationInput>
+  create: Prisma.XOR<Prisma.DefenseCreateWithoutEvaluationInput, Prisma.DefenseUncheckedCreateWithoutEvaluationInput>
+  where?: Prisma.DefenseWhereInput
+}
+
+export type DefenseUpdateToOneWithWhereWithoutEvaluationInput = {
+  where?: Prisma.DefenseWhereInput
+  data: Prisma.XOR<Prisma.DefenseUpdateWithoutEvaluationInput, Prisma.DefenseUncheckedUpdateWithoutEvaluationInput>
+}
+
+export type DefenseUpdateWithoutEvaluationInput = {
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  time?: Prisma.StringFieldUpdateOperationsInput | string
+  duration?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneRequiredWithoutDefenseNestedInput
+  room?: Prisma.RoomUpdateOneRequiredWithoutDefensesNestedInput
+  president?: Prisma.TeacherUpdateOneRequiredWithoutPresidedDefensesNestedInput
+  members?: Prisma.DefenseMemberUpdateManyWithoutDefenseNestedInput
+  confirmations?: Prisma.JuryConfirmationUpdateManyWithoutDefenseNestedInput
+  scores?: Prisma.DefenseScoreUpdateManyWithoutDefenseNestedInput
+}
+
+export type DefenseUncheckedUpdateWithoutEvaluationInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  time?: Prisma.StringFieldUpdateOperationsInput | string
+  duration?: Prisma.IntFieldUpdateOperationsInput | number
+  roomId?: Prisma.StringFieldUpdateOperationsInput | string
+  presidentId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  members?: Prisma.DefenseMemberUncheckedUpdateManyWithoutDefenseNestedInput
+  confirmations?: Prisma.JuryConfirmationUncheckedUpdateManyWithoutDefenseNestedInput
+  scores?: Prisma.DefenseScoreUncheckedUpdateManyWithoutDefenseNestedInput
 }
 
 export type DefenseCreateManyPresidentInput = {
@@ -960,6 +1182,8 @@ export type DefenseUpdateWithoutPresidentInput = {
   room?: Prisma.RoomUpdateOneRequiredWithoutDefensesNestedInput
   members?: Prisma.DefenseMemberUpdateManyWithoutDefenseNestedInput
   confirmations?: Prisma.JuryConfirmationUpdateManyWithoutDefenseNestedInput
+  evaluation?: Prisma.DefenseEvaluationUpdateOneWithoutDefenseNestedInput
+  scores?: Prisma.DefenseScoreUpdateManyWithoutDefenseNestedInput
 }
 
 export type DefenseUncheckedUpdateWithoutPresidentInput = {
@@ -973,6 +1197,8 @@ export type DefenseUncheckedUpdateWithoutPresidentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.DefenseMemberUncheckedUpdateManyWithoutDefenseNestedInput
   confirmations?: Prisma.JuryConfirmationUncheckedUpdateManyWithoutDefenseNestedInput
+  evaluation?: Prisma.DefenseEvaluationUncheckedUpdateOneWithoutDefenseNestedInput
+  scores?: Prisma.DefenseScoreUncheckedUpdateManyWithoutDefenseNestedInput
 }
 
 export type DefenseUncheckedUpdateManyWithoutPresidentInput = {
@@ -1007,6 +1233,8 @@ export type DefenseUpdateWithoutRoomInput = {
   president?: Prisma.TeacherUpdateOneRequiredWithoutPresidedDefensesNestedInput
   members?: Prisma.DefenseMemberUpdateManyWithoutDefenseNestedInput
   confirmations?: Prisma.JuryConfirmationUpdateManyWithoutDefenseNestedInput
+  evaluation?: Prisma.DefenseEvaluationUpdateOneWithoutDefenseNestedInput
+  scores?: Prisma.DefenseScoreUpdateManyWithoutDefenseNestedInput
 }
 
 export type DefenseUncheckedUpdateWithoutRoomInput = {
@@ -1020,6 +1248,8 @@ export type DefenseUncheckedUpdateWithoutRoomInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.DefenseMemberUncheckedUpdateManyWithoutDefenseNestedInput
   confirmations?: Prisma.JuryConfirmationUncheckedUpdateManyWithoutDefenseNestedInput
+  evaluation?: Prisma.DefenseEvaluationUncheckedUpdateOneWithoutDefenseNestedInput
+  scores?: Prisma.DefenseScoreUncheckedUpdateManyWithoutDefenseNestedInput
 }
 
 export type DefenseUncheckedUpdateManyWithoutRoomInput = {
@@ -1041,11 +1271,13 @@ export type DefenseUncheckedUpdateManyWithoutRoomInput = {
 export type DefenseCountOutputType = {
   members: number
   confirmations: number
+  scores: number
 }
 
 export type DefenseCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   members?: boolean | DefenseCountOutputTypeCountMembersArgs
   confirmations?: boolean | DefenseCountOutputTypeCountConfirmationsArgs
+  scores?: boolean | DefenseCountOutputTypeCountScoresArgs
 }
 
 /**
@@ -1072,6 +1304,13 @@ export type DefenseCountOutputTypeCountConfirmationsArgs<ExtArgs extends runtime
   where?: Prisma.JuryConfirmationWhereInput
 }
 
+/**
+ * DefenseCountOutputType without action
+ */
+export type DefenseCountOutputTypeCountScoresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DefenseScoreWhereInput
+}
+
 
 export type DefenseSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1088,6 +1327,8 @@ export type DefenseSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   president?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
   members?: boolean | Prisma.Defense$membersArgs<ExtArgs>
   confirmations?: boolean | Prisma.Defense$confirmationsArgs<ExtArgs>
+  evaluation?: boolean | Prisma.Defense$evaluationArgs<ExtArgs>
+  scores?: boolean | Prisma.Defense$scoresArgs<ExtArgs>
   _count?: boolean | Prisma.DefenseCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["defense"]>
 
@@ -1140,6 +1381,8 @@ export type DefenseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   president?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
   members?: boolean | Prisma.Defense$membersArgs<ExtArgs>
   confirmations?: boolean | Prisma.Defense$confirmationsArgs<ExtArgs>
+  evaluation?: boolean | Prisma.Defense$evaluationArgs<ExtArgs>
+  scores?: boolean | Prisma.Defense$scoresArgs<ExtArgs>
   _count?: boolean | Prisma.DefenseCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DefenseIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1161,6 +1404,8 @@ export type $DefensePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     president: Prisma.$TeacherPayload<ExtArgs>
     members: Prisma.$DefenseMemberPayload<ExtArgs>[]
     confirmations: Prisma.$JuryConfirmationPayload<ExtArgs>[]
+    evaluation: Prisma.$DefenseEvaluationPayload<ExtArgs> | null
+    scores: Prisma.$DefenseScorePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1571,6 +1816,8 @@ export interface Prisma__DefenseClient<T, Null = never, ExtArgs extends runtime.
   president<T extends Prisma.TeacherDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TeacherDefaultArgs<ExtArgs>>): Prisma.Prisma__TeacherClient<runtime.Types.Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   members<T extends Prisma.Defense$membersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Defense$membersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DefenseMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   confirmations<T extends Prisma.Defense$confirmationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Defense$confirmationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$JuryConfirmationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  evaluation<T extends Prisma.Defense$evaluationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Defense$evaluationArgs<ExtArgs>>): Prisma.Prisma__DefenseEvaluationClient<runtime.Types.Result.GetResult<Prisma.$DefenseEvaluationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  scores<T extends Prisma.Defense$scoresArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Defense$scoresArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DefenseScorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2055,6 +2302,49 @@ export type Defense$confirmationsArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.JuryConfirmationScalarFieldEnum | Prisma.JuryConfirmationScalarFieldEnum[]
+}
+
+/**
+ * Defense.evaluation
+ */
+export type Defense$evaluationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DefenseEvaluation
+   */
+  select?: Prisma.DefenseEvaluationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DefenseEvaluation
+   */
+  omit?: Prisma.DefenseEvaluationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DefenseEvaluationInclude<ExtArgs> | null
+  where?: Prisma.DefenseEvaluationWhereInput
+}
+
+/**
+ * Defense.scores
+ */
+export type Defense$scoresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DefenseScore
+   */
+  select?: Prisma.DefenseScoreSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DefenseScore
+   */
+  omit?: Prisma.DefenseScoreOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DefenseScoreInclude<ExtArgs> | null
+  where?: Prisma.DefenseScoreWhereInput
+  orderBy?: Prisma.DefenseScoreOrderByWithRelationInput | Prisma.DefenseScoreOrderByWithRelationInput[]
+  cursor?: Prisma.DefenseScoreWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DefenseScoreScalarFieldEnum | Prisma.DefenseScoreScalarFieldEnum[]
 }
 
 /**

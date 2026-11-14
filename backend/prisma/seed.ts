@@ -45,7 +45,9 @@ for (const room of roomsSeed) {
 }
 
   console.log(`Admin prêt : ${email}`);
+
 }
+
 
 main()
   .catch((e) => { console.error(e); process.exit(1); })

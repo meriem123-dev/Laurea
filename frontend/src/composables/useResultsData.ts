@@ -13,8 +13,9 @@ import { finalGrade, publicationState } from '../utils/result'
 // TODO backend : remplacer par un store Pinia branché sur l'API (avec états chargement / erreur).
 const results = ref<DefenseResult[]>(resultsMock.map((result) => ({ ...result })))
 
-// Résultat enrichi avec les objets liés, prêt à être affiché
+// Une ligne par étudiant (une soutenance de binôme donne deux lignes)
 export interface ResultView {
+  defenseId: number
   result: DefenseResult
   student: Student | undefined
   project: Project | undefined
@@ -25,6 +26,7 @@ export interface ResultView {
 
 function toView(result: DefenseResult): ResultView {
   return {
+    defenseId: result.id, // données fictives : un résultat = une soutenance
     result,
     student: students.find((item) => item.id === result.studentId),
     project: projects.find((item) => item.studentIds.includes(result.studentId)),

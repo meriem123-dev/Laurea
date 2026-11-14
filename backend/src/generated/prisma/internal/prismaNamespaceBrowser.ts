@@ -60,7 +60,10 @@ export const ModelName = {
   Defense: 'Defense',
   DefenseMember: 'DefenseMember',
   JuryConfirmation: 'JuryConfirmation',
-  Document: 'Document'
+  Document: 'Document',
+  Criterion: 'Criterion',
+  DefenseScore: 'DefenseScore',
+  DefenseEvaluation: 'DefenseEvaluation'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -213,6 +216,42 @@ export const DocumentScalarFieldEnum = {
 } as const
 
 export type DocumentScalarFieldEnum = (typeof DocumentScalarFieldEnum)[keyof typeof DocumentScalarFieldEnum]
+
+
+export const CriterionScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  label: 'label',
+  description: 'description',
+  coefficient: 'coefficient',
+  position: 'position'
+} as const
+
+export type CriterionScalarFieldEnum = (typeof CriterionScalarFieldEnum)[keyof typeof CriterionScalarFieldEnum]
+
+
+export const DefenseScoreScalarFieldEnum = {
+  defenseId: 'defenseId',
+  teacherId: 'teacherId',
+  criterionId: 'criterionId',
+  value: 'value'
+} as const
+
+export type DefenseScoreScalarFieldEnum = (typeof DefenseScoreScalarFieldEnum)[keyof typeof DefenseScoreScalarFieldEnum]
+
+
+export const DefenseEvaluationScalarFieldEnum = {
+  defenseId: 'defenseId',
+  finalGrade: 'finalGrade',
+  justification: 'justification',
+  observations: 'observations',
+  locked: 'locked',
+  lockedAt: 'lockedAt',
+  lockedById: 'lockedById',
+  publishedAt: 'publishedAt'
+} as const
+
+export type DefenseEvaluationScalarFieldEnum = (typeof DefenseEvaluationScalarFieldEnum)[keyof typeof DefenseEvaluationScalarFieldEnum]
 
 
 export const SortOrder = {

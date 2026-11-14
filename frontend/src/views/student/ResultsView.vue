@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { Award, BookOpen, Download, FileText } from '@lucide/vue'
 import BaseAlert from '../../components/common/BaseAlert.vue'
 import BaseBadge from '../../components/common/BaseBadge.vue'
@@ -8,46 +9,47 @@ import BaseCard from '../../components/common/BaseCard.vue'
 import EmptyState from '../../components/common/EmptyState.vue'
 import IconTile from '../../components/common/IconTile.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
-import { useEvaluationsData } from '../../composables/useEvaluationsData'
-import { useResultsData } from '../../composables/useResultsData'
-import { useStudentSpace } from '../../composables/useStudentSpace'
-import { CURRENT_STUDENT_ID } from '../../mocks/currentStudent'
 import { formatFullDate } from '../../utils/dateLabels'
 import { openPrintWindow } from '../../utils/download'
 import { coefficientShare } from '../../utils/grading'
 import { formatGrade } from '../../utils/result'
+import { toResultViews } from '../../utils/resultsAdapter'
 import { PASS_MARK, buildReportHtml, mentionOf } from '../../utils/resultExport'
 import { SPECIALITY_LABELS } from '../../utils/speciality'
-import { fullName } from '../../utils/student'
+import { useMyResultStore } from './stores/my-results' // adapte si ton store est ailleurs
 
-const { student, project, defense } = useStudentSpace(CURRENT_STUDENT_ID)
-const { views } = useResultsData()
-const { criteria, evaluationOf } = useEvaluationsData()
+const store = useMyResultStore()
+const { result, loading, error } = storeToRefs(store)
+onMounted(() => store.load())
 
-const view = computed(
-  () => views.value.find((item) => item.student?.id === CURRENT_STUDENT_ID) ?? null,
+// tout est null tant que l'administration n'a pas publié
+const published = computed(() => (result.value?.published ? result.value : null))
+const row = computed(() => published.value?.row ?? null)
+const student = computed(
+  () => row.value?.students.find((s) => s.id === published.value?.studentId) ?? null,
+)
+const project = computed(() => row.value?.project ?? null)
+const criteria = computed(() => published.value?.criteria ?? [])
+const view = computed(() =>
+  row.value
+    ? (toResultViews([row.value]).find((v) => v.student?.id === published.value?.studentId) ?? null)
+    : null,
 )
 
-// L'étudiant ne voit son résultat qu'une fois publié par l'administration
-const grade = computed(() =>
-  view.value?.state === 'published' ? view.value.finalGrade : null,
-)
+const grade = computed(() => row.value?.finalGrade ?? null)
 const passed = computed(() => grade.value !== null && grade.value >= PASS_MARK)
 const mention = computed(() => (grade.value !== null && passed.value ? mentionOf(grade.value) : ''))
-
-const observations = computed(() =>
-  defense.value ? evaluationOf(defense.value.defense.id).observations.trim() : '',
-)
+const observations = computed(() => row.value?.observations.trim() ?? '')
 
 const infos = computed(() => [
-  {
-    label: 'Date de soutenance',
-    value: defense.value ? formatFullDate(defense.value.defense.date) : '—',
-  },
+  { label: 'Date de soutenance', value: row.value ? formatFullDate(row.value.date) : '—' },
   { label: 'Décision du jury', value: passed.value ? 'Projet validé' : 'Projet non validé' },
   {
     label: 'Spécialité',
-    value: student.value ? SPECIALITY_LABELS[student.value.speciality] : '—',
+    value: student.value
+      ? ((SPECIALITY_LABELS as Record<string, string>)[student.value.speciality] ??
+        student.value.speciality)
+      : '—',
   },
 ])
 
@@ -56,9 +58,9 @@ const pvError = ref('')
 function downloadPv() {
   // TODO backend : le PV officiel (PDF signé, numéroté) doit être généré côté serveur.
   const current = view.value
-  if (!current) return
+  if (!current || !student.value) return
   const generatedOn = new Intl.DateTimeFormat('fr-FR').format(new Date())
-  const title = `PV – ${current.student ? fullName(current.student) : 'soutenance'}`
+  const title = `PV – ${student.value.firstName} ${student.value.lastName}`
   const opened = openPrintWindow(title, buildReportHtml(current, generatedOn))
   pvError.value = opened
     ? ''
@@ -78,9 +80,16 @@ const labelClass = 'text-[0.625rem] font-bold uppercase tracking-[0.14em] text-t
       <BaseBadge tone="neutral" :dot="false">Vue étudiante</BaseBadge>
     </PageHeader>
 
-    <EmptyState v-if="!view" message="Aucun résultat n’est rattaché à votre compte pour le moment." />
+    <BaseAlert v-if="error" variant="error">{{ error }}</BaseAlert>
 
-    <BaseAlert v-else-if="grade === null" title="Résultat non disponible">
+    <EmptyState v-else-if="loading" message="Chargement de votre résultat…" />
+
+    <EmptyState
+      v-else-if="result && !result.hasDefense"
+      message="Aucun résultat n’est rattaché à votre compte pour le moment."
+    />
+
+    <BaseAlert v-else-if="!published" title="Résultat non disponible">
       Votre note finale et le procès-verbal seront visibles ici une fois les notes du jury validées
       et publiées.
     </BaseAlert>
@@ -98,7 +107,7 @@ const labelClass = 'text-[0.625rem] font-bold uppercase tracking-[0.14em] text-t
           <p :class="[labelClass, 'mt-4']">Résultat final publié</p>
 
           <p class="mt-2 font-display text-6xl leading-none tabular-nums text-ink">
-            {{ formatGrade(grade) }}<small class="ml-1 text-lg text-text-muted">/20</small>
+            {{ formatGrade(grade!) }}<small class="ml-1 text-lg text-text-muted">/20</small>
           </p>
 
           <BaseBadge v-if="mention" tone="info" class="mt-4">Mention {{ mention }}</BaseBadge>

@@ -108,6 +108,8 @@ model Teacher {
   juryMemberships   DefenseMember[]
   juryConfirmations JuryConfirmation[]
   evaluatedDocuments Document[]
+
+  scores     DefenseScore[]
 }
 
 model Room {
@@ -158,6 +160,10 @@ model Defense {
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
 
+  evaluation DefenseEvaluation?
+  scores     DefenseScore[]
+
+
   @@index([date])
 }
 
@@ -204,7 +210,45 @@ model Document {
 
   @@index([projectId])
 }
+
 enum DocumentStatus {
   PENDING   // déposé, pas encore noté
   EVALUATED // noté par l'encadrant
+}
+
+// Critère de la grille
+model Criterion {
+  id          String         @id @default(uuid())
+  key         String         @unique // "demarche", "qualite", ...
+  label       String
+  description String         @default("")
+  coefficient Int
+  position    Int
+  scores      DefenseScore[]
+}
+
+// Note d'un juré (président inclus) pour un critère d'une soutenance (association)
+model DefenseScore {
+  defenseId   Int
+  defense     Defense   @relation(fields: [defenseId], references: [id], onDelete: Cascade)
+  teacherId   String
+  teacher     Teacher   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  criterionId String
+  criterion   Criterion @relation(fields: [criterionId], references: [id], onDelete: Restrict)
+  value       Float     // sur 20
+
+  @@id([defenseId, teacherId, criterionId])
+}
+
+// Délibération : une ligne par soutenance
+model DefenseEvaluation {
+  defenseId     Int       @id
+  defense       Defense   @relation(fields: [defenseId], references: [id], onDelete: Cascade)
+  finalGrade    Float?    // null = moyenne du jury
+  justification String    @default("")
+  observations  String    @default("")
+  locked        Boolean   @default(false)
+  lockedAt      DateTime?
+  lockedById    String?   // id du Teacher (le président)
+  publishedAt DateTime?
 }
