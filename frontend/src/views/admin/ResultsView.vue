@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { toast } from 'vue-sonner'
 import { Award, CircleCheck, Clock, Download } from '@lucide/vue'
 import BaseAlert from '../../components/common/BaseAlert.vue'
 import BaseButton from '../../components/common/BaseButton.vue'
@@ -10,13 +11,20 @@ import PageHeader from '../../components/layout/PageHeader.vue'
 import ResultDetailsModal from '../../components/results/ResultDetailsModal.vue'
 import ResultsTable from '../../components/results/ResultsTable.vue'
 import { useResultFilters } from '../../composables/useResultFilters'
-import { useResultsData, type ResultView } from '../../composables/useResultsData'
+import type { ResultView } from '../../composables/useResultsData'
 import type { PublicationState } from '../../types/result'
 import { downloadTextFile, openPrintWindow } from '../../utils/download'
 import { buildReportHtml, resultsToCsv } from '../../utils/resultExport'
+import { toResultViews } from '../../utils/resultsAdapter'
 import { fullName } from '../../utils/student'
+import { useResultsStore } from './stores/results'
 
-const { views, publish } = useResultsData()
+const store = useResultsStore()
+onMounted(() => store.load())
+
+// une ligne par étudiant (l'API renvoie une ligne par soutenance)
+const views = computed(() => toResultViews(store.items))
+
 const {
   search,
   publication,
@@ -68,10 +76,16 @@ function openCheck(view: ResultView) {
   isDetailsOpen.value = true
 }
 
-function publishSelected() {
-  // TODO backend : POST /results/:id/publish. Le backend doit revérifier que toutes les notes
-  // sont reçues. Ici : publication locale en mémoire, perdue au rechargement.
-  if (selectedId.value !== null) publish(selectedId.value)
+async function publishSelected() {
+  const view = selectedView.value
+  if (!view) return
+  try {
+    // le serveur vérifie que la note est verrouillée ; toute l'équipe est publiée d'un coup
+    await store.publish(view.defenseId)
+    toast.success('Résultat publié.')
+  } catch (e) {
+    toast.error((e as Error).message)
+  }
 }
 
 function printReport(view: ResultView | null) {
@@ -113,6 +127,8 @@ function exportResults() {
         Exporter les résultats
       </BaseButton>
     </PageHeader>
+
+    <BaseAlert v-if="store.error" variant="error">{{ store.error }}</BaseAlert>
 
     <StatStrip :columns="3" aria-label="Synthèse des résultats">
       <StatCard

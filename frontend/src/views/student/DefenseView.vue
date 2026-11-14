@@ -73,7 +73,7 @@ const jury = computed(() => {
   return list
 })
 
-// TODO backend : déroulement paramétrable par établissement
+// déroulement
 const steps = [
   { minutes: 25, label: 'Présentation orale du candidat (sans interruption du jury).' },
   { minutes: 20, label: 'Questions et débat avec les membres du jury.' },
@@ -100,7 +100,7 @@ const totalMinutes = steps.reduce((sum, step) => sum + step.minutes, 0)
       <BaseCard class="motion-safe:animate-fade-up">
         <div class="flex flex-col gap-5 sm:flex-row sm:items-center">
           <div
-            class="flex h-24 w-24 shrink-0 flex-col items-center justify-center rounded-xl bg-primary-600 text-white"
+            class="flex h-24 w-24 shrink-0 flex-col items-center justify-center rounded-xl bg-brass-dark text-white"
           >
             <p class="font-display text-4xl leading-none">{{ formatDay(defense.defense.date) }}</p>
             <p class="mt-1.5 text-[0.625rem] font-bold uppercase tracking-[0.14em]">

@@ -89,3 +89,18 @@ export type JuryConfirmation = Prisma.JuryConfirmationModel
  * 
  */
 export type Document = Prisma.DocumentModel
+/**
+ * Model Criterion
+ * 
+ */
+export type Criterion = Prisma.CriterionModel
+/**
+ * Model DefenseScore
+ * 
+ */
+export type DefenseScore = Prisma.DefenseScoreModel
+/**
+ * Model DefenseEvaluation
+ * 
+ */
+export type DefenseEvaluation = Prisma.DefenseEvaluationModel

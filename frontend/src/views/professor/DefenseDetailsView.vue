@@ -1,119 +1,116 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
-import { toast } from 'vue-sonner'
-import { ArrowLeft, CalendarDays, GraduationCap, MapPin } from '@lucide/vue'
-import BaseAlert from '../../components/common/BaseAlert.vue'
-import BaseBadge from '../../components/common/BaseBadge.vue'
-import BaseCard from '../../components/common/BaseCard.vue'
-import EmptyState from '../../components/common/EmptyState.vue'
-import InitialsAvatar from '../../components/common/InitialsAvatar.vue'
-import DeliberationPanel from '../../components/evaluations/DeliberationPanel.vue'
-import EvaluationGrid, { type GridJuror } from '../../components/evaluations/EvaluationGrid.vue'
-import JuryMemberCard from '../../components/evaluations/JuryMemberCard.vue'
-import PageHeader from '../../components/layout/PageHeader.vue'
-import { useDefensesData } from '../../composables/useDefensesData'
-import { useEvaluationsData } from '../../composables/useEvaluationsData'
-import { CURRENT_PROFESSOR_ID } from '../../mocks/currentProfessor'
-import { formatLongDay } from '../../utils/calendar'
-import { defenseSlot, formatTime, juryIdsOf } from '../../utils/defense'
-import { filledCount, juryAverage, totalCoefficient, weightedGrade } from '../../utils/grading'
-import { JURY_ROLE_META } from '../../utils/juryRole'
-import { displayName, initials as professorInitials } from '../../utils/professor'
-import { PROJECT_STATUS_META } from '../../utils/projectStatus'
-import { roomLocation } from '../../utils/room'
-import { fullName, initials as studentInitials } from '../../utils/student'
-import type { JuryRole } from '../../types/dashboard'
+import { computed, onBeforeUnmount, onMounted, watch } from "vue";
+import { RouterLink, useRoute } from "vue-router";
+import { storeToRefs } from "pinia";
+import { toast } from "vue-sonner";
+import { ArrowLeft, CalendarDays, GraduationCap, MapPin } from "@lucide/vue";
+import BaseAlert from "../../components/common/BaseAlert.vue";
+import BaseBadge from "../../components/common/BaseBadge.vue";
+import BaseCard from "../../components/common/BaseCard.vue";
+import EmptyState from "../../components/common/EmptyState.vue";
+import InitialsAvatar from "../../components/common/InitialsAvatar.vue";
+import DeliberationPanel from "../../components/evaluations/DeliberationPanel.vue";
+import EvaluationGrid, {
+  type GridJuror,
+} from "../../components/evaluations/EvaluationGrid.vue";
+import JuryMemberCard from "../../components/evaluations/JuryMemberCard.vue";
+import PageHeader from "../../components/layout/PageHeader.vue";
+import { formatLongDay } from "../../utils/calendar";
+import { totalCoefficient } from "../../utils/grading";
+import { JURY_ROLE_META } from "../../utils/juryRole";
+import { PROJECT_STATUS_META } from "../../utils/projectStatus";
+import { useEvaluationStore } from "./stores/evaluation.store"; // adapte le chemin
 
-const CURSUS_LABELS = { MASTER: 'Master', INGENIEUR: 'Ingénieur' } as const
+const CURSUS_LABELS = { MASTER: "Master", INGENIEUR: "Ingénieur" } as const;
 
-const route = useRoute()
-const { views, professors } = useDefensesData()
-const { criteria, evaluationOf, setScore, saveDeliberation, lock } = useEvaluationsData()
+const route = useRoute();
+const store = useEvaluationStore();
+const { data, loading, error } = storeToRefs(store);
 
-const defenseId = computed(() => Number(route.params.id))
-const view = computed(() => views.value.find((item) => item.defense.id === defenseId.value))
-const evaluation = computed(() => evaluationOf(defenseId.value))
-const student = computed(() => view.value?.students[0])
+const defenseId = computed(() => Number(route.params.id));
+onMounted(() => store.load(defenseId.value));
+watch(defenseId, (id) => store.load(id));
+onBeforeUnmount(() => store.flush()); // n'oublie pas les dernières saisies
 
-const jurors = computed(() => {
-  const current = view.value
-  if (!current) return []
-  return juryIdsOf(current.defense).flatMap((id) => {
-    const professor = professors.find((item) => item.id === id)
-    if (!professor) return []
-    const role: JuryRole = id === current.defense.presidentId ? 'president' : 'examiner'
-    const scores = evaluation.value.scores[id] ?? {}
-    return [
-      {
-        professor,
-        role,
-        scores,
-        filled: filledCount(scores, criteria),
-        grade: weightedGrade(scores, criteria),
-      },
-    ]
-  })
-})
+const initialsOf = (p: { firstName: string; lastName: string }) =>
+  `${p.firstName[0] ?? ""}${p.lastName[0] ?? ""}`.toUpperCase();
+
+const criteria = computed(() => data.value?.criteria ?? []);
+const jurors = computed(() => data.value?.jurors ?? []);
+const student = computed(() => data.value?.defense.students[0]);
+const studentNames = computed(() =>
+  (data.value?.defense.students ?? [])
+    .map((s) => `${s.firstName} ${s.lastName}`)
+    .join(", "),
+);
+const roomLocation = computed(() => {
+  const room = data.value?.defense.room;
+  return room ? [room.block, room.pole].filter(Boolean).join(" · ") : "";
+});
+
+const currentId = computed(() => data.value?.me.teacherId ?? "");
+const isJuror = computed(() => data.value?.me.isJuror ?? false);
+const isPresident = computed(() => data.value?.me.isPresident ?? false);
+const isSupervisor = computed(() => data.value?.me.isSupervisor ?? false)
+const locked = computed(() => data.value?.locked ?? false);
 
 const gridJurors = computed<GridJuror[]>(() =>
   jurors.value.map((juror) => ({
-    id: juror.professor.id,
-    name: displayName(juror.professor),
+    id: juror.id,
+    name: juror.name,
     roleLabel: JURY_ROLE_META[juror.role].label,
     scores: juror.scores,
     grade: juror.grade,
   })),
-)
+);
 
 const completeCount = computed(
-  () => jurors.value.filter((juror) => juror.filled >= criteria.length).length,
-)
-const isJuror = computed(() => jurors.value.some((j) => j.professor.id === CURRENT_PROFESSOR_ID))
-const isPresident = computed(() => view.value?.defense.presidentId === CURRENT_PROFESSOR_ID)
-const canEditGrid = computed(() => isJuror.value && !evaluation.value.locked)
-
-const average = computed(() => juryAverage(jurors.value.map((juror) => juror.grade)))
-const retained = computed(() => evaluation.value.finalGrade ?? average.value)
-const deviation = computed(
   () =>
-    retained.value !== null &&
-    average.value !== null &&
-    Math.abs(retained.value - average.value) > 0.001,
-)
+    jurors.value.filter((juror) => juror.filled >= criteria.value.length)
+      .length,
+);
+const canEditGrid = computed(() => isJuror.value && !locked.value);
+
+const average = computed(() => data.value?.average ?? null);
+const retained = computed(() => data.value?.finalGrade ?? null);
+const deviation = computed(() => data.value?.deviation ?? false);
 
 const blockedReason = computed(() => {
-  if (!isPresident.value) return 'Seul le président du jury peut valider et verrouiller la note.'
-  if (average.value === null) return 'Tous les jurés doivent d’abord compléter leur grille.'
-  if (deviation.value && !evaluation.value.justification.trim()) {
-    return 'Justifiez l’ajustement de la note pour pouvoir valider.'
+  if (!isPresident.value)
+    return "Seul le président du jury peut valider et verrouiller la note.";
+  if (average.value === null)
+    return "Tous les jurés doivent d’abord compléter leur grille.";
+  if (deviation.value && !data.value?.justification.trim()) {
+    return "Justifiez l’ajustement de la note pour pouvoir valider.";
   }
-  return ''
-})
+  return "";
+});
 const canLock = computed(
-  () => !evaluation.value.locked && retained.value !== null && blockedReason.value === '',
-)
+  () => !locked.value && retained.value !== null && blockedReason.value === "",
+);
 
 const gridAlert = computed(() => {
-  if (evaluation.value.locked) {
-    return 'La note est verrouillée : les évaluations ne sont plus modifiables.'
+  if (locked.value) return 'La note est verrouillée : les évaluations ne sont plus modifiables.'
+  if (isJuror.value) {
+    return 'Votre colonne est modifiable. Les notes des autres jurés sont affichées en lecture seule pour la délibération.'
   }
-  if (!isJuror.value) {
-    return 'Vous n’êtes pas membre du jury de cette soutenance : les évaluations sont en lecture seule.'
+  if (isSupervisor.value) {
+    return 'En tant qu’encadrant, vous consultez les évaluations du jury en lecture seule.'
   }
-  return 'Votre colonne est modifiable. Les notes des autres jurés sont affichées en lecture seule pour la délibération.'
+  return 'Vous n’êtes pas membre du jury de cette soutenance : les évaluations sont en lecture seule.'
 })
 
 function onScore(criterionId: string, value: number | null) {
-  // TODO backend : PUT /defenses/:id/evaluations/me
-  setScore(defenseId.value, CURRENT_PROFESSOR_ID, criterionId, value)
+  store.setScore(criterionId, value);
 }
 
-function onLock() {
-  // TODO backend : POST /defenses/:id/grade/lock (le serveur recalcule et vérifie le rôle)
-  if (retained.value === null) return
-  lock(defenseId.value, retained.value)
-  toast.success('Note validée et verrouillée.')
+async function onLock() {
+  try {
+    await store.lock();
+    toast.success("Note validée et verrouillée.");
+  } catch (e) {
+    toast.error((e as Error).message);
+  }
 }
 </script>
 
@@ -127,7 +124,12 @@ function onLock() {
       Mes soutenances
     </RouterLink>
 
-    <EmptyState v-if="!view" message="Cette soutenance est introuvable." />
+    <EmptyState
+      v-if="!data"
+      :message="
+        loading ? 'Chargement…' : error || 'Cette soutenance est introuvable.'
+      "
+    />
 
     <template v-else>
       <PageHeader
@@ -135,76 +137,109 @@ function onLock() {
         title="Détails d’une soutenance"
         subtitle="Consultez le dossier, les évaluations du jury et préparez la délibération."
       >
-        <BaseBadge v-if="view.project" :tone="PROJECT_STATUS_META[view.project.status].tone">
-          {{ PROJECT_STATUS_META[view.project.status].label }}
+        <BaseBadge
+          v-if="data.defense.project"
+          :tone="PROJECT_STATUS_META[data.defense.project.status].tone"
+        >
+          {{ PROJECT_STATUS_META[data.defense.project.status].label }}
         </BaseBadge>
       </PageHeader>
 
       <BaseCard>
         <div class="flex flex-wrap items-start gap-4">
-          <InitialsAvatar v-if="student" :initials="studentInitials(student)" size="lg" />
+          <InitialsAvatar
+            v-if="student"
+            :initials="initialsOf(student)"
+            size="lg"
+          />
 
           <div class="min-w-0 flex-1">
             <p class="text-xs text-text-muted">
-              {{ view.studentNames }}
+              {{ studentNames }}
               <template v-if="student"> · {{ student.matricule }}</template>
             </p>
-            <h2 class="mt-1 break-words font-display text-2xl leading-snug text-ink">
-              {{ view.project?.title }}
+            <h2
+              class="mt-1 break-words font-display text-2xl leading-snug text-ink"
+            >
+              {{ data.defense.project?.title }}
             </h2>
             <p class="mt-1 text-xs text-text-secondary">
-              {{ view.project?.domain }} · {{ view.project?.academicYear }}
+              {{ data.defense.project?.domain }} ·
+              {{ data.defense.project?.academicYear }}
             </p>
           </div>
 
           <RouterLink
-            v-if="view.project"
-            :to="{ path: '/professor/evaluations', query: { project: view.project.id } }"
+            v-if="data.defense.project"
+            :to="{
+              path: '/professor/evaluations',
+              query: { project: data.defense.project.id },
+            }"
             class="inline-flex h-10 w-full items-center justify-center rounded-lg border border-border-strong bg-card px-4 text-sm font-semibold text-ink transition hover:bg-surface focus:outline-none focus-visible:ring-4 focus-visible:ring-ink/20 sm:w-auto"
           >
             Consulter le mémoire
           </RouterLink>
         </div>
 
-        <dl class="mt-5 grid grid-cols-1 gap-4 border-t border-border pt-5 sm:grid-cols-3">
+        <dl
+          class="mt-5 grid grid-cols-1 gap-4 border-t border-border pt-5 sm:grid-cols-3"
+        >
           <div class="flex min-w-0 items-start gap-3">
-            <GraduationCap class="mt-0.5 h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
+            <GraduationCap
+              class="mt-0.5 h-4 w-4 shrink-0 text-text-muted"
+              aria-hidden="true"
+            />
             <div class="min-w-0">
-              <dt class="text-[0.625rem] font-bold uppercase tracking-[0.14em] text-text-muted">
+              <dt
+                class="text-[0.625rem] font-bold uppercase tracking-[0.14em] text-text-muted"
+              >
                 Cursus
               </dt>
               <dd class="mt-0.5 text-sm font-semibold text-ink">
-                {{ student ? `${CURSUS_LABELS[student.cursus]} · ${student.speciality}` : '—' }}
+                {{
+                  student
+                    ? `${CURSUS_LABELS[student.cursus]} · ${student.speciality}`
+                    : "—"
+                }}
               </dd>
             </div>
           </div>
 
           <div class="flex min-w-0 items-start gap-3">
-            <CalendarDays class="mt-0.5 h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
+            <CalendarDays
+              class="mt-0.5 h-4 w-4 shrink-0 text-text-muted"
+              aria-hidden="true"
+            />
             <div class="min-w-0">
-              <dt class="text-[0.625rem] font-bold uppercase tracking-[0.14em] text-text-muted">
+              <dt
+                class="text-[0.625rem] font-bold uppercase tracking-[0.14em] text-text-muted"
+              >
                 Date et heure
               </dt>
               <dd class="mt-0.5 text-sm font-semibold text-ink">
-                {{ formatLongDay(view.defense.date) }}<br />
+                {{ formatLongDay(data.defense.date) }}<br />
                 <span class="font-normal tabular-nums text-text-secondary">
-                  {{ formatTime(defenseSlot(view.defense).start) }} –
-                  {{ formatTime(defenseSlot(view.defense).end) }}
+                  {{ data.defense.time }} - {{ data.defense.endTime }}
                 </span>
               </dd>
             </div>
           </div>
 
           <div class="flex min-w-0 items-start gap-3">
-            <MapPin class="mt-0.5 h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
+            <MapPin
+              class="mt-0.5 h-4 w-4 shrink-0 text-text-muted"
+              aria-hidden="true"
+            />
             <div class="min-w-0">
-              <dt class="text-[0.625rem] font-bold uppercase tracking-[0.14em] text-text-muted">
+              <dt
+                class="text-[0.625rem] font-bold uppercase tracking-[0.14em] text-text-muted"
+              >
                 Lieu
               </dt>
               <dd class="mt-0.5 text-sm font-semibold text-ink">
-                {{ view.room?.name ?? '—' }}<br />
+                {{ data.defense.room?.name ?? "—" }}<br />
                 <span class="font-normal text-text-secondary">
-                  {{ view.room ? roomLocation(view.room) : '' }}
+                  {{ data.defense.room ? roomLocation : "" }}
                 </span>
               </dd>
             </div>
@@ -214,22 +249,28 @@ function onLock() {
 
       <section aria-labelledby="jury-title" class="flex flex-col gap-3">
         <div class="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 id="jury-title" class="font-display text-xl text-ink">Membres du jury</h2>
+          <h2 id="jury-title" class="font-display text-xl text-ink">
+            Membres du jury
+          </h2>
           <p class="text-xs text-text-muted">
             {{ jurors.length }} membres · {{ completeCount }}
-            {{ completeCount > 1 ? 'évaluations complètes' : 'évaluation complète' }}
+            {{
+              completeCount > 1
+                ? "évaluations complètes"
+                : "évaluation complète"
+            }}
           </p>
         </div>
 
         <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <li v-for="juror in jurors" :key="juror.professor.id" class="min-w-0">
+          <li v-for="juror in jurors" :key="juror.id" class="min-w-0">
             <JuryMemberCard
-              :name="displayName(juror.professor)"
-              :initials="professorInitials(juror.professor)"
+              :name="juror.name"
+              :initials="initialsOf(juror)"
               :roleLabel="JURY_ROLE_META[juror.role].label"
               :filled="juror.filled"
               :total="criteria.length"
-              :isYou="juror.professor.id === CURRENT_PROFESSOR_ID"
+              :isYou="juror.id === currentId"
             />
           </li>
         </ul>
@@ -242,12 +283,13 @@ function onLock() {
           <div class="min-w-0">
             <h2 class="font-display text-xl text-ink">Grille d’évaluation</h2>
             <p class="mt-1 text-xs text-text-muted">
-              {{ criteria.length }} critères · Σ coefficients {{ totalCoefficient(criteria) }}.
-              Chaque juré renseigne sa propre grille.
+              {{ criteria.length }} critères · Σ coefficients
+              {{ totalCoefficient(criteria) }}. Chaque juré renseigne sa propre
+              grille.
             </p>
           </div>
           <BaseBadge tone="neutral" :dot="false">
-            {{ student ? CURSUS_LABELS[student.cursus] : 'Master' }} · Notes sur 20
+            {{ CURSUS_LABELS[data.cursus] }} · Notes sur 20
           </BaseBadge>
         </header>
 
@@ -259,7 +301,7 @@ function onLock() {
           <EvaluationGrid
             :criteria="criteria"
             :jurors="gridJurors"
-            :currentId="CURRENT_PROFESSOR_ID"
+            :currentId="currentId"
             :editable="canEditGrid"
             @score="onScore"
           />
@@ -268,23 +310,21 @@ function onLock() {
 
       <DeliberationPanel
         :members="
-          jurors.map((juror) => ({
-            id: juror.professor.id,
-            name: displayName(juror.professor),
-            grade: juror.grade,
-          }))
+          jurors.map((j) => ({ id: j.id, name: j.name, grade: j.grade }))
         "
         :average="average"
         :finalGrade="retained"
-        :justification="evaluation.justification"
-        :observations="evaluation.observations"
-        :locked="evaluation.locked"
+        :justification="data.justification"
+        :observations="data.observations"
+        :locked="locked"
         :deviation="deviation"
         :canLock="canLock"
         :blockedReason="blockedReason"
-        @update:finalGrade="saveDeliberation(defenseId, { finalGrade: $event })"
-        @update:justification="saveDeliberation(defenseId, { justification: $event })"
-        @update:observations="saveDeliberation(defenseId, { observations: $event })"
+        @update:finalGrade="store.saveDeliberation({ finalGrade: $event })"
+        @update:justification="
+          store.saveDeliberation({ justification: $event })
+        "
+        @update:observations="store.saveDeliberation({ observations: $event })"
         @lock="onLock"
       />
     </template>
