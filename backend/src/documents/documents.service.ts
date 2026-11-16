@@ -10,6 +10,7 @@ import { DocumentStatus, ProjectStatus } from "../generated/prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuthUser, projectScope } from "../projects/project-scope";
 import { EvaluateDocumentDto } from "./dto/evaluate-document.dto";
+import { NotificationsService } from "../notifications/notifications.service";
 
 // En prod, monter un volume sur /app/uploads (voir Dockerfile)
 export const UPLOAD_DIR =
@@ -43,7 +44,10 @@ const toApi = (d: {
 
 @Injectable()
 export class DocumentsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notifications: NotificationsService,
+  ) {}
 
   // le projet, seulement s'il est dans le périmètre de l'utilisateur
   private async getProject(projectId: string, user: AuthUser) {
@@ -105,6 +109,19 @@ export class DocumentsService {
           // status : PENDING par défaut
         },
       });
+      // l'encadrant et le co-encadrant sont prévenus du nouveau dépôt
+      const author = student
+        ? await this.prisma.user.findUnique({ where: { id: user.id } })
+        : null;
+      await this.notifications.notifyTeachers(
+        [project.supervisorId, project.coSupervisorId],
+        {
+          type: "PROJECT",
+          title: "Nouveau dépôt",
+          message: `${author ? `${author.firstName} ${author.lastName}` : "Un étudiant"} a déposé « ${originalName} » pour le projet « ${project.title} ».`,
+          link: `/professor/evaluations?project=${projectId}`,
+        },
+      );
       return toApi(doc);
     } catch (e) {
       await unlink(join(UPLOAD_DIR, storedName)).catch(() => undefined);
@@ -145,6 +162,15 @@ export class DocumentsService {
         evaluatedById: evaluated ? (teacher?.id ?? null) : null,
       },
     });
+    // les étudiants voient la note de leur dépôt
+    if (evaluated) {
+      await this.notifications.notifyProjectStudents(doc.projectId, {
+        type: "PROJECT",
+        title: "Dépôt évalué",
+        message: `Votre document « ${doc.originalName} » a été évalué : ${grade}/20.`,
+        link: "/student/project",
+      });
+    }
     return toApi(updated);
   }
 

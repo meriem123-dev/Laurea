@@ -2,7 +2,7 @@
 // Fonctions pures : testées dans defense-notice.spec.ts
 
 import { formatTime, toMinutes } from "./defense.rules";
-
+import type { NotificationInput } from "../notifications/notifications.service";
 export type NoticeKind = "planned" | "updated" | "cancelled";
 
 interface Person {
@@ -161,5 +161,46 @@ export function buildDeclineNotice(d: DefenseDetails, teacher: TeacherInfo) {
       `Salle : ${d.room.name}`,
     ],
     footer: "Message automatique de Laurea.",
+  };
+}
+
+/* ---------- Notifications dans l'application (cloche) ---------- */
+
+const IN_APP_TITLE: Record<NoticeKind, string> = {
+  planned: "Soutenance planifiée",
+  updated: "Soutenance modifiée",
+  cancelled: "Soutenance annulée",
+};
+
+// même événement que le mail, en version courte pour la cloche
+// needsAnswer : membre du jury qui doit (re)confirmer -> catégorie « Jurys »
+export function buildInAppNotice(
+  kind: NoticeKind,
+  d: DefenseDetails,
+  r: Recipient,
+  needsAnswer: boolean,
+): NotificationInput {
+  const isStudent = r.roles.includes("Étudiant(e)");
+  const when = `${formatLongDate(d.date)} à ${d.time}, salle ${d.room.name}`;
+  const project = `« ${d.project.title} »`;
+  if (needsAnswer && kind !== "cancelled") {
+    return {
+      type: "JURY",
+      title:
+        kind === "planned"
+          ? "Affectation au jury"
+          : "Soutenance modifiée : confirmez votre présence",
+      message: `${r.roles.join(", ")} pour ${project} le ${when}. Merci de confirmer votre présence.`,
+      link: "/professor/defenses",
+    };
+  }
+  return {
+    type: "DEFENSE",
+    title: IN_APP_TITLE[kind],
+    message:
+      kind === "cancelled"
+        ? `La soutenance de ${project} prévue le ${when} est annulée.`
+        : `${project} : ${when}.`,
+    link: isStudent ? "/student/defense" : "/professor/defenses",
   };
 }

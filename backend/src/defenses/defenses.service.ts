@@ -19,6 +19,8 @@ import {
   buildNotice,
   buildRecipients,
   teacherLabel,
+  buildInAppNotice,
+  formatLongDate,
   type DefenseDetails,
   type NoticeKind,
   type Recipient,
@@ -37,7 +39,7 @@ import {
   toSlot,
   isInPast,
 } from "./defense.rules";
-
+import { NotificationsService } from "../notifications/notifications.service";
 // jurés dans l'ordre Juré 1, Juré 2, Juré 3 + réponses du jury
 const include = {
   members: { orderBy: { position: "asc" } },
@@ -142,6 +144,7 @@ export class DefensesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly mail: MailService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   /* ---------- Lecture ---------- */
@@ -212,7 +215,7 @@ export class DefensesService {
     });
     return defenses.map(toApi);
   }
-     // étudiant : sa soutenance avec les noms (salle, jury, encadrant), sans données privées
+  // étudiant : sa soutenance avec les noms (salle, jury, encadrant), sans données privées
   async findMyDefense(userId: string) {
     const defense = await this.prisma.defense.findFirst({
       where: { project: { students: { some: { userId } } } },
@@ -220,7 +223,10 @@ export class DefensesService {
         room: true,
         confirmations: { select: { teacherId: true, status: true } },
         president: withUser,
-        members: { orderBy: { position: "asc" }, include: { teacher: withUser } },
+        members: {
+          orderBy: { position: "asc" },
+          include: { teacher: withUser },
+        },
         project: { include: { supervisor: withUser } },
       },
     });
@@ -237,9 +243,14 @@ export class DefensesService {
       lastName: t.user.lastName,
     });
 
-    const jury = [defense.presidentId, ...defense.members.map((m) => m.teacherId)];
+    const jury = [
+      defense.presidentId,
+      ...defense.members.map((m) => m.teacherId),
+    ];
     const confirmed = jury.every((id) =>
-      defense.confirmations.some((c) => c.teacherId === id && c.status === "ACCEPTED"),
+      defense.confirmations.some(
+        (c) => c.teacherId === id && c.status === "ACCEPTED",
+      ),
     );
 
     return {
@@ -261,7 +272,7 @@ export class DefensesService {
     };
   }
 
-    // enseignant : ses soutenances avec noms, son rôle et sa réponse
+  // enseignant : ses soutenances avec noms, son rôle et sa réponse
   async findTeacherDefenses(userId: string) {
     const teacher = await this.prisma.teacher.findUnique({ where: { userId } });
     if (!teacher) throw new NotFoundException("Profil enseignant introuvable");
@@ -279,9 +290,16 @@ export class DefensesService {
         room: true,
         confirmations: { select: { teacherId: true, status: true } },
         president: withUser,
-        members: { orderBy: { position: "asc" }, include: { teacher: withUser } },
+        members: {
+          orderBy: { position: "asc" },
+          include: { teacher: withUser },
+        },
         project: {
-          include: { students: withUser, supervisor: withUser, coSupervisor: withUser },
+          include: {
+            students: withUser,
+            supervisor: withUser,
+            coSupervisor: withUser,
+          },
         },
       },
       orderBy: [{ date: "asc" }, { time: "asc" }],
@@ -301,12 +319,15 @@ export class DefensesService {
     return defenses.map((d) => {
       const jury = [d.presidentId, ...d.members.map((m) => m.teacherId)];
       const confirmed = jury.every((id) =>
-        d.confirmations.some((c) => c.teacherId === id && c.status === "ACCEPTED"),
+        d.confirmations.some(
+          (c) => c.teacherId === id && c.status === "ACCEPTED",
+        ),
       );
 
       const roles: string[] = [];
       if (d.presidentId === teacher.id) roles.push("president");
-      if (d.members.some((m) => m.teacherId === teacher.id)) roles.push("member");
+      if (d.members.some((m) => m.teacherId === teacher.id))
+        roles.push("member");
       if (d.project.supervisorId === teacher.id) roles.push("supervisor");
       if (d.project.coSupervisorId === teacher.id) roles.push("coSupervisor");
 
@@ -318,7 +339,8 @@ export class DefensesService {
         status: confirmed ? ("confirmed" as const) : ("planned" as const),
         roles,
         myResponse:
-          d.confirmations.find((c) => c.teacherId === teacher.id)?.status ?? null,
+          d.confirmations.find((c) => c.teacherId === teacher.id)?.status ??
+          null,
         project: { id: d.project.id, title: d.project.title },
         students: d.project.students.map((s) => ({
           id: s.id,
@@ -334,11 +356,13 @@ export class DefensesService {
         president: person(d.president),
         members: d.members.map((m) => person(m.teacher)),
         supervisor: person(d.project.supervisor),
-        coSupervisor: d.project.coSupervisor ? person(d.project.coSupervisor) : null,
+        coSupervisor: d.project.coSupervisor
+          ? person(d.project.coSupervisor)
+          : null,
       };
     });
   }
-  
+
   /* ---------- Écriture ---------- */
 
   // planifier une soutenance : le projet passe à « planifié »
@@ -582,10 +606,39 @@ export class DefensesService {
         );
       }),
     );
+    await this.notifyInApp(kind, details, recipients, tokens);
     const sent = results.filter(Boolean).length;
     return { sent, failed: results.length - sent };
   }
 
+  // même événement dans la cloche des personnes concernées (retrouvées par leur e-mail)
+  private async notifyInApp(
+    kind: NoticeKind,
+    details: DefenseDetails,
+    recipients: Recipient[],
+    tokens?: Map<string, string>,
+  ) {
+    if (recipients.length === 0) return;
+    const users = await this.prisma.user.findMany({
+      where: {
+        email: { in: recipients.map((r) => r.email), mode: "insensitive" },
+      },
+      select: { id: true, email: true },
+    });
+    await Promise.all(
+      recipients.map((r) => {
+        const user = users.find(
+          (u) => u.email.toLowerCase() === r.email.toLowerCase(),
+        );
+        if (!user) return;
+        const needsAnswer = !!r.juryTeacherId && !!tokens?.has(r.juryTeacherId);
+        return this.notifications.notifyUsers(
+          [user.id],
+          buildInAppNotice(kind, details, r, needsAnswer),
+        );
+      }),
+    );
+  }
   /* ---------- Réponse du jury ---------- */
 
   // page ouverte depuis le lien du mail (pas de connexion : le jeton fait foi)
@@ -674,6 +727,9 @@ export class DefensesService {
       },
       data: { status, respondedAt: new Date() },
     });
+    // cloche de l'administration : refus d'un membre, ou jury au complet
+    if (status !== c.status)
+      await this.notifyJuryAnswer(c.defenseId, c.teacher, status);
 
     // refus : on prévient l'administration pour qu'elle remplace le membre
     if (status === "DECLINED" && c.status !== "DECLINED") {
@@ -688,6 +744,34 @@ export class DefensesService {
       );
     }
     return toApi(await this.get(c.defenseId));
+  }
+  private async notifyJuryAnswer(
+    defenseId: number,
+    teacher: Parameters<typeof teacherName>[0],
+    status: JuryResponse,
+  ) {
+    const details = await this.loadDetails(defenseId);
+    const about = `« ${details.project.title} » (${formatLongDate(details.date)} à ${details.time})`;
+    if (status === "DECLINED") {
+      await this.notifications.notifyAdmins({
+        type: "JURY",
+        title: "Refus d'un membre du jury",
+        message: `${teacherName(teacher)} a décliné la soutenance de ${about}. Il faut le remplacer.`,
+        link: "/admin/juries",
+      });
+      return;
+    }
+    const pending = await this.prisma.juryConfirmation.count({
+      where: { defenseId, status: { not: "ACCEPTED" } },
+    });
+    if (pending === 0) {
+      await this.notifications.notifyAdmins({
+        type: "JURY",
+        title: "Jury confirmé",
+        message: `Tous les membres du jury ont confirmé leur présence à la soutenance de ${about}.`,
+        link: "/admin/juries",
+      });
+    }
   }
 
   /* ---------- Vérifications ---------- */

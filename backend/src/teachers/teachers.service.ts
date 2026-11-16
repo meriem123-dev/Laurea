@@ -10,6 +10,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { AuthService } from "../auth/auth.service";
 import { CreateTeacherDto } from "./dto/create-teacher.dto";
 import { UpdateTeacherDto } from "./dto/update-teacher.dto";
+import { NotificationsService } from "../notifications/notifications.service";
 
 // On n'expose jamais le passwordHash
 const include = { user: { omit: { passwordHash: true } } } as const;
@@ -19,6 +20,7 @@ export class TeachersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly auth: AuthService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   // création enseignant avec compte non actif + mail d'activation (même mail que les étudiants)
@@ -43,6 +45,13 @@ export class TeachersService {
       });
 
       const emailSent = await this.auth.sendActivationLink(teacher.user);
+      // message d'accueil, visible dès la première connexion
+      await this.notifications.notifyUsers([teacher.user.id], {
+        type: "SYSTEM",
+        title: "Bienvenue sur Laurea",
+        message: `Bonjour ${teacher.user.firstName}, votre compte est prêt. Vous retrouverez ici toutes les informations sur votre projet et votre soutenance.`,
+        link: "/professor/projects",
+      });
       return { ...teacher, emailSent };
     } catch (e) {
       this.handleUniqueError(e);

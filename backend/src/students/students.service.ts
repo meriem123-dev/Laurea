@@ -9,17 +9,21 @@ import { PrismaService } from "../prisma/prisma.service";
 import { CreateStudentDto } from "./dto/create-student.dto";
 import { UpdateStudentDto } from "./dto/update-student.dto";
 import { randomBytes } from "node:crypto";
-
 import { AuthService } from "../auth/auth.service";
+import { NotificationsService } from "../notifications/notifications.service";
 
 // On n'expose jamais le passwordHash
-const include = { user: { omit: { passwordHash: true } },project: { select: { status: true } }, } as const;
+const include = {
+  user: { omit: { passwordHash: true } },
+  project: { select: { status: true } },
+} as const;
 
 @Injectable()
 export class StudentsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly auth: AuthService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   //logique création étudiant avec compte non actif et envoie mail
@@ -46,6 +50,13 @@ export class StudentsService {
       });
 
       const emailSent = await this.auth.sendActivationLink(student.user);
+      // message d'accueil, visible dès la première connexion
+      await this.notifications.notifyUsers([student.user.id], {
+        type: "SYSTEM",
+        title: "Bienvenue sur Laurea",
+        message: `Bonjour ${student.user.firstName}, votre compte est prêt. Vous retrouverez ici toutes les informations sur votre projet et votre soutenance.`,
+        link: "/student/project",
+      });
       return { ...student, emailSent };
     } catch (e) {
       this.handleUniqueError(e);
