@@ -1,6 +1,8 @@
 import type { FormFieldConfig, FormValues } from '../types/form'
+import type { Admin, AdminPayload, AdminType } from '../types/admin'
 import { emailField } from './accountFields'
-import type { Admin, AdminPayload } from '../types/admin'
+import { ADMIN_TYPE_OPTIONS } from './adminType'
+
 export function buildAdminFields(existingEmails: string[]): FormFieldConfig[] {
   return [
     {
@@ -22,6 +24,15 @@ export function buildAdminFields(existingEmails: string[]): FormFieldConfig[] {
       half: true,
     },
     emailField('Ex. : nadia.boukhalfa@univ.dz', existingEmails),
+    {
+      key: 'adminType',
+      label: 'Fonction',
+      type: 'select',
+      placeholder: 'Sélectionner une fonction',
+      options: ADMIN_TYPE_OPTIONS,
+      required: true,
+      requiredMessage: 'Sélectionnez une fonction.',
+    },
   ]
 }
 
@@ -31,12 +42,15 @@ export function toAdminData(values: FormValues): AdminPayload {
     firstName: get('firstName'),
     lastName: get('lastName'),
     email: get('email').toLowerCase(),
+    adminType: get('adminType') as AdminType,
   }
 }
+
 export function adminToFormValues(admin: Admin): FormValues {
   return {
     firstName: admin.firstName,
     lastName: admin.lastName,
     email: admin.email,
+    adminType: admin.adminType ?? '',
   }
 }

@@ -8,7 +8,7 @@ import DataTable, { type TableColumn } from '../tables/DataTable.vue'
 import { ACCOUNT_STATUS_META } from '../../utils/accountStatus'
 import { formatLongDate } from '../../utils/format'
 import type { Admin } from '../../types/admin'
-
+import { ADMIN_TYPE_LABELS } from '../../utils/adminType'
 const props = withDefaults(
   defineProps<{
     admins: Admin[]
@@ -25,6 +25,7 @@ const emit = defineEmits<{
 
 const columns = computed<TableColumn[]>(() => [
   { key: 'admin', label: 'Administrateur' },
+  { key: 'adminType', label: 'Fonction' },
   { key: 'account', label: 'Compte' },
   { key: 'createdAt', label: 'Créé le' },
   ...(props.canManage ? [{ key: 'action', label: 'Action', align: 'right' as const }] : []),
@@ -87,6 +88,9 @@ const initials = (admin: Admin) =>
             <p class="truncate text-xs text-text-muted">{{ row.email }}</p>
           </div>
         </div>
+      </template>
+       <template #cell-adminType="{ row }">
+        {{ row.adminType ? ADMIN_TYPE_LABELS[row.adminType] : '—' }}
       </template>
 
       <template #cell-account="{ row }">

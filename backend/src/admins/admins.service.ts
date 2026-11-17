@@ -6,13 +6,12 @@ import {
 } from "@nestjs/common";
 import * as argon2 from "argon2";
 import { randomBytes } from "node:crypto";
-import { AccountStatus, Prisma, Role } from "../generated/prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuthService } from "../auth/auth.service";
 import { NotificationsService } from "../notifications/notifications.service";
 import { CreateAdminDto } from "./dto/create-admin.dto";
 import { UpdateAdminDto } from "./dto/update-admin.dto";
-
+import { AccountStatus, AdminType, Prisma, Role } from "../generated/prisma/client";
 // On n'expose jamais le passwordHash : sélection explicite des champs
 const select = {
   id: true,
@@ -21,6 +20,7 @@ const select = {
   lastName: true,
   isActive: true,
   isSystemAdmin: true,
+  adminType: true,
   createdAt: true,
   resetTokens: { select: { usedAt: true } },
 } as const;
@@ -32,6 +32,7 @@ interface AdminRow {
   lastName: string;
   isActive: boolean;
   isSystemAdmin: boolean;
+  adminType: AdminType | null;
   createdAt: Date;
   resetTokens: { usedAt: Date | null }[];
 }
@@ -70,6 +71,7 @@ export class AdminsService {
           firstName: dto.firstName.trim(),
           lastName: dto.lastName.trim(),
           role: Role.ADMIN_STAFF,
+          adminType: dto.adminType,
         },
         select,
       });
@@ -111,7 +113,6 @@ export class AdminsService {
     return toAdmin(user);
   }
 
-  // seuls nom, prénom et email sont modifiables (jamais le rôle ni isSystemAdmin)
   async update(id: string, dto: UpdateAdminDto) {
     await this.findOne(id); // 404 si inexistant ou pas admin
     try {
@@ -121,6 +122,7 @@ export class AdminsService {
           email: dto.email?.trim().toLowerCase(),
           firstName: dto.firstName?.trim(),
           lastName: dto.lastName?.trim(),
+          adminType: dto.adminType,
         },
         select,
       });

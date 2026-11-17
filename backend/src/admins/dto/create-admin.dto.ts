@@ -1,4 +1,5 @@
-import { IsEmail, IsNotEmpty, IsString, MaxLength } from "class-validator";
+import { IsEmail, IsEnum, IsNotEmpty, IsString, MaxLength } from "class-validator";
+import { AdminType } from "../../generated/prisma/client";
 
 export class CreateAdminDto {
   @IsString()
@@ -13,4 +14,7 @@ export class CreateAdminDto {
 
   @IsEmail({}, { message: "Adresse e-mail invalide" })
   email!: string;
+
+  @IsEnum(AdminType, { message: "Fonction invalide" })
+  adminType!: AdminType;
 }

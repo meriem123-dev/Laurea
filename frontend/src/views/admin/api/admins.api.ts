@@ -1,7 +1,6 @@
 import { http } from '../../../api/http'
-import type { Admin, AdminPayload } from '../../../types/admin'
 import type { AccountStatus } from '../../../types/student'
-
+import type { Admin, AdminPayload, AdminType } from '../../../types/admin'
 // Réponse du back (GET /api/admins)
 export interface AdminDto {
   id: string
@@ -10,6 +9,7 @@ export interface AdminDto {
   lastName: string
   isActive: boolean
   isSystemAdmin: boolean
+  adminType: AdminType | null
   createdAt: string
   accountStatus: AccountStatus
 }
@@ -22,6 +22,7 @@ export function toAdmin(dto: AdminDto): Admin {
     email: dto.email,
     accountStatus: dto.accountStatus,
     isSystemAdmin: dto.isSystemAdmin,
+    adminType: dto.adminType,
     createdAt: dto.createdAt,
   }
 }
