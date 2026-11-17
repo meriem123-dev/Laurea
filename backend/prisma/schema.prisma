@@ -56,19 +56,28 @@ enum ProjectStatus {
   closed
 }
 
+enum NotificationType {
+  DEFENSE
+  PROJECT
+  JURY
+  RESULT
+  SYSTEM
+}
+
 model User {
-  id           String               @id @default(uuid())
-  email        String               @unique
-  passwordHash String
-  firstName    String
-  lastName     String
-  role         Role
-  isActive     Boolean              @default(true)
-  updatedAt    DateTime             @updatedAt
-  createdAt    DateTime             @default(now())
-  resetTokens  PasswordResetToken[]
-  student      Student?
-  teacher      Teacher?
+  id            String               @id @default(uuid())
+  email         String               @unique
+  passwordHash  String
+  firstName     String
+  lastName      String
+  role          Role
+  isActive      Boolean              @default(true)
+  updatedAt     DateTime             @updatedAt
+  createdAt     DateTime             @default(now())
+  resetTokens   PasswordResetToken[]
+  student       Student?
+  teacher       Teacher?
+  notifications Notification[]
 }
 
 model PasswordResetToken {
@@ -96,20 +105,20 @@ model Student {
 }
 
 model Teacher {
-  id                String             @id @default(uuid())
-  userId            String             @unique
-  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title             String? // "Pr." ou "Dr." (comme ProfessorTitle du front)
-  specialty         String // texte libre, comme dans le front
-  accountStatus     AccountStatus      @default(PENDING)
-  supervised        Project[]          @relation("Supervisor")
-  coSupervised      Project[]          @relation("CoSupervisor")
-  presidedDefenses  Defense[]
-  juryMemberships   DefenseMember[]
-  juryConfirmations JuryConfirmation[]
+  id                 String             @id @default(uuid())
+  userId             String             @unique
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title              String? // "Pr." ou "Dr." (comme ProfessorTitle du front)
+  specialty          String // texte libre, comme dans le front
+  accountStatus      AccountStatus      @default(PENDING)
+  supervised         Project[]          @relation("Supervisor")
+  coSupervised       Project[]          @relation("CoSupervisor")
+  presidedDefenses   Defense[]
+  juryMemberships    DefenseMember[]
+  juryConfirmations  JuryConfirmation[]
   evaluatedDocuments Document[]
 
-  scores     DefenseScore[]
+  scores DefenseScore[]
 }
 
 model Room {
@@ -163,7 +172,6 @@ model Defense {
   evaluation DefenseEvaluation?
   scores     DefenseScore[]
 
-
   @@index([date])
 }
 
@@ -190,6 +198,7 @@ model JuryConfirmation {
 
   @@id([defenseId, teacherId])
 }
+
 // Document déposé par un étudiant sur son projet (PDF stocké sur disque)
 model Document {
   id            Int            @id @default(autoincrement())
@@ -212,7 +221,7 @@ model Document {
 }
 
 enum DocumentStatus {
-  PENDING   // déposé, pas encore noté
+  PENDING // déposé, pas encore noté
   EVALUATED // noté par l'encadrant
 }
 
@@ -235,7 +244,7 @@ model DefenseScore {
   teacher     Teacher   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
   criterionId String
   criterion   Criterion @relation(fields: [criterionId], references: [id], onDelete: Restrict)
-  value       Float     // sur 20
+  value       Float // sur 20
 
   @@id([defenseId, teacherId, criterionId])
 }
@@ -244,11 +253,25 @@ model DefenseScore {
 model DefenseEvaluation {
   defenseId     Int       @id
   defense       Defense   @relation(fields: [defenseId], references: [id], onDelete: Cascade)
-  finalGrade    Float?    // null = moyenne du jury
+  finalGrade    Float? // null = moyenne du jury
   justification String    @default("")
   observations  String    @default("")
   locked        Boolean   @default(false)
   lockedAt      DateTime?
-  lockedById    String?   // id du Teacher (le président)
-  publishedAt DateTime?
+  lockedById    String? // id du Teacher (le président)
+  publishedAt   DateTime?
+}
+
+model Notification {
+  id        Int              @id @default(autoincrement())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  message   String
+  link      String? // page ouverte au clic (ex. /student/defense)
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  @@index([userId, read])
 }

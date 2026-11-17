@@ -7,10 +7,16 @@ import {
   OnModuleInit,
 } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { Cursus, Prisma, ProjectStatus, Role } from "../generated/prisma/client";
+import {
+  Cursus,
+  Prisma,
+  ProjectStatus,
+  Role,
+} from "../generated/prisma/client";
 import { UpsertMyScoresDto } from "./dto/upsert-my-scores.dto";
 import { UpdateDeliberationDto } from "./dto/update-deliberation.dto";
 import { juryAverage, weightedGrade } from "./grading.utils";
+import { NotificationsService } from "../notifications/notifications.service";
 
 type AuthUser = { id: string; role: Role };
 
@@ -54,7 +60,10 @@ const DEFAULT_GRID = [
 
 @Injectable()
 export class GradingService implements OnModuleInit {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notifications: NotificationsService,
+  ) {}
 
   // s'exécute à chaque démarrage : crée les critères manquants, ne touche jamais à ceux qui existent
   async onModuleInit() {
@@ -233,6 +242,13 @@ export class GradingService implements OnModuleInit {
         data: { status: ProjectStatus.graded },
       }),
     ]);
+    // la note est prête : l'administration peut la publier
+    await this.notifications.notifyAdmins({
+      type: "RESULT",
+      title: "Résultat à publier",
+      message: `La note du projet « ${defense.project.title} » est validée par le président du jury. Elle peut être publiée.`,
+      link: "/admin/results",
+    });
 
     return this.getEvaluation(defenseId, { id: userId, role: Role.TEACHER });
   }
@@ -271,7 +287,7 @@ export class GradingService implements OnModuleInit {
     );
   }
 
-    // check si on est teacher
+  // check si on est teacher
   private teacherOf(userId: string) {
     return this.prisma.teacher.findUnique({ where: { userId } });
   }
@@ -280,7 +296,7 @@ export class GradingService implements OnModuleInit {
     return [defense.presidentId, ...defense.members.map((m) => m.teacherId)];
   }
 
-    // check si on est jury
+  // check si on est jury
   private async requireJuror(
     defense: Awaited<ReturnType<GradingService["loadDefense"]>>,
     userId: string,
@@ -294,7 +310,7 @@ export class GradingService implements OnModuleInit {
     return teacher;
   }
 
-    // check si on est president
+  // check si on est president
   private async requirePresident(
     defense: Awaited<ReturnType<GradingService["loadDefense"]>>,
     userId: string,
@@ -429,10 +445,30 @@ export class GradingService implements OnModuleInit {
       where: { defenseId },
       data: { publishedAt: published ? new Date() : null },
     });
+    // publication (pas au retrait, ni si c'était déjà publié) : étudiants, jury et encadrants
+    if (published && !defense.evaluation.publishedAt) {
+      await this.notifications.notifyProjectStudents(defense.projectId, {
+        type: "RESULT",
+        title: "Résultat publié",
+        message: `Le résultat de votre soutenance « ${defense.project.title} » est disponible.`,
+        link: "/student/results",
+      });
+      await this.notifications.notifyTeachers(
+        [
+          ...this.juryIds(defense),
+          defense.project.supervisorId,
+          defense.project.coSupervisorId,
+        ],
+        {
+          type: "RESULT",
+          title: "Résultat publié",
+          message: `Le résultat du projet « ${defense.project.title} » a été publié.`,
+          link: `/professor/evaluations?project=${defense.projectId}`,
+        },
+      );
+    }
     return this.getEvaluation(defenseId, user);
   }
-
-
 
   // ---------- résultats ----------
 

@@ -10,6 +10,7 @@ import { CreateProjectDto } from "./dto/create-project.dto";
 import { UpdateProjectDto } from "./dto/update-project.dto";
 import { ProjectStatus } from "../generated/prisma/client";
 import { AuthUser, projectScope } from "./project-scope";
+import { NotificationsService } from "../notifications/notifications.service";
 const SIZE: Record<TeamType, number> = { solo: 1, pair: 2, trio: 3, quad: 4 };
 const include = { students: { select: { id: true } } };
 // transitions autorisées : une étape en avant, ou un retour arrière d'une étape
@@ -57,7 +58,10 @@ const toDetailedApi = ({ students, supervisor, coSupervisor, ...p }: any) => ({
 });
 @Injectable()
 export class ProjectsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly notifications: NotificationsService,
+  ) {}
 
   private async check(
     d: {
@@ -107,6 +111,22 @@ export class ProjectsService {
       },
       include,
     });
+    // encadrants et étudiants du nouveau projet
+    await this.notifications.notifyTeachers(
+      [p.supervisorId, p.coSupervisorId],
+      {
+        type: "PROJECT",
+        title: "Nouveau projet à encadrer",
+        message: `Vous encadrez le projet « ${p.title} ».`,
+        link: "/professor/projects",
+      },
+    );
+    await this.notifications.notifyProjectStudents(p.id, {
+      type: "PROJECT",
+      title: "Projet enregistré",
+      message: `Votre projet « ${p.title} » a été enregistré par l'administration.`,
+      link: "/student/project",
+    });
     return toApi(p);
   }
 
@@ -126,8 +146,8 @@ export class ProjectsService {
     if (!p) throw new NotFoundException("Projet introuvable");
     return toApi(p);
   }
-    // projets de l'utilisateur connecté (liste : 0 ou 1 pour un étudiant, N pour un enseignant)
-   async findMine(user: AuthUser) {
+  // projets de l'utilisateur connecté (liste : 0 ou 1 pour un étudiant, N pour un enseignant)
+  async findMine(user: AuthUser) {
     const projects = await this.prisma.project.findMany({
       where: projectScope(user),
       include: detailedInclude,
@@ -161,6 +181,15 @@ export class ProjectsService {
       },
       include,
     });
+    // sujet validé : les étudiants peuvent passer à la suite
+    if (status === "validated" && current.status === "deposited") {
+      await this.notifications.notifyProjectStudents(p.id, {
+        type: "PROJECT",
+        title: "Votre sujet a été validé",
+        message: `Le projet « ${p.title} » est validé. La soutenance pourra être planifiée.`,
+        link: "/student/project",
+      });
+    }
     return toApi(p);
   }
 

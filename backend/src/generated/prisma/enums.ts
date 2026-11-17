@@ -77,6 +77,17 @@ export const ProjectStatus = {
 export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus]
 
 
+export const NotificationType = {
+  DEFENSE: 'DEFENSE',
+  PROJECT: 'PROJECT',
+  JURY: 'JURY',
+  RESULT: 'RESULT',
+  SYSTEM: 'SYSTEM'
+} as const
+
+export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
+
+
 export const DocumentStatus = {
   PENDING: 'PENDING',
   EVALUATED: 'EVALUATED'

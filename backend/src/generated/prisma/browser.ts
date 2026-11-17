@@ -82,3 +82,8 @@ export type DefenseScore = Prisma.DefenseScoreModel
  * 
  */
 export type DefenseEvaluation = Prisma.DefenseEvaluationModel
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel
