@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { PrismaClient, Role } from '../src/generated/prisma/client';
+import { AdminType, PrismaClient, Role } from '../src/generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import * as argon2 from 'argon2';
 
@@ -26,6 +26,8 @@ async function main() {
       firstName: 'Admin',
       lastName: 'Système',
       role: Role.ADMIN_STAFF,
+      isSystemAdmin: true,
+      adminType: AdminType.ADMINISTRATION,
     },
   });
 

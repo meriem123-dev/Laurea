@@ -46,6 +46,14 @@ export const AccountStatus = {
 export type AccountStatus = (typeof AccountStatus)[keyof typeof AccountStatus]
 
 
+export const AdminType = {
+  DEPARTMENT_HEAD: 'DEPARTMENT_HEAD',
+  ADMINISTRATION: 'ADMINISTRATION'
+} as const
+
+export type AdminType = (typeof AdminType)[keyof typeof AdminType]
+
+
 export const TeamType = {
   solo: 'solo',
   pair: 'pair',

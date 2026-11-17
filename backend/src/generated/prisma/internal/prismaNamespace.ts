@@ -1514,6 +1514,7 @@ export const UserScalarFieldEnum = {
   role: 'role',
   isActive: 'isActive',
   isSystemAdmin: 'isSystemAdmin',
+  adminType: 'adminType',
   updatedAt: 'updatedAt',
   createdAt: 'createdAt'
 } as const
@@ -1754,6 +1755,20 @@ export type ListEnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'AdminType'
+ */
+export type EnumAdminTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AdminType'>
+    
+
+
+/**
+ * Reference to a field of type 'AdminType[]'
+ */
+export type ListEnumAdminTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AdminType[]'>
     
 
 

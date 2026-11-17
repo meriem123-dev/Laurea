@@ -32,6 +32,10 @@ enum AccountStatus {
   ACTIVE
   DISABLED
 }
+enum AdminType {
+  DEPARTMENT_HEAD // Responsable de département
+  ADMINISTRATION  // Administration / Scolarité
+}
 
 enum TeamType {
   solo
@@ -73,6 +77,7 @@ model User {
   role          Role
   isActive      Boolean              @default(true)
   isSystemAdmin Boolean              @default(false)
+  adminType     AdminType?
   updatedAt     DateTime             @updatedAt
   createdAt     DateTime             @default(now())
   resetTokens   PasswordResetToken[]
