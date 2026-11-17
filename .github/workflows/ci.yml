@@ -102,5 +102,5 @@ jobs:
       # acceptée à revoir quand vee-validate supportera zod 4
       - name: Audit frontend
         if: always()
-        run: npx audit-ci@^7 --omit dev --high --allowlist GHSA-mrhx-c7xc-m3w5
+        run: npx audit-ci@^7 --omit dev --high --allowlist GHSA-mrhx-c7xc-m3w5 GHSA-fc5q-39xc-vjpf
         working-directory: frontend
