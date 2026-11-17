@@ -13,7 +13,8 @@ import { ProjectsModule } from './projects/projects.module';
 import { DefensesModule } from './defenses/defenses.module';
 import { DocumentsModule } from './documents/documents.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { AdminsModule } from './admins/admins.module';
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), PrismaModule, GradingModule, UsersModule, AuthModule, StudentsModule, TeachersModule, RoomsModule, ProjectsModule, DefensesModule, DocumentsModule, NotificationsModule],  controllers: [HealthController],
+    imports: [ConfigModule.forRoot({ isGlobal: true }), PrismaModule, GradingModule, UsersModule, AuthModule, StudentsModule, TeachersModule, RoomsModule, ProjectsModule, DefensesModule, DocumentsModule, NotificationsModule, AdminsModule],
 })
 export class AppModule {}

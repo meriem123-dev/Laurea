@@ -9,6 +9,7 @@ import {
   Settings,
   User,
   Users,
+  ShieldCheck
 } from '@lucide/vue'
 import type { UserRole } from '../types/auth'
 import type { NavSection } from '../types/navigation'
@@ -40,6 +41,7 @@ const adminNav: NavSection[] = [
     items: [
       // Le badge est calculé dans AppLayout à partir des notifications non lues
       { label: 'Notifications', to: '/admin/notifications', icon: Bell },
+      { label: 'Administrateurs', to: '/admin/admins', icon: ShieldCheck },
       { label: 'Paramètres', to: '/admin/settings', icon: Settings },
     ],
   },
