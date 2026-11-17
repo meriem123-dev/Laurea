@@ -16,5 +16,6 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { AdminsModule } from './admins/admins.module';
 @Module({
     imports: [ConfigModule.forRoot({ isGlobal: true }), PrismaModule, GradingModule, UsersModule, AuthModule, StudentsModule, TeachersModule, RoomsModule, ProjectsModule, DefensesModule, DocumentsModule, NotificationsModule, AdminsModule],
+    controllers: [HealthController],
 })
 export class AppModule {}
