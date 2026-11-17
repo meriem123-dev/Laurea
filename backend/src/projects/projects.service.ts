@@ -166,6 +166,7 @@ export class ProjectsService {
   }
 
   //modif prjt
+  //modif prjt
   async update(id: string, dto: UpdateProjectDto) {
     const current = await this.findOne(id);
     const merged = { ...current, ...dto };
@@ -181,15 +182,6 @@ export class ProjectsService {
       },
       include,
     });
-    // sujet validé : les étudiants peuvent passer à la suite
-    if (status === "validated" && current.status === "deposited") {
-      await this.notifications.notifyProjectStudents(p.id, {
-        type: "PROJECT",
-        title: "Votre sujet a été validé",
-        message: `Le projet « ${p.title} » est validé. La soutenance pourra être planifiée.`,
-        link: "/student/project",
-      });
-    }
     return toApi(p);
   }
 
@@ -205,6 +197,16 @@ export class ProjectsService {
       data: { status },
       include,
     });
+
+    // sujet validé : les étudiants peuvent passer à la suite
+    if (status === "validated" && current.status === "deposited") {
+      await this.notifications.notifyProjectStudents(p.id, {
+        type: "PROJECT",
+        title: "Votre sujet a été validé",
+        message: `Le projet « ${p.title} » est validé. La soutenance pourra être planifiée.`,
+        link: "/student/project",
+      });
+    }
     return toApi(p);
   }
 
