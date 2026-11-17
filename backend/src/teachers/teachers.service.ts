@@ -13,7 +13,18 @@ import { UpdateTeacherDto } from "./dto/update-teacher.dto";
 import { NotificationsService } from "../notifications/notifications.service";
 
 // On n'expose jamais le passwordHash
-const include = { user: { omit: { passwordHash: true } } } as const;
+// _count : nombre de projets encadrés et de jurys (affichés sur la carte du professeur)
+const include = {
+  user: { omit: { passwordHash: true } },
+  _count: {
+    select: {
+      supervised: true, // projets dont il est l'encadrant
+      coSupervised: true, // projets dont il est le co-encadrant
+      presidedDefenses: true, // soutenances qu'il préside
+      juryMemberships: true, // soutenances où il est juré
+    },
+  },
+} as const;
 
 @Injectable()
 export class TeachersService {

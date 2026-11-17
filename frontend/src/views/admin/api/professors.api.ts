@@ -43,6 +43,13 @@ export interface TeacherDto {
     lastName: string;
     isActive: boolean;
   };
+  // nombres calculés par le back (Prisma _count)
+  _count?: {
+    supervised: number;
+    coSupervised: number;
+    presidedDefenses: number;
+    juryMemberships: number;
+  };
 }
 
 export interface ProfessorFilters {
@@ -63,9 +70,14 @@ export function toProfessor(dto: TeacherDto): ProfessorData {
     specialty: dto.specialty,
     accountStatus: dto.accountStatus,
     // valeurs statiques : pas encore fournies par le back (modules jurys / projets / indisponibilités)
+    // valeur statique : les indisponibilités ne sont pas encore gérées par le back
     busyOn: undefined,
-    juryCount: 0,
-    projectCount: 0,
+    // soutenances où il est président ou juré
+    juryCount:
+      (dto._count?.presidedDefenses ?? 0) + (dto._count?.juryMemberships ?? 0),
+    // projets où il est encadrant ou co-encadrant
+    projectCount:
+      (dto._count?.supervised ?? 0) + (dto._count?.coSupervised ?? 0),
   };
 }
 
