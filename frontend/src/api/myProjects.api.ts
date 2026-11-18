@@ -62,4 +62,9 @@ export async function openDocument(id: number): Promise<void> {
     win?.close();
     throw e;
   }
+  
+}
+//valider un projet
+export async function validateProject(projectId: string): Promise<void> {
+  await http.post(`api/projects/${projectId}/validate`)
 }

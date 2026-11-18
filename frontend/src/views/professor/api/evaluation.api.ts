@@ -90,3 +90,7 @@ export async function lockEvaluation(defenseId: number): Promise<EvaluationDto> 
   const { data } = await http.post<EvaluationDto>(`api/defenses/${defenseId}/evaluation/lock`);
   return data;
 }
+
+export async function validateProject(projectId: string): Promise<void> {
+  await http.post(`api/my-projects/${projectId}/validate`)
+}
