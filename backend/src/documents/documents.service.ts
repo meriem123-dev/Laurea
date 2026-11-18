@@ -2,6 +2,8 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  ForbiddenException,
+  ConflictException
 } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
 import { access, mkdir, unlink, writeFile } from "node:fs/promises";
@@ -187,5 +189,42 @@ export class DocumentsService {
       throw new NotFoundException("Le fichier n'est plus disponible.");
     }
     return { path, name: doc.originalName };
+  }
+
+
+    // validation du projet par l'encadrant / co-encadrant : deposited => validated
+  async validateProject(projectId: string, user: AuthUser) {
+    const teacher = await this.prisma.teacher.findUnique({
+      where: { userId: user.id },
+    });
+    if (!teacher) throw new ForbiddenException("Réservé aux encadrants.");
+
+    // 404 si le projet n'est pas dans le périmètre de l'utilisateur
+    const project = await this.getProject(projectId, user);
+    if (project.status !== "deposited") {
+      throw new ConflictException("Ce projet a déjà été validé.");
+    }
+
+    // updateMany = vérification du statut et de l'encadrant en une seule requête atomique
+    const { count } = await this.prisma.project.updateMany({
+      where: {
+        id: projectId,
+        status: "deposited",
+        OR: [{ supervisorId: teacher.id }, { coSupervisorId: teacher.id }],
+      },
+      data: { status: "validated" },
+    });
+    if (count === 0) {
+      throw new ForbiddenException("Vous n'encadrez pas ce projet.");
+    }
+
+    await this.notifications.notifyProjectStudents(projectId, {
+      type: "PROJECT",
+      title: "Projet validé",
+      message: `Votre encadrant a validé le projet « ${project.title} ».`,
+      link: "/student/project",
+    });
+
+    return { id: projectId, status: "validated" as const };
   }
 }

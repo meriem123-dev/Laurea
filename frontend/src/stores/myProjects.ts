@@ -4,6 +4,7 @@ import * as api from "../api/myProjects.api";
 import { getErrorMessage } from "../utils/apiError";
 import type { MyProject } from "../types/project";
 import type { ProjectDocument } from "../types/document";
+import { validateProject } from '../api/myProjects.api'
 
 export const useMyProjectsStore = defineStore("myProjects", () => {
   const items = ref<MyProject[]>([]);
@@ -63,5 +64,14 @@ export const useMyProjectsStore = defineStore("myProjects", () => {
     error.value = null;
   }
 
-  return { items, documents, loading, error, fetchAll, documentsOf, upload, evaluate, reset };
+
+
+async function validate(id: string) {
+  await validateProject(id)
+  const item = items.value.find((p) => p.id === id)
+  if (item) item.status = 'validated'
+}
+
+
+  return { items, documents, loading, error, fetchAll, documentsOf, upload, evaluate, reset,validate };
 });

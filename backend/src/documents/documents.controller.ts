@@ -14,7 +14,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
+import { AuthGuard, } from "@nestjs/passport";
 import { FileInterceptor } from "@nestjs/platform-express";
 import type { Response } from "express";
 import { createReadStream } from "node:fs";
@@ -81,5 +81,15 @@ export class DocumentsController {
       "Content-Disposition": `inline; filename*=UTF-8''${encodeURIComponent(name)}`,
     });
     return new StreamableFile(createReadStream(path));
+  }
+
+   // POST de validation
+  @Roles(Role.TEACHER)
+  @Post("projects/:projectId/validate")
+  validate(
+    @Param("projectId", ParseUUIDPipe) projectId: string,
+    @Req() req: { user: AuthUser },
+  ) {
+    return this.documents.validateProject(projectId, req.user);
   }
 }
