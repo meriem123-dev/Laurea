@@ -49,8 +49,14 @@ jobs:
       - name: Vérifier qu'aucune migration ne manque (schéma = migrations)
         run: npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code
       - run: npm run lint
-      - name: Tests (dont calcul de la note finale)
-        run: npm test
+      - name: Tests unitaires
+        run: npm run test:unit
+
+      - name: Tests d'intégration
+        run: npm run test:integration
+
+      - name: Tests E2E
+        run: npm run test:e2e
       - run: npm run build
 
   frontend:
