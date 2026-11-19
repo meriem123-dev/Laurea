@@ -1,5 +1,6 @@
 import { http } from "../../../api/http";
 import type { Professor, ProfessorTitle } from "../../../types/professor";
+import type { ProjectStatus } from "../../../types/student";
 export interface PersonDto {
   id: string;
   title: string | null;
@@ -12,8 +13,8 @@ export interface MyDefenseDto {
   date: string; // "2026-11-15"
   time: string; // "09:00"
   duration: number;
-  status: "planned" | "confirmed";
-  project: { id: string; title: string };
+  status: "planned" | "confirmed"; // confirmation du jury
+  project: { id: string; title: string,status:ProjectStatus };
   room: { id: string; name: string; block: string; pole: string };
   president: PersonDto;
   members: PersonDto[];

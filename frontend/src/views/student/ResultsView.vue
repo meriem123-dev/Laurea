@@ -16,7 +16,7 @@ import { formatGrade } from '../../utils/result'
 import { toResultViews } from '../../utils/resultsAdapter'
 import { PASS_MARK, buildReportHtml, mentionOf } from '../../utils/resultExport'
 import { SPECIALITY_LABELS } from '../../utils/speciality'
-import { useMyResultStore } from './stores/my-results' // adapte si ton store est ailleurs
+import { useMyResultStore } from './stores/my-results'
 
 const store = useMyResultStore()
 const { result, loading, error } = storeToRefs(store)
@@ -56,7 +56,7 @@ const infos = computed(() => [
 const pvError = ref('')
 
 function downloadPv() {
-  // TODO backend : le PV officiel (PDF signé, numéroté) doit être généré côté serveur.
+
   const current = view.value
   if (!current || !student.value) return
   const generatedOn = new Intl.DateTimeFormat('fr-FR').format(new Date())

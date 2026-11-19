@@ -43,7 +43,7 @@ export class DefensesController {
     return this.defensesService.findAll({ from, to, roomId, teacherId });
   }
 
-  // "me" doit rester AVANT ":id"
+
   @Roles(Role.TEACHER, Role.STUDENT)
   @Get("me")
   findMine(@Req() req: { user: { id: string; role: Role } }) {

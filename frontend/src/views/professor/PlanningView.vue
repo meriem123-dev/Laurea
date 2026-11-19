@@ -1,65 +1,63 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import CalendarToolbar from '../../components/calendar/CalendarToolbar.vue'
-import MonthGrid from '../../components/calendar/MonthGrid.vue'
-import TimeGrid from '../../components/calendar/TimeGrid.vue'
-import BaseAlert from '../../components/common/BaseAlert.vue'
-import BaseCard from '../../components/common/BaseCard.vue'
-import DefenseDetailsModal from '../../components/defenses/DefenseDetailsModal.vue'
-import DefenseList from '../../components/defenses/DefenseList.vue'
-import PageHeader from '../../components/layout/PageHeader.vue'
-import { useCalendarNavigation } from '../../composables/useCalendarNavigation'
-import { useDefensesData, type DefenseView } from '../../composables/useDefensesData'
-import { useProfessorDefenses } from '../../composables/useProfessorDefenses'
-import { initialCursor, todayISO } from '../../utils/calendar'
-import { describeConflict, findConflicts } from '../../utils/defense'
-import type { Defense } from '../../types/defense'
-import { CURRENT_PROFESSOR_ID } from '../../mocks/currentProfessor.js'
+import { computed, onMounted, ref } from "vue";
+import { storeToRefs } from "pinia";
+import CalendarToolbar from "../../components/calendar/CalendarToolbar.vue";
+import MonthGrid from "../../components/calendar/MonthGrid.vue";
+import TimeGrid from "../../components/calendar/TimeGrid.vue";
+import BaseAlert from "../../components/common/BaseAlert.vue";
+import BaseCard from "../../components/common/BaseCard.vue";
+import DefenseDetailsModal from "../../components/defenses/DefenseDetailsModal.vue";
+import DefenseList from "../../components/defenses/DefenseList.vue";
+import PageHeader from "../../components/layout/PageHeader.vue";
+import { useCalendarNavigation } from "../../composables/useCalendarNavigation";
+import type { DefenseView } from "../../composables/useDefensesData";
+import { initialCursor, todayISO } from "../../utils/calendar";
+import { toDefenseView } from "../../utils/teacherDefenseAdapter";
+import type { Defense } from "../../types/defense";
+import { useTeacherDefensesStore } from "./stores/useTeacherDefensesStore";
 
+const store = useTeacherDefensesStore();
+const { items, loading, error } = storeToRefs(store);
 
+async function loadPlanning() {
+  await store.fetchAll();
+  // se place sur la prochaine soutenance (sinon la dernière)
+  const dates = items.value.map((item) => item.date).sort();
+  const target = dates.find((d) => d >= todayISO()) ?? dates[dates.length - 1];
+  if (target) goTo(target);
+}
 
-const { defenses, rooms, professors } = useDefensesData()
-const { items } = useProfessorDefenses(CURRENT_PROFESSOR_ID)
+onMounted(loadPlanning);
 
-// Uniquement les soutenances où le professeur intervient (président, jury ou encadrant)
-const myViews = computed(() => items.value.map((item) => item.view))
+const myViews = computed(() => items.value.map(toDefenseView));
 
 const { view, cursor, days, weeks, range, rangeLabel, shift, goToday, goTo } =
-  useCalendarNavigation(initialCursor(myViews.value.map((item) => item.defense.date)))
+  useCalendarNavigation(initialCursor([]));
 
-const today = todayISO()
+const today = todayISO();
 
-// Soutenances de la période affichée
 const visibleViews = computed(() =>
   myViews.value.filter(
-    (item) => item.defense.date >= range.value.from && item.defense.date <= range.value.to,
+    (item) =>
+      item.defense.date >= range.value.from &&
+      item.defense.date <= range.value.to,
   ),
-)
+);
 
-// Conflits de la période (salle ou professeur occupés deux fois sur le même créneau)
-const conflictMessages = computed(() =>
-  findConflicts(visibleViews.value.map((item) => item.defense)).map((conflict) =>
-    describeConflict(conflict, rooms, professors, defenses.value),
-  ),
-)
+const isDetailsOpen = ref(false);
 
-const conflictSummary = computed(() => {
-  const [first, ...rest] = conflictMessages.value
-  if (!first) return ''
-  return rest.length > 0 ? `${first} (et ${rest.length} autre(s)).` : first
-})
-
-const selected = ref<Defense | null>(null)
-const isDetailsOpen = ref(false)
+const selected = ref<Defense | null>(null);
+const selectedView = ref<DefenseView | null>(null);
 
 function openDetails(item: DefenseView) {
-  selected.value = item.defense
-  isDetailsOpen.value = true
+  selected.value = item.defense;
+  selectedView.value = item;
+  isDetailsOpen.value = true;
 }
 
 function openDay(date: string) {
-  goTo(date)
-  view.value = 'day'
+  goTo(date);
+  view.value = "day";
 }
 </script>
 
@@ -79,7 +77,22 @@ function openDay(date: string) {
       @today="goToday"
     />
 
-    <BaseCard :padded="false" class="overflow-hidden">
+    <BaseAlert v-if="error" variant="error">
+      {{ error }}
+      <button
+        type="button"
+        class="ml-2 font-semibold underline"
+        @click="loadPlanning"
+      >
+        Réessayer
+      </button>
+    </BaseAlert>
+
+    <p v-else-if="loading" class="text-sm text-text-muted">
+      Chargement de votre planning…
+    </p>
+
+    <BaseCard v-else :padded="false" class="overflow-hidden">
       <TimeGrid
         v-if="view === 'day' || view === 'week'"
         :days="days"
@@ -98,22 +111,10 @@ function openDay(date: string) {
       />
       <DefenseList v-else :items="visibleViews" @select="openDetails" />
     </BaseCard>
-
-    <BaseAlert
-      v-if="conflictMessages.length === 0"
-      variant="success"
-      title="Aucun conflit détecté"
-    >
-      Les salles et les membres de jury sont disponibles sur cette période.
-    </BaseAlert>
-    <BaseAlert
-      v-else
-      variant="error"
-      :title="`${conflictMessages.length} conflit(s) détecté(s)`"
-    >
-      {{ conflictSummary }}
-    </BaseAlert>
-
-    <DefenseDetailsModal v-model="isDetailsOpen" :defense="selected" />
+    <DefenseDetailsModal
+      v-model="isDetailsOpen"
+      :defense="selected"
+      :view="selectedView"
+    />
   </div>
 </template>

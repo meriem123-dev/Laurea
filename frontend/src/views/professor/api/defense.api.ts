@@ -1,4 +1,5 @@
 import { http } from "../../../api/http";
+import type { ProjectStatus } from "../../../types/student";
 
 export interface PersonDto {
   id: string;
@@ -18,7 +19,7 @@ export interface TeacherDefenseDto {
   status: "planned" | "confirmed";
   roles: TeacherRole[];
   myResponse: JuryAnswer | null;
-  project: { id: string; title: string };
+  project: { id: string; title: string; domain: string; status: ProjectStatus };
   students: { id: string; firstName: string; lastName: string }[];
   room: { id: string; name: string; block: string; pole: string };
   president: PersonDto;

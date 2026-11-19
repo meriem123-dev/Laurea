@@ -1,33 +1,38 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
-import { storeToRefs } from 'pinia'
-import { Building2, Clock } from '@lucide/vue'
-import BaseAlert from '../../components/common/BaseAlert.vue'
-import BaseBadge from '../../components/common/BaseBadge.vue'
-import BaseCard from '../../components/common/BaseCard.vue'
-import EmptyState from '../../components/common/EmptyState.vue'
-import InitialsAvatar from '../../components/common/InitialsAvatar.vue'
-import PageHeader from '../../components/layout/PageHeader.vue'
-import { formatLongDay } from '../../utils/calendar'
-import { defenseSlot, formatTime } from '../../utils/defense'
-import { formatDay, formatMonthShort } from '../../utils/format'
-import { displayName, initials } from '../../utils/professor'
-import { roomLocation } from '../../utils/room'
-import { useMyDefenseStore } from './stores/useMyDefenseStore'
-import { toProfessor } from './api/defense.api'
-import type { Professor } from '../../types/professor'
+import { computed, onMounted } from "vue";
+import { storeToRefs } from "pinia";
+import { Building2, Clock } from "@lucide/vue";
+import BaseAlert from "../../components/common/BaseAlert.vue";
+import BaseBadge from "../../components/common/BaseBadge.vue";
+import BaseCard from "../../components/common/BaseCard.vue";
+import EmptyState from "../../components/common/EmptyState.vue";
+import InitialsAvatar from "../../components/common/InitialsAvatar.vue";
+import PageHeader from "../../components/layout/PageHeader.vue";
+import { formatLongDay } from "../../utils/calendar";
+import { defenseSlot, formatTime } from "../../utils/defense";
+import { formatDay, formatMonthShort } from "../../utils/format";
+import { displayName, initials } from "../../utils/professor";
+import { roomLocation } from "../../utils/room";
+import { useMyDefenseStore } from "./stores/useMyDefenseStore";
+import { toProfessor } from "./api/defense.api";
+import type { Professor } from "../../types/professor";
+import { PROJECT_STATUS_META } from "../../utils/projectStatus";
 
-const store = useMyDefenseStore()
-const { defense: dto, loading, error } = storeToRefs(store)
-onMounted(store.fetchMe)
+const store = useMyDefenseStore();
+const { defense: dto, loading, error } = storeToRefs(store);
+onMounted(store.fetchMe);
 
-const project = computed(() => (dto.value ? { title: dto.value.project.title } : null))
-const supervisor = computed(() => (dto.value ? toProfessor(dto.value.supervisor) : undefined))
+const project = computed(() =>
+  dto.value ? { title: dto.value.project.title } : null,
+);
+const supervisor = computed(() =>
+  dto.value ? toProfessor(dto.value.supervisor) : undefined,
+);
 
 // même forme que l'ancien « view » : le template change très peu
 const defense = computed(() => {
-  const d = dto.value
-  if (!d) return null
+  const d = dto.value;
+  if (!d) return null;
   return {
     defense: {
       id: d.id,
@@ -39,47 +44,53 @@ const defense = computed(() => {
       presidentId: d.president.id,
       memberIds: d.members.map((m) => m.id),
     },
-    room: { ...d.room, equipment: '', capacity: 0, tone: 'blue' as const },
+    room: { ...d.room, equipment: "", capacity: 0, tone: "blue" as const },
     president: toProfessor(d.president),
     members: d.members.map(toProfessor),
-  }
-})
+  };
+});
 
-const slot = computed(() => (defense.value ? defenseSlot(defense.value.defense) : null))
+const slot = computed(() =>
+  defense.value ? defenseSlot(defense.value.defense) : null,
+);
 
-const status = computed(() => {
-  if (!dto.value) return null
-  return dto.value.status === 'confirmed'
-    ? { label: 'Confirmée', tone: 'success' as const }
-    : { label: 'Planifiée', tone: 'warning' as const }
-})
+const projectStatus = computed(() => {
+  const s = dto.value?.project.status;
+  return s ? PROJECT_STATUS_META[s] : null;
+});
 
 // Président, encadrant, puis examinateurs (sans doublon)
 const jury = computed(() => {
-  const current = defense.value
-  if (!current) return []
+  const current = defense.value;
+  if (!current) return [];
 
-  const list: { professor: Professor; role: string }[] = []
-  const seen = new Set<string>()
+  const list: { professor: Professor; role: string }[] = [];
+  const seen = new Set<string>();
   const add = (professor: Professor | undefined, role: string) => {
-    if (!professor || seen.has(professor.id)) return
-    seen.add(professor.id)
-    list.push({ professor, role })
-  }
+    if (!professor || seen.has(professor.id)) return;
+    seen.add(professor.id);
+    list.push({ professor, role });
+  };
 
-  add(current.president, 'Président')
-  add(supervisor.value, 'Encadrant')
-  current.members.forEach((member) => add(member, 'Examinateur'))
-  return list
-})
+  add(current.president, "Président");
+  add(supervisor.value, "Encadrant");
+  current.members.forEach((member) => add(member, "Examinateur"));
+  return list;
+});
 
 // déroulement
 const steps = [
-  { minutes: 25, label: 'Présentation orale du candidat (sans interruption du jury).' },
-  { minutes: 20, label: 'Questions et débat avec les membres du jury.' },
-  { minutes: 15, label: 'Délibération à huis clos et proclamation de la note et mention.' },
-]
-const totalMinutes = steps.reduce((sum, step) => sum + step.minutes, 0)
+  {
+    minutes: 25,
+    label: "Présentation orale du candidat (sans interruption du jury).",
+  },
+  { minutes: 20, label: "Questions et débat avec les membres du jury." },
+  {
+    minutes: 15,
+    label: "Délibération à huis clos et proclamation de la note et mention.",
+  },
+];
+const totalMinutes = steps.reduce((sum, step) => sum + step.minutes, 0);
 </script>
 
 <template>
@@ -90,7 +101,7 @@ const totalMinutes = steps.reduce((sum, step) => sum + step.minutes, 0)
       subtitle="Toutes les informations pratiques pour le jour J."
     />
 
-        <BaseAlert v-if="error" variant="error">{{ error }}</BaseAlert>
+    <BaseAlert v-if="error" variant="error">{{ error }}</BaseAlert>
     <EmptyState
       v-if="!loading && !error && (!defense || !slot || !project)"
       message="Votre soutenance n’est pas encore planifiée. La date vous sera communiquée."
@@ -102,22 +113,33 @@ const totalMinutes = steps.reduce((sum, step) => sum + step.minutes, 0)
           <div
             class="flex h-24 w-24 shrink-0 flex-col items-center justify-center rounded-xl bg-brass-dark text-white"
           >
-            <p class="font-display text-4xl leading-none">{{ formatDay(defense.defense.date) }}</p>
-            <p class="mt-1.5 text-[0.625rem] font-bold uppercase tracking-[0.14em]">
+            <p class="font-display text-4xl leading-none">
+              {{ formatDay(defense.defense.date) }}
+            </p>
+            <p
+              class="mt-1.5 text-[0.625rem] font-bold uppercase tracking-[0.14em]"
+            >
               {{ formatMonthShort(defense.defense.date) }}
             </p>
           </div>
 
           <div class="min-w-0 flex-1">
-            <BaseBadge v-if="status" :tone="status.tone">{{ status.label }}</BaseBadge>
+            <BaseBadge v-if="projectStatus" :tone="projectStatus.tone">
+              {{ projectStatus.label }}
+            </BaseBadge>
 
-            <h2 class="mt-2 break-words font-display text-2xl leading-snug text-ink">
+            <h2
+              class="mt-2 break-words font-display text-2xl leading-snug text-ink"
+            >
               {{ project.title }}
             </h2>
 
             <ul class="mt-3 space-y-1.5 text-sm text-text-secondary">
               <li class="flex items-center gap-2">
-                <Clock class="h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
+                <Clock
+                  class="h-4 w-4 shrink-0 text-text-muted"
+                  aria-hidden="true"
+                />
                 <span>
                   {{ formatLongDay(defense.defense.date) }} ·
                   <span class="tabular-nums">
@@ -127,7 +149,10 @@ const totalMinutes = steps.reduce((sum, step) => sum + step.minutes, 0)
                 </span>
               </li>
               <li v-if="defense.room" class="flex items-center gap-2">
-                <Building2 class="h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
+                <Building2
+                  class="h-4 w-4 shrink-0 text-text-muted"
+                  aria-hidden="true"
+                />
                 <span>
                   {{ defense.room.name }}
                   <template v-if="roomLocation(defense.room)">
@@ -145,7 +170,10 @@ const totalMinutes = steps.reduce((sum, step) => sum + step.minutes, 0)
         subtitle="Les membres qui évalueront votre soutenance."
         class="motion-safe:animate-fade-up [animation-delay:100ms]"
       >
-        <p v-if="jury.length === 0" class="py-4 text-center text-sm text-text-muted">
+        <p
+          v-if="jury.length === 0"
+          class="py-4 text-center text-sm text-text-muted"
+        >
           Le jury n’est pas encore constitué.
         </p>
 
@@ -171,7 +199,11 @@ const totalMinutes = steps.reduce((sum, step) => sum + step.minutes, 0)
         class="motion-safe:animate-fade-up [animation-delay:200ms]"
       >
         <ol class="divide-y divide-border">
-          <li v-for="(step, index) in steps" :key="index" class="flex items-start gap-4 py-3">
+          <li
+            v-for="(step, index) in steps"
+            :key="index"
+            class="flex items-start gap-4 py-3"
+          >
             <span
               class="w-14 shrink-0 rounded-full bg-surface-muted px-2.5 py-1 text-center text-xs font-semibold tabular-nums text-ink"
             >
