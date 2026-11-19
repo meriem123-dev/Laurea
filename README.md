@@ -50,18 +50,19 @@ Les fonctionnalités sont développées progressivement.
 - CI/CD
 - Render pour le backend
 - Vercel pour le frontend
+- Neon pour la base de données de production
 
 ## Architecture du projet
 
 ```text
 Laurea/
 ├── .github/
-│   └── workflows/       # Workflows CI/CD
-├── backend/             # API NestJS
-├── frontend/            # Application Vue.js
-├── docker-compose.yml   # Configuration Docker
-├── render.yaml          # Configuration Render
-├── .nvmrc               # Version Node.js
+│   └── workflows/          # Workflows GitHub Actions
+├── backend/                # API NestJS
+├── frontend/               # Application Vue.js
+├── docker-compose.yml      # Environnement local
+├── render.yaml             # Configuration Render
+├── .nvmrc                  # Version Node.js
 └── README.md
 ```
 
@@ -73,7 +74,8 @@ Laurea/
 - Node.js (version indiquée dans `.nvmrc`)
 - npm
 - Docker Desktop
-- PostgreSQL (ou environnement PostgreSQL via Docker)
+
+Aucune installation locale de PostgreSQL n'est nécessaire : la base de données est lancée dans un conteneur Docker.
 
 ### 1. Cloner le dépôt
 
@@ -84,27 +86,49 @@ cd Laurea
 
 ### 2. Configurer le backend
 
-```bash
-cd backend
-npm install
-```
+ configurer le fichier `backend/.env`.
 
-Configurer les variables d'environnement nécessaires dans un fichier `.env`, notamment la connexion à PostgreSQL et les paramètres d'authentification.
+La connexion à PostgreSQL est configurée automatiquement par Docker Compose pour l'environnement local.
 
-Puis générer le client Prisma et appliquer les migrations :
+### 3. Démarrer le backend et la base de données
 
-```bash
-npx prisma generate
-npx prisma migrate deploy
-```
-
-Lancer le serveur en mode développement :
+Depuis la racine du projet :
 
 ```bash
-npm run start:dev
+docker compose up -d --build
 ```
 
-### 3. Configurer le frontend
+Docker Compose démarre les services dans l'ordre suivant :
+
+1. **db :** démarre PostgreSQL 17 et attend qu'il soit prêt.
+2. **migrate :** applique automatiquement les migrations Prisma, puis s'arrête.
+3. **api :** démarre le serveur NestJS après la réussite des migrations.
+
+L'API est accessible à l'adresse :
+
+```text
+http://localhost:3000
+```
+
+Pour consulter l'état des conteneurs :
+
+```bash
+docker compose ps
+```
+
+Pour consulter les logs :
+
+```bash
+docker compose logs -f api
+```
+
+Pour consulter les logs de la base de données :
+
+```bash
+docker compose logs -f db
+```
+
+### 4. Démarrer le frontend
 
 Dans un autre terminal :
 
@@ -114,15 +138,38 @@ npm install
 npm run dev
 ```
 
-Les variables d'environnement du frontend doivent être configurées selon l'URL de l'API locale.
+Le frontend est accessible à l'adresse :
+
+```text
+http://localhost:5173
+```
+
+
+### 5. Arrêter les services
+
+Depuis la racine du projet :
+
+```bash
+docker compose down
+```
+
+Cette commande arrête et supprime les conteneurs sans supprimer les données persistées dans les volumes Docker.
+
+Pour supprimer également les données locales de PostgreSQL :
+
+```bash
+docker compose down -v
+```
+
+**Attention :** cette dernière commande supprime les données de la base locale.
 
 ## Tests et intégration continue
 
-Le projet utilise GitHub Actions pour automatiser les vérifications avant intégration.
+Le projet utilise GitHub Actions pour automatiser plusieurs vérifications.
 
 La CI comprend notamment :
 
-- Vérification et validation du schéma Prisma.
+- Validation du schéma Prisma.
 - Application et vérification des migrations.
 - Analyse statique du code.
 - Exécution des tests.
@@ -130,7 +177,7 @@ La CI comprend notamment :
 - Vérification de la configuration Docker.
 - Audit des dépendances.
 
-La stratégie de tests prévoit trois niveaux :
+La stratégie de tests distingue trois niveaux :
 
 - **Tests unitaires :** vérification des fonctions et composants isolés.
 - **Tests d'intégration :** vérification des interactions entre plusieurs composants.
@@ -138,10 +185,11 @@ La stratégie de tests prévoit trois niveaux :
 
 ## Déploiement
 
-Le projet utilise :
-- **Render** pour héberger l'API backend.
-- **Vercel** pour héberger l'application frontend.
-- **Neon / PostgreSQL** pour la base de données distante.
+Les environnements de production utilisent :
+
+- **Vercel :** hébergement du frontend.
+- **Render :** hébergement de l'API backend.
+- **Neon :** hébergement de la base de données PostgreSQL.
 
 Application : https://laurea-gold.vercel.app/
 
@@ -153,4 +201,4 @@ Projet réalisé dans le cadre d'un travail universitaire en équipe de quatre m
 
 ---
 
-*Laurea est actuellement en développement. Les fonctionnalités, l'architecture et la documentation sont susceptibles d'évoluer au fil des contributions.*
+*Laurea est actuellement en cours de développement. Les fonctionnalités, l'architecture et la documentation sont susceptibles d'évoluer au fil des contributions.*
