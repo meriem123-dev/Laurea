@@ -1,4 +1,4 @@
-import { http } from "../../../api/http"; // adapte le chemin
+import { http } from "../../../api/http";
 
 export interface MyResultPublished {
   published: true;

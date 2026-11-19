@@ -19,7 +19,7 @@ import { formatLongDay } from "../../utils/calendar";
 import { totalCoefficient } from "../../utils/grading";
 import { JURY_ROLE_META } from "../../utils/juryRole";
 import { PROJECT_STATUS_META } from "../../utils/projectStatus";
-import { useEvaluationStore } from "./stores/evaluation.store"; // adapte le chemin
+import { useEvaluationStore } from "./stores/evaluation.store";
 
 const CURSUS_LABELS = { MASTER: "Master", INGENIEUR: "Ingénieur" } as const;
 

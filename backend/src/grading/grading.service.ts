@@ -483,7 +483,15 @@ export class GradingService implements OnModuleInit {
           orderBy: { position: "asc" },
         },
         evaluation: true,
-        scores: true,
+        scores: {
+          include: {
+            teacher: {
+              include: {
+                user: { select: { firstName: true, lastName: true } },
+              },
+            },
+          },
+        },
       },
       orderBy: [{ date: "desc" }, { time: "asc" }],
     });

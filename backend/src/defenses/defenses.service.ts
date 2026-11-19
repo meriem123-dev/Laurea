@@ -186,7 +186,6 @@ export class DefensesService {
   }
 
   // enseignant : soutenances où il est président, juré, encadrant ou co-encadrant
-  // étudiant : la soutenance de son projet (liste vide si pas encore planifiée)
   async findMine(user: { id: string; role: Role }) {
     let where: Prisma.DefenseWhereInput;
     if (user.role === Role.TEACHER) {
@@ -215,6 +214,7 @@ export class DefensesService {
     });
     return defenses.map(toApi);
   }
+
   // étudiant : sa soutenance avec les noms (salle, jury, encadrant), sans données privées
   async findMyDefense(userId: string) {
     const defense = await this.prisma.defense.findFirst({
@@ -259,7 +259,11 @@ export class DefensesService {
       time: defense.time,
       duration: defense.duration,
       status: confirmed ? ("confirmed" as const) : ("planned" as const),
-      project: { id: defense.project.id, title: defense.project.title },
+      project: {
+        id: defense.project.id,
+        title: defense.project.title,
+        status: defense.project.status,
+      },
       room: {
         id: defense.room.id,
         name: defense.room.name,
@@ -341,7 +345,7 @@ export class DefensesService {
         myResponse:
           d.confirmations.find((c) => c.teacherId === teacher.id)?.status ??
           null,
-        project: { id: d.project.id, title: d.project.title },
+        project: { id: d.project.id, title: d.project.title,domain: d.project.domain,status: d.project.status, },
         students: d.project.students.map((s) => ({
           id: s.id,
           firstName: s.user.firstName,
