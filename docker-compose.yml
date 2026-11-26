@@ -1,33 +1,33 @@
+
 # Environnement local. En production : base sur Neon, API sur Render
 services:
   db:
     image: postgres:17-alpine
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-soutenances}
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER manquant dans .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD manquant dans .env}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB manquant dans .env}
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-soutenances}"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 3s
       retries: 10
-  
 
-    # Base dédiée aux tests d'intégration et E2E (jamais utilisée par l'app)
+  # Base dédiée aux tests d'intégration et E2E
   db_test:
     image: postgres:17-alpine
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: soutenances_test
+      POSTGRES_USER: ${TEST_POSTGRES_USER:?TEST_POSTGRES_USER manquant dans .env}
+      POSTGRES_PASSWORD: ${TEST_POSTGRES_PASSWORD:?TEST_POSTGRES_PASSWORD manquant dans .env}
+      POSTGRES_DB: ${TEST_POSTGRES_DB:?TEST_POSTGRES_DB manquant dans .env}
     ports:
       - "5433:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d soutenances_test"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -39,7 +39,7 @@ services:
       target: build
     command: npx prisma migrate deploy
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-soutenances}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     depends_on:
       db:
         condition: service_healthy
@@ -52,13 +52,13 @@ services:
       - path: ./backend/.env
         required: false
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-soutenances}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       FRONTEND_URL: http://localhost:5173
       PORT: "3000"
     ports:
       - "3000:3000"
     volumes:
-      - uploads:/app/uploads # mémoires PDF déposés
+      - uploads:/app/uploads
     depends_on:
       migrate:
         condition: service_completed_successfully
