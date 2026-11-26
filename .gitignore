@@ -1,8 +1,10 @@
 node_modules/
 dist/
 .env
+.env.test
 .env.*
 !.env.example
+!.env.test.example
 
 src/generated/
 uploads/
