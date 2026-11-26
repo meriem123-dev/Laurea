@@ -5,7 +5,7 @@
     "target": "ES2022",
     "rootDir": ".",
     "outDir": "./dist",
-    "types": ["node", "jest", "multer"],
+    "types": ["node", "jest", "multer", "vitest/globals"],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
@@ -13,7 +13,8 @@
     "sourceMap": true,
     "skipLibCheck": true,
     "strict": true,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    
   },
   "include": ["src/**/*", "prisma/**/*.ts", "prisma.config.ts"]
 }
