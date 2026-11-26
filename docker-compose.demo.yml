@@ -1,0 +1,65 @@
+# Démo : tout vient de Docker Hub, aucun build.
+# Lancement : docker compose -f docker-compose.demo.yml up
+# Accès     : http://localhost:8080
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: soutenances
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d soutenances"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Tâche unique : migrations Prisma + seed (admin et salles), puis s'arrête
+  migrate:
+    image: meriemdev2004/soutenances-migrate:${TAG:-v1.0}
+    command: sh -c "npx prisma migrate deploy && npx tsx prisma/seed.ts"
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/soutenances
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@demo.local}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-Admin-demo-123}
+      DEMO_PASSWORD: ${DEMO_PASSWORD:-Demo-1234!}
+      SEED_DEMO_DATA: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    image: meriemdev2004/soutenances-api:${TAG:-v1.0}
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/soutenances
+      FRONTEND_URL: http://localhost:8080
+      PORT: "3000"
+      JWT_SECRET: ${JWT_SECRET:-demo-only-not-a-real-secret}
+    # Healthcheck plus rapide que celui de l'image (30 s) pour accélérer le démarrage
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      start_period: 10s
+      retries: 12
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  web:
+    image: meriemdev2004/soutenances-web:${TAG:-v1.0}
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  uploads:

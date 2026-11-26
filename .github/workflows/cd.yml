@@ -17,6 +17,12 @@ jobs:
   ci:
     uses: ./.github/workflows/ci.yml
 
+  publish:                      # <-- NOUVEAU
+    name: Publier les images Docker
+    needs: ci
+    uses: ./.github/workflows/docker-publish.yml
+    secrets: inherit
+
   migrate:
     name: Migrations Neon
     needs: ci
