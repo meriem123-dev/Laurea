@@ -2,7 +2,7 @@ name: CI
 
 on:
   pull_request:
-  workflow_call: # réutilisé par cd.yml avant tout déploiement
+  workflow_call: # réutilisé par cd.yml avant tout déploiement.
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
