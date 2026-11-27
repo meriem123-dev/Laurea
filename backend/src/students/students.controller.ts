@@ -10,11 +10,11 @@ import {
   Post,
   Query,
   UseGuards,
-    UploadedFile,
+  UploadedFile,
   UseInterceptors,
   BadRequestException,
   Res,
-  Req
+  Req,
 } from "@nestjs/common";
 import { Role, Speciality } from "../generated/prisma/client";
 import { CreateStudentDto } from "./dto/create-student.dto";
@@ -26,11 +26,16 @@ import { Roles } from "../common/roles.decorator";
 import { FileInterceptor } from "@nestjs/platform-express";
 import type { Response } from "express";
 import { StudentsImportService } from "./students-import.service";
+import { StudentDashboardService } from "./student-dashboard.service";
 
 @UseGuards(AuthGuard("jwt"), RolesGuard)
 @Controller("students")
 export class StudentsController {
-  constructor(private readonly studentsService: StudentsService, private readonly importService: StudentsImportService) {}
+  constructor(
+    private readonly studentsService: StudentsService,
+    private readonly importService: StudentsImportService,
+    private readonly dashboardService: StudentDashboardService,
+  ) {}
 
   @Roles(Role.ADMIN_STAFF)
   @Post()
@@ -73,10 +78,16 @@ export class StudentsController {
     if (!file) throw new BadRequestException("Fichier manquant.");
     return this.importService.import(file);
   }
+  // tableau de bord de l'étudiant connecté (projet, soutenance, dépôts)
+  @Roles(Role.STUDENT)
+  @Get("me/dashboard")
+  dashboard(@Req() req: { user: { id: string } }) {
+    return this.dashboardService.forUser(req.user.id);
+  }
 
   @Roles(Role.STUDENT)
   @Get("me")
-  me(@Req() req: {user:{id:string}}){
+  me(@Req() req: { user: { id: string } }) {
     return this.studentsService.findByUserId(req.user.id);
   }
 

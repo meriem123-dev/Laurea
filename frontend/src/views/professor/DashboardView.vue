@@ -6,17 +6,15 @@ import StatStrip from '../../components/common/StatStrip.vue'
 import ProfessorTodosCard from '../../components/dashboard/ProfessorTodosCard.vue'
 import UpcomingDefensesCard from '../../components/dashboard/UpcomingDefensesCard.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
-import {
-  professorPriority,
-  professorStats,
-  professorTodos,
-  professorUpcomingDefenses,
-} from '../../mocks/professorDashboard'
+import { useProfessorDashboard } from './composables/useProfessorDashboard'
+import BaseAlert from '../../components/common/BaseAlert.vue'
 import { formatLongDate } from '../../utils/format'
 import { useAuthStore } from '../auth/store.js'
 import type { ProfessorStatId } from '../../types/dashboard'
 
 const auth = useAuthStore()
+// chiffres, prochaines soutenances et actions : calculés par le back (GET /teachers/me/dashboard)
+const { error, stats, upcoming, upcomingSubtitle, todos, priority } = useProfessorDashboard()
 
 const greeting = computed(() =>
   auth.user ? `Bonjour ${auth.user.firstName},` : 'Bonjour,',
@@ -37,6 +35,7 @@ const statIcons: Record<ProfessorStatId, Component> = {
       :title="greeting"
       subtitle="Votre espace d’encadrement et de participation aux jurys."
     >
+      <BaseAlert v-if="error" variant="error">{{ error }}</BaseAlert>
       <div class="border-l-2 border-primary-400 pl-3">
         <p class="text-[0.625rem] font-bold uppercase tracking-[0.14em] text-text-muted">
           Aujourd’hui
@@ -51,7 +50,7 @@ const statIcons: Record<ProfessorStatId, Component> = {
       class="motion-safe:animate-fade-up [animation-delay:100ms]"
     >
       <StatCard
-        v-for="stat in professorStats"
+        v-for="stat in stats"
         :key="stat.id"
         :label="stat.label"
         :value="stat.value"
@@ -65,12 +64,12 @@ const statIcons: Record<ProfessorStatId, Component> = {
     >
       <UpcomingDefensesCard
         title="Mes prochaines soutenances"
-        subtitle="Semaine du 16 juin"
+        :subtitle="upcomingSubtitle"
         viewAllLabel="Planning complet"
         view-all-to="/professor/planning"
-        :defenses="professorUpcomingDefenses"
+        :defenses="upcoming"
       />
-      <ProfessorTodosCard :actions="professorTodos" :priority="professorPriority" />
+          <ProfessorTodosCard :actions="todos" :priority="priority" />
     </div>
   </div>
 </template>

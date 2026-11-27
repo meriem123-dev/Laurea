@@ -25,6 +25,7 @@ import { CreateTeacherDto } from "./dto/create-teacher.dto";
 import { UpdateTeacherDto } from "./dto/update-teacher.dto";
 import { TeachersImportService } from "./teachers-import.service";
 import { TeachersService } from "./teachers.service";
+import { TeacherDashboardService } from "./teacher-dashboard.service";
 
 @UseGuards(AuthGuard("jwt"), RolesGuard)
 @Controller("teachers")
@@ -32,8 +33,15 @@ export class TeachersController {
   constructor(
     private readonly teachersService: TeachersService,
     private readonly importService: TeachersImportService,
+    private readonly dashboardService: TeacherDashboardService,
   ) {}
 
+  // tableau de bord de l'enseignant connecté (chiffres clés, prochaines soutenances, à faire)
+  @Roles(Role.TEACHER)
+  @Get("me/dashboard")
+  dashboard(@Req() req: { user: { id: string } }) {
+    return this.dashboardService.forUser(req.user.id);
+  }
   @Roles(Role.ADMIN_STAFF)
   @Post()
   create(@Body() dto: CreateTeacherDto) {

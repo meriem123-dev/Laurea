@@ -10,12 +10,10 @@ import SegmentedBar from '../../components/common/SegmentedBar.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
 import NotificationItem from '../../components/notifications/NotificationItem.vue'
 import { useNotifications } from '../../composables/useNotifications'
-import { useStudentSpace } from '../../composables/useStudentSpace'
-import { CURRENT_STUDENT_ID } from '../../mocks/currentStudent'
-import { projectSteps } from '../../mocks/studentSpace'
-import { formatFullDate, formatWeekdayDayMonth } from '../../utils/dateLabels'
-import { formatDayMonth } from '../../utils/format'
-import { displayName } from '../../utils/professor'
+import BaseAlert from '../../components/common/BaseAlert.vue'
+import { useStudentDashboard } from './composables/useStudentDashboard'
+import { formatWeekdayDayMonth } from '../../utils/dateLabels'
+import { SPECIALITY_LABELS } from '../../utils/speciality'
 import { projectProgress } from '../../utils/project'
 import { PROJECT_STATUS_META } from '../../utils/projectStatus'
 import { useAuthStore } from '../auth/store.js'
@@ -38,11 +36,12 @@ interface InfoCard {
 
 const router = useRouter()
 const auth = useAuthStore()
-const { student, project, supervisor, defense, meta } = useStudentSpace(CURRENT_STUDENT_ID)
+// projet, soutenance, rapport et étapes : calculés par le back (GET /students/me/dashboard)
+const { data, loaded, error, project, defense, report, validation, steps } = useStudentDashboard()
 const { notifications, unreadCount, markAsRead } = useNotifications('STUDENT')
 
 const greeting = computed(() => {
-  const firstName = auth.user?.firstName ?? student.value?.firstName
+  const firstName = auth.user?.firstName ?? data.value?.firstName
   return firstName ? `Bonjour ${firstName},` : 'Bonjour,'
 })
 
@@ -58,21 +57,19 @@ const cards = computed<InfoCard[]>(() => {
     {
       key: 'defense',
       label: 'Ma soutenance',
-      title: current ? formatWeekdayDayMonth(current.defense.date) : 'Non planifiée',
-      detail: current
-        ? `${current.defense.time}${current.room ? ` · ${current.room.name}` : ''}`
-        : 'La date vous sera communiquée.',
+      title: current ? formatWeekdayDayMonth(current.date) : 'Non planifiée',
+      detail: current ? `${current.time} · ${current.room}` : 'La date vous sera communiquée.',
       action: 'Voir les détails',
       to: '/student/defense',
       icon: CalendarDays,
       tone: 'blue',
     },
     {
-      key: 'deadline',
-      label: 'Prochaine échéance',
-      title: 'Rapport final',
-      detail: meta.value ? `À déposer avant le ${formatDayMonth(meta.value.reportDeadline)}` : '',
-      action: 'Déposer maintenant',
+      key: 'report',
+      label: 'Mon rapport',
+      title: report.value.title,
+      detail: report.value.detail,
+      action: report.value.action,
       to: '/student/project',
       icon: Clock,
       tone: 'orange',
@@ -80,8 +77,8 @@ const cards = computed<InfoCard[]>(() => {
     {
       key: 'validation',
       label: 'Validation',
-      title: 'Sujet approuvé',
-      detail: meta.value ? `Validé le ${formatFullDate(meta.value.validatedOn)}` : '',
+      title: validation.value.title,
+      detail: validation.value.detail,
       action: 'Voir le suivi',
       to: '/student/project',
       icon: CircleCheck,
@@ -89,14 +86,6 @@ const cards = computed<InfoCard[]>(() => {
     },
   ]
 })
-
-const steps = computed(() =>
-  projectSteps.map((step) =>
-    step.id === 'defense' && defense.value
-      ? { ...step, detail: formatFullDate(defense.value.defense.date) }
-      : step,
-  ),
-)
 
 const recent = computed(() => notifications.value.slice(0, 2))
 const notificationsSubtitle = computed(() =>
@@ -106,7 +95,6 @@ const notificationsSubtitle = computed(() =>
 )
 
 function openNotification(item: AppNotification) {
-  // TODO backend : PATCH /notifications/:id/read
   markAsRead(item.id)
   if (item.to) void router.push(item.to)
 }
@@ -119,9 +107,14 @@ function openNotification(item: AppNotification) {
       subtitle="Votre projet avance bien. Voici les prochaines étapes à retenir."
     />
 
-    <EmptyState v-if="!project" message="Aucun projet n’est rattaché à votre compte pour le moment." />
+    <BaseAlert v-if="error" variant="error">{{ error }}</BaseAlert>
 
-    <template v-else>
+    <EmptyState
+      v-if="loaded && !error && !project"
+      message="Aucun projet n’est rattaché à votre compte pour le moment."
+    />
+
+    <template v-else-if="project">
       <section
         class="relative overflow-hidden rounded-xl border border-primary-200 bg-primary-50 p-5 motion-safe:animate-fade-up sm:p-6"
       >
@@ -136,11 +129,9 @@ function openNotification(item: AppNotification) {
             </h2>
 
             <p class="mt-2 text-xs text-text-secondary">
-              <template v-if="supervisor">
-                Encadré par <span class="font-semibold text-ink">{{ displayName(supervisor) }}</span>
-              </template>
-              <template v-if="student">
-                · {{ CURSUS_LABELS[student.cursus] }} {{ student.speciality }}
+              Encadré par <span class="font-semibold text-ink">{{ project.supervisor }}</span>
+              <template v-if="data">
+                · {{ CURSUS_LABELS[data.cursus] }} {{ SPECIALITY_LABELS[data.speciality] }}
               </template>
             </p>
 
