@@ -17,14 +17,22 @@ import { CreateAdminDto } from "./dto/create-admin.dto";
 import { UpdateAdminDto } from "./dto/update-admin.dto";
 import { AdminsService } from "./admins.service";
 import { SystemAdminGuard } from "./system-admin.guard";
-
+import { AdminDashboardService } from "./admin-dashboard.service";
 // Lecture : tous les admins. Écriture : admin système uniquement (SystemAdminGuard).
 @UseGuards(AuthGuard("jwt"), RolesGuard)
 @Controller("admins")
 export class AdminsController {
-  constructor(private readonly adminsService: AdminsService) {}
+   constructor(
+    private readonly adminsService: AdminsService,
+    private readonly dashboardService: AdminDashboardService,
+  ) {}
 
+    // tableau de bord : chiffres clés, prochaines soutenances, actions à traiter
   @Roles(Role.ADMIN_STAFF)
+  @Get("dashboard")
+  dashboard() {
+    return this.dashboardService.get();
+  }
   @Get()
   findAll() {
     return this.adminsService.findAll();

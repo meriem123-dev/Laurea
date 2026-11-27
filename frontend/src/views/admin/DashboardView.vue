@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Component } from 'vue'
+import { computed, type Component } from 'vue'
 import { useRouter } from 'vue-router'
 import { BookOpen, CalendarDays, GraduationCap, Plus, Users } from '@lucide/vue'
 import BaseButton from '../../components/common/BaseButton.vue'
@@ -9,19 +9,16 @@ import DefenseProgressCard from '../../components/dashboard/DefenseProgressCard.
 import TodoActionsCard from '../../components/dashboard/TodoActionsCard.vue'
 import UpcomingDefensesCard from '../../components/dashboard/UpcomingDefensesCard.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
-import {
-  adminStats,
-  defenseBreakdown,
-  todoActions,
-  upcomingDefenses,
-} from '../../mocks/adminDashboard'
+import { useAdminDashboard } from './composables/useAdminDashboard'
+import { useAuthStore } from '../auth/store.js'
 import { formatLongDate } from '../../utils/format'
 import type { StatId } from '../../types/dashboard'
 
 const router = useRouter()
+const auth = useAuthStore()
+const { loading, error, stats, breakdown, upcoming, todos, reload } = useAdminDashboard()
 
-// TODO backend : nom issu du store auth
-const adminName = 'Admin'
+const adminName = computed(() => auth.user?.firstName ?? 'Admin')
 const today = formatLongDate(new Date())
 
 const statIcons: Record<StatId, Component> = {
@@ -45,34 +42,47 @@ const statIcons: Record<StatId, Component> = {
       </BaseButton>
     </PageHeader>
 
-    <StatStrip aria-label="Chiffres clés" class="motion-safe:animate-fade-up [animation-delay:100ms]">
-      <StatCard
-        v-for="stat in adminStats"
-        :key="stat.id"
-        :label="stat.label"
-        :value="stat.value"
-        :hint="stat.hint"
-        :icon="statIcons[stat.id]"
-      />
-    </StatStrip>
-
     <div
-      class="grid grid-cols-1 gap-6 motion-safe:animate-fade-up [animation-delay:200ms] lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]"
+      v-if="error"
+      role="alert"
+      class="flex items-center justify-between gap-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800"
     >
-      <DefenseProgressCard
-        :items="defenseBreakdown"
-        subtitle="Répartition par statut · Promotion 2025"
-      />
-      <UpcomingDefensesCard
-        :defenses="upcomingDefenses"
-        subtitle="7 jours à venir"
-        view-all-to="/admin/defenses"
-      />
+      <span>{{ error }}</span>
+      <BaseButton variant="secondary" size="md" @click="reload()">Réessayer</BaseButton>
     </div>
 
-    <TodoActionsCard
-      :actions="todoActions"
-      class="motion-safe:animate-fade-up [animation-delay:300ms]"
-    />
+    <p v-else-if="loading" class="text-sm text-text-muted">Chargement du tableau de bord…</p>
+
+    <template v-else>
+      <StatStrip
+        aria-label="Chiffres clés"
+        class="motion-safe:animate-fade-up [animation-delay:100ms]"
+      >
+        <StatCard
+          v-for="stat in stats"
+          :key="stat.id"
+          :label="stat.label"
+          :value="stat.value"
+          :hint="stat.hint"
+          :icon="statIcons[stat.id]"
+        />
+      </StatStrip>
+
+      <div
+        class="grid grid-cols-1 gap-6 motion-safe:animate-fade-up [animation-delay:200ms] lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]"
+      >
+        <DefenseProgressCard :items="breakdown" subtitle="Répartition par statut" />
+        <UpcomingDefensesCard
+          :defenses="upcoming"
+          subtitle="7 jours à venir"
+          view-all-to="/admin/defenses"
+        />
+      </div>
+
+      <TodoActionsCard
+        :actions="todos"
+        class="motion-safe:animate-fade-up [animation-delay:300ms]"
+      />
+    </template>
   </div>
 </template>
